@@ -3,7 +3,7 @@ import os
 import pytest
 
 from app.db import SessionLocal
-from app.queries import find_nearby_places, find_places_along_route
+from app.queries import find_nearby_places, find_place_by_slug, find_places_along_route
 from app.routing import RouteResult
 from app.schemas import NearbyRequest, PlaceType
 
@@ -11,6 +11,17 @@ pytestmark = pytest.mark.integration
 
 if os.getenv("RUN_INTEGRATION") != "1":
     pytest.skip("PostGIS integration tests are disabled", allow_module_level=True)
+
+
+@pytest.mark.asyncio
+async def test_place_detail_returns_latest_verification() -> None:
+    async with SessionLocal() as session:
+        row = await find_place_by_slug(session, "test-route-mosque-middle")
+
+    assert row is not None
+    assert row["place_type"] == "MOSQUE"
+    assert row["trust_status"] == "UNVERIFIED"
+    assert row["source_reference"] == "synthetic://phase0-test-fixture"
 
 
 @pytest.mark.asyncio
