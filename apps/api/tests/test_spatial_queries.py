@@ -35,7 +35,7 @@ async def test_nearby_respects_place_type_filter() -> None:
     request = NearbyRequest(
         latitude=12.6,
         longitude=100.2,
-        radius_m=150_000,
+        radius_m=50_000,
         place_types=[PlaceType.MOSQUE],
         limit=20,
     )
