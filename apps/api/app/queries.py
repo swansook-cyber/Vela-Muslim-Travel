@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .routing import RouteResult
 from .schemas import NearbyRequest, PlaceType
 
-
 LATEST_VERIFICATION_SQL = """
 LEFT JOIN LATERAL (
     SELECT
