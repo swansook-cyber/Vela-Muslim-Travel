@@ -25,6 +25,53 @@ CREATE TYPE verification_source_type AS ENUM (
   'UNKNOWN'
 );
 
+CREATE TYPE candidate_review_state AS ENUM (
+  'DISCOVERED',
+  'GEOCODED',
+  'APPROVED',
+  'REJECTED'
+);
+
+CREATE TABLE place_candidates (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  place_type place_type NOT NULL,
+  address text,
+  district text,
+  province text,
+  phone text,
+  latitude double precision,
+  longitude double precision,
+  proposed_trust_status trust_status NOT NULL DEFAULT 'UNVERIFIED',
+  source_type verification_source_type NOT NULL DEFAULT 'UNKNOWN',
+  source_reference text,
+  external_provider text,
+  external_id text,
+  certification_number text,
+  certification_expires_at timestamptz,
+  review_state candidate_review_state NOT NULL DEFAULT 'DISCOVERED',
+  review_note text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CHECK (
+    (latitude IS NULL AND longitude IS NULL)
+    OR (
+      latitude BETWEEN -90 AND 90
+      AND longitude BETWEEN -180 AND 180
+    )
+  )
+);
+
+CREATE INDEX idx_place_candidates_review_state
+  ON place_candidates(review_state);
+
+CREATE INDEX idx_place_candidates_province
+  ON place_candidates(province);
+
+CREATE UNIQUE INDEX idx_place_candidates_external_ref
+  ON place_candidates(external_provider, external_id)
+  WHERE external_provider IS NOT NULL AND external_id IS NOT NULL;
+
 CREATE TABLE places (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   slug text NOT NULL UNIQUE,
