@@ -60,6 +60,11 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
     external_provider = empty_to_none(row.get("external_provider"))
     external_id = empty_to_none(row.get("external_id"))
     certification_number = empty_to_none(row.get("certification_number"))
+    certification_expires_at = parse_datetime(
+        row.get("certification_expires_at"),
+        "certification_expires_at",
+        row_number,
+    )
 
     latitude_raw = empty_to_none(row.get("latitude"))
     longitude_raw = empty_to_none(row.get("longitude"))
@@ -107,6 +112,10 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
             raise ValueError(
                 f"Row {row_number}: certified candidate requires certification_number"
             )
+        if certification_expires_at is None:
+            raise ValueError(
+                f"Row {row_number}: certified candidate requires certification_expires_at"
+            )
 
     if place_type == "ACCOMMODATION" and trust_status == "HALAL_CERTIFIED":
         raise ValueError(
@@ -133,11 +142,7 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
         external_provider=external_provider,
         external_id=external_id,
         certification_number=certification_number,
-        certification_expires_at=parse_datetime(
-            row.get("certification_expires_at"),
-            "certification_expires_at",
-            row_number,
-        ),
+        certification_expires_at=certification_expires_at,
         review_state=review_state,
         review_note=empty_to_none(row.get("review_note")),
     )

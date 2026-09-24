@@ -35,6 +35,7 @@ from .schemas import (
     RouteSummary,
 )
 from .security import require_admin
+from .verification import certification_is_current
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
 AdminGuard = Annotated[None, Depends(require_admin)]
@@ -223,6 +224,15 @@ async def admin_promote_candidate(
         raise HTTPException(
             status_code=409,
             detail="Candidate requires reviewed coordinates before promotion",
+        )
+
+    if not certification_is_current(
+        candidate["proposed_trust_status"],
+        candidate["certification_expires_at"],
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="Certified candidate requires a current, non-expired certificate",
         )
 
     place_id = await promote_candidate(

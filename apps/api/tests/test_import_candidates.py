@@ -98,3 +98,13 @@ def test_candidate_accepts_reviewed_coordinates() -> None:
 
     assert candidate.latitude == pytest.approx(14.529001)
     assert candidate.longitude == pytest.approx(101.372001)
+
+
+def test_certified_candidate_requires_expiry() -> None:
+    row = candidate_row()
+    row["proposed_trust_status"] = "HALAL_CERTIFIED"
+    row["source_type"] = "OFFICIAL_CERTIFICATION"
+    row["certification_number"] = "TEST-123"
+
+    with pytest.raises(ValueError, match="certification_expires_at"):
+        parse_candidate(row, 2)
