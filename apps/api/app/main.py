@@ -6,11 +6,6 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .admin_places import get_admin_place, list_admin_places, update_admin_place
-from .admin_verifications import (
-    add_place_verification,
-    list_place_verifications,
-    validate_verification_claim,
-)
 from .admin_queries import (
     get_admin_dashboard,
     get_candidate,
@@ -32,6 +27,11 @@ from .admin_schemas import (
     CandidateResult,
     CandidateReviewState,
     CandidateReviewUpdate,
+)
+from .admin_verifications import (
+    add_place_verification,
+    list_place_verifications,
+    validate_verification_claim,
 )
 from .config import get_settings
 from .db import get_db
