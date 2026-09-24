@@ -1,5 +1,7 @@
 import type {
   AlongRouteResponse,
+  CandidateResult,
+  CandidateReviewState,
   Coordinate,
   GeocodeResult,
   PlaceResult,
@@ -84,4 +86,85 @@ export async function searchDestination(query: string): Promise<GeocodeResult[]>
   }
 
   return response.json() as Promise<GeocodeResult[]>;
+}
+
+
+function adminHeaders(adminKey: string): HeadersInit {
+  return {
+    "Content-Type": "application/json",
+    "X-Admin-Key": adminKey,
+  };
+}
+
+export async function fetchCandidates(
+  adminKey: string,
+  reviewState?: CandidateReviewState,
+): Promise<CandidateResult[]> {
+  const url = new URL(`${API_BASE_URL}/admin/candidates`);
+  if (reviewState) {
+    url.searchParams.set("review_state", reviewState);
+  }
+
+  const response = await fetch(url, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<CandidateResult[]>;
+}
+
+export interface CandidateReviewInput {
+  latitude?: number;
+  longitude?: number;
+  review_state?: CandidateReviewState;
+  review_note?: string;
+}
+
+export async function updateCandidate(
+  adminKey: string,
+  candidateId: string,
+  update: CandidateReviewInput,
+): Promise<CandidateResult> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/candidates/${encodeURIComponent(candidateId)}`,
+    {
+      method: "PATCH",
+      headers: adminHeaders(adminKey),
+      body: JSON.stringify(update),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<CandidateResult>;
+}
+
+export async function promoteCandidate(
+  adminKey: string,
+  candidateId: string,
+  slug: string,
+  nameTh?: string,
+): Promise<{ candidate_id: string; place_id: string; slug: string }> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/candidates/${encodeURIComponent(candidateId)}/promote`,
+    {
+      method: "POST",
+      headers: adminHeaders(adminKey),
+      body: JSON.stringify({
+        slug,
+        name_th: nameTh || undefined,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json();
 }
