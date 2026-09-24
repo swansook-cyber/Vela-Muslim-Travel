@@ -74,3 +74,38 @@ Promotion writes the place and its evidence-backed verification record in the sa
 ## Important certification boundary
 
 A halal-certified kitchen inside a hotel is represented as `HALAL_CERTIFIED_SERVICE`. It is not converted into a claim that the entire hotel is halal-certified.
+
+
+## Coordinate review
+
+Candidate geocoding is deliberately not automatic promotion.
+
+The admin UI:
+
+1. searches using candidate name/address,
+2. displays multiple coordinate suggestions,
+3. requires an explicit coordinate choice,
+4. provides a Google Maps review link,
+5. saves the record as `GEOCODED` or `APPROVED` only after review.
+
+Re-importing the discovery CSV must not erase coordinates or review state that were already checked by an admin.
+
+## Certification freshness
+
+A certified label is current only while its evidence has a future expiry date.
+
+- certified candidates require a certificate number,
+- certified candidates require an expiry date,
+- expired certified candidates cannot be promoted,
+- user-facing results flag expired verification evidence,
+- the admin dashboard surfaces expired and soon-to-expire verification records.
+
+## Operational dashboard
+
+`/admin/dashboard` summarizes:
+
+- total candidates,
+- DISCOVERED / GEOCODED / APPROVED / PROMOTED / REJECTED counts,
+- production place count,
+- expired verification evidence,
+- certification evidence expiring in the next 30 days.

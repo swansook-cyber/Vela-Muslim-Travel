@@ -76,10 +76,14 @@ Phase 0 now includes:
 - `Along My Route` query ordered by route progress,
 - replaceable routing-provider adapter,
 - controlled reviewed-place importer,
-- verification-evidence guardrails,
+- controlled geocode candidate review with explicit coordinate selection,
+- candidate readiness dashboard,
+- reviewed-coordinate preservation across candidate re-imports,
+- verification-evidence guardrails and certificate-expiry handling,
 - PostGIS integration tests in GitHub Actions,
 - React + Vite + MapLibre route-search web client,
 - browser geolocation for route origin,
-- web and API CI pipelines.
+- web and API CI pipelines,
+- production Docker Compose full-stack smoke tests.
 
 The next major gate is a manually reviewed real-world pilot dataset and an end-to-end route test using that data.
