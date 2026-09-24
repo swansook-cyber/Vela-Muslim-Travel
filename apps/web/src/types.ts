@@ -114,3 +114,13 @@ export interface AdminDashboard {
   expired_verifications: number;
   certifications_expiring_30d: number;
 }
+
+
+export interface AdminAuditEntry {
+  id: string;
+  action: string;
+  entity_type: string;
+  entity_id?: string | null;
+  details: Record<string, unknown>;
+  created_at: string;
+}

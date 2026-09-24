@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  fetchAdminAudit,
   fetchAdminDashboard,
   fetchCandidates,
   promoteCandidate,
@@ -8,6 +9,7 @@ import {
   updateCandidate,
 } from "./api";
 import type {
+  AdminAuditEntry,
   AdminDashboard,
   CandidateResult,
   CandidateReviewState,
@@ -55,6 +57,7 @@ export default function AdminApp() {
   const [filter, setFilter] = useState<CandidateReviewState | "">("DISCOVERED");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
+  const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
@@ -92,12 +95,14 @@ export default function AdminApp() {
     sessionStorage.setItem("vela-admin-key", adminKey);
 
     try {
-      const [items, stats] = await Promise.all([
+      const [items, stats, recentAudit] = await Promise.all([
         fetchCandidates(adminKey, filter || undefined),
         fetchAdminDashboard(adminKey),
+        fetchAdminAudit(adminKey, 12),
       ]);
       setCandidates(items);
       setDashboard(stats);
+      setAudit(recentAudit);
       initializeDrafts(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "โหลด candidate ไม่สำเร็จ");
@@ -278,6 +283,19 @@ export default function AdminApp() {
       )}
 
       <div className="admin-summary">{filteredCount} candidates ในรายการปัจจุบัน</div>
+
+      {audit.length > 0 && (
+        <section className="admin-audit">
+          <h2>กิจกรรมล่าสุด</h2>
+          {audit.map((entry) => (
+            <div key={entry.id}>
+              <strong>{entry.action}</strong>
+              <span>{entry.entity_id || entry.entity_type}</span>
+              <time>{new Date(entry.created_at).toLocaleString("th-TH")}</time>
+            </div>
+          ))}
+        </section>
+      )}
 
       <section className="candidate-list">
         {candidates.map((candidate) => {

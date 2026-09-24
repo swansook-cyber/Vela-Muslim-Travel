@@ -1,4 +1,5 @@
 import type {
+  AdminAuditEntry,
   AdminDashboard,
   AlongRouteResponse,
   CandidateResult,
@@ -183,4 +184,23 @@ export async function fetchAdminDashboard(
   }
 
   return response.json() as Promise<AdminDashboard>;
+}
+
+
+export async function fetchAdminAudit(
+  adminKey: string,
+  limit = 20,
+): Promise<AdminAuditEntry[]> {
+  const url = new URL(`${API_BASE_URL}/admin/audit`);
+  url.searchParams.set("limit", String(limit));
+
+  const response = await fetch(url, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<AdminAuditEntry[]>;
 }
