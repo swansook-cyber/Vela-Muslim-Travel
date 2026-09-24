@@ -36,6 +36,34 @@ export default function App() {
   const [result, setResult] = useState<AlongRouteResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [locating, setLocating] = useState(false);
+
+  function useCurrentLocation() {
+    if (!navigator.geolocation) {
+      setError("อุปกรณ์นี้ไม่รองรับการระบุตำแหน่ง");
+      return;
+    }
+
+    setLocating(true);
+    setError("");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setOriginLat(position.coords.latitude.toFixed(6));
+        setOriginLng(position.coords.longitude.toFixed(6));
+        setLocating(false);
+      },
+      () => {
+        setError("ไม่สามารถอ่านตำแหน่งปัจจุบันได้ กรุณาตรวจสิทธิ์ Location");
+        setLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10_000,
+        maximumAge: 60_000,
+      },
+    );
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -84,6 +112,15 @@ export default function App() {
       <section className="workspace">
         <form className="search-panel" onSubmit={submit}>
           <h2>ค้นหาระหว่างทาง</h2>
+
+          <button
+            type="button"
+            className="secondary"
+            onClick={useCurrentLocation}
+            disabled={locating}
+          >
+            {locating ? "กำลังหาตำแหน่ง…" : "ใช้ตำแหน่งปัจจุบันเป็นต้นทาง"}
+          </button>
 
           <div className="coordinate-grid">
             <label>
