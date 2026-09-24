@@ -40,3 +40,28 @@ jobs:
 
       - name: Build web image
         run: docker build -t vela-muslim-travel-web:ci apps/web
+
+      - name: Start production stack
+        run: docker compose -f docker-compose.prod.yml up -d --build
+
+      - name: Smoke test API through web proxy
+        run: |
+          curl --fail --silent --show-error             --retry 20 --retry-delay 2 --retry-all-errors             http://localhost:8080/api/health | tee /tmp/health.json
+          grep -q '"status":"ok"' /tmp/health.json
+
+      - name: Smoke test web shell
+        run: |
+          curl --fail --silent --show-error             --retry 10 --retry-delay 2 --retry-all-errors             http://localhost:8080/ | tee /tmp/index.html
+          grep -q "Vela Muslim Travel" /tmp/index.html
+
+      - name: Show container status
+        if: always()
+        run: docker compose -f docker-compose.prod.yml ps
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.prod.yml logs --no-color --tail=200
+
+      - name: Stop production stack
+        if: always()
+        run: docker compose -f docker-compose.prod.yml down -v
