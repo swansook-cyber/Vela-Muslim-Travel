@@ -1,0 +1,17 @@
+{
+  "name": "Vela Muslim Travel",
+  "short_name": "Vela Travel",
+  "description": "ผู้ช่วยค้นหาร้านอาหาร ที่พัก มัสยิด และห้องละหมาดระหว่างการเดินทาง",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f4",
+  "theme_color": "#173f2c",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
