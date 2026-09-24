@@ -217,4 +217,4 @@ async def test_candidate_can_be_reviewed_and_promoted() -> None:
     assert place["province"] == "TEST"
     assert place["trust_status"] == "UNVERIFIED"
     assert candidate_after is not None
-    assert candidate_after["review_state"] == "APPROVED"
+    assert candidate_after["review_state"] == "PROMOTED"
