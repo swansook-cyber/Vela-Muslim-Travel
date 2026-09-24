@@ -97,10 +97,10 @@ function formatRouteProgress(progress: number, totalSeconds: number): string {
 }
 
 export default function App() {
-  const [originLat, setOriginLat] = useState("8.1646");
-  const [originLng, setOriginLng] = useState("99.6804");
-  const [destinationLat, setDestinationLat] = useState("14.5289");
-  const [destinationLng, setDestinationLng] = useState("101.3722");
+  const [originLat, setOriginLat] = useState("");
+  const [originLng, setOriginLng] = useState("");
+  const [destinationLat, setDestinationLat] = useState("");
+  const [destinationLng, setDestinationLng] = useState("");
   const [destinationQuery, setDestinationQuery] = useState("");
   const [destinationResults, setDestinationResults] = useState<GeocodeResult[]>([]);
   const [selectedDestination, setSelectedDestination] = useState("");
@@ -179,18 +179,44 @@ export default function App() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+
+    const originLatitude = Number(originLat);
+    const originLongitude = Number(originLng);
+    const destinationLatitude = Number(destinationLat);
+    const destinationLongitude = Number(destinationLng);
+
+    if (
+      !originLat ||
+      !originLng ||
+      !Number.isFinite(originLatitude) ||
+      !Number.isFinite(originLongitude)
+    ) {
+      setError("กรุณาใช้ตำแหน่งปัจจุบันหรือระบุพิกัดต้นทางก่อนค้นหา");
+      return;
+    }
+
+    if (
+      !destinationLat ||
+      !destinationLng ||
+      !Number.isFinite(destinationLatitude) ||
+      !Number.isFinite(destinationLongitude)
+    ) {
+      setError("กรุณาค้นหาและเลือกปลายทางก่อนค้นหาตามเส้นทาง");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
       const response = await fetchAlongRoute({
         origin: {
-          latitude: Number(originLat),
-          longitude: Number(originLng),
+          latitude: originLatitude,
+          longitude: originLongitude,
         },
         destination: {
-          latitude: Number(destinationLat),
-          longitude: Number(destinationLng),
+          latitude: destinationLatitude,
+          longitude: destinationLongitude,
         },
         corridorRadiusM: Number(corridorKm) * 1000,
         placeTypes: types,
@@ -205,13 +231,26 @@ export default function App() {
   }
 
   async function searchNearby() {
+    const latitude = Number(originLat);
+    const longitude = Number(originLng);
+
+    if (
+      !originLat ||
+      !originLng ||
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude)
+    ) {
+      setError("กรุณาใช้ตำแหน่งปัจจุบันหรือระบุพิกัดต้นทางก่อนค้นหาใกล้ฉัน");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
       const places = await fetchNearby({
-        latitude: Number(originLat),
-        longitude: Number(originLng),
+        latitude,
+        longitude,
         radiusM: Number(corridorKm) * 1000,
         placeTypes: types,
       });
