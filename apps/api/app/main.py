@@ -1,26 +1,38 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .config import get_settings
 from .db import get_db
-from .queries import find_nearby_places, find_places_along_route
+from .queries import find_nearby_places, find_place_by_slug, find_places_along_route
 from .routing import RoutingError, get_route
 from .schemas import (
     AlongRouteRequest,
     AlongRouteResponse,
+    GeoJsonLineString,
     NearbyRequest,
     PlaceResult,
     RouteSummary,
 )
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
+settings = get_settings()
 
 app = FastAPI(
     title="Vela Muslim Travel API",
-    version="0.1.0",
-    description="Phase 0 API for Muslim travel discovery in Thailand.",
+    version="0.2.0",
+    description="Route-first Muslim travel discovery API for Thailand.",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origin_list,
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
 )
 
 
@@ -31,7 +43,18 @@ async def health(session: DbSession) -> dict:
     except Exception as exc:
         raise HTTPException(status_code=503, detail="Database unavailable") from exc
 
-    return {"status": "ok"}
+    return {"status": "ok", "version": app.version}
+
+
+@app.get("/places/{slug}", response_model=PlaceResult)
+async def place_detail(
+    slug: str,
+    session: DbSession,
+) -> PlaceResult:
+    row = await find_place_by_slug(session, slug)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Place not found")
+    return PlaceResult(**row)
 
 
 @app.post("/places/nearby", response_model=list[PlaceResult])
@@ -65,6 +88,7 @@ async def along_route(
         route=RouteSummary(
             distance_m=route.distance_m,
             duration_s=route.duration_s,
+            geometry=GeoJsonLineString(coordinates=route.coordinates),
         ),
         places=[PlaceResult(**row) for row in rows],
     )
