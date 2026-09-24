@@ -74,3 +74,42 @@ class AdminAuditEntry(BaseModel):
     entity_id: str | None = None
     details: dict
     created_at: datetime
+
+
+class AdminPlaceResult(BaseModel):
+    id: str
+    slug: str
+    place_type: PlaceType
+    name_th: str
+    name_en: str | None = None
+    address: str | None = None
+    district: str | None = None
+    province: str | None = None
+    phone: str | None = None
+    website_url: str | None = None
+    social_url: str | None = None
+    active: bool
+    latitude: float
+    longitude: float
+    created_at: datetime
+    updated_at: datetime
+
+
+class AdminPlaceUpdate(BaseModel):
+    slug: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=160,
+        pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+    )
+    name_th: str | None = Field(default=None, min_length=1, max_length=250)
+    name_en: str | None = Field(default=None, max_length=250)
+    address: str | None = None
+    district: str | None = None
+    province: str | None = None
+    phone: str | None = None
+    website_url: str | None = None
+    social_url: str | None = None
+    active: bool | None = None
+    latitude: float | None = Field(default=None, ge=-90, le=90)
+    longitude: float | None = Field(default=None, ge=-180, le=180)
