@@ -113,3 +113,24 @@ class AdminPlaceUpdate(BaseModel):
     active: bool | None = None
     latitude: float | None = Field(default=None, ge=-90, le=90)
     longitude: float | None = Field(default=None, ge=-180, le=180)
+
+
+class AdminVerificationCreate(BaseModel):
+    trust_status: str
+    source_type: str
+    source_reference: str | None = None
+    verified_at: datetime
+    expires_at: datetime | None = None
+    note: str | None = None
+
+
+class AdminVerificationResult(BaseModel):
+    id: str
+    trust_status: str
+    source_type: str
+    source_reference: str | None = None
+    verified_at: datetime | None = None
+    expires_at: datetime | None = None
+    note: str | None = None
+    verified_by: str | None = None
+    created_at: datetime
