@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { ProductionPlaces } from "./ProductionPlaces";
 import {
   fetchAdminAudit,
   fetchAdminDashboard,
@@ -296,6 +297,8 @@ export default function AdminApp() {
           ))}
         </section>
       )}
+
+      <ProductionPlaces adminKey={adminKey} />
 
       <section className="candidate-list">
         {candidates.map((candidate) => {

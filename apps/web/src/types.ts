@@ -124,3 +124,38 @@ export interface AdminAuditEntry {
   details: Record<string, unknown>;
   created_at: string;
 }
+
+
+export interface AdminPlaceResult {
+  id: string;
+  slug: string;
+  place_type: PlaceType;
+  name_th: string;
+  name_en?: string | null;
+  address?: string | null;
+  district?: string | null;
+  province?: string | null;
+  phone?: string | null;
+  website_url?: string | null;
+  social_url?: string | null;
+  active: boolean;
+  latitude: number;
+  longitude: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminPlaceUpdate {
+  slug?: string;
+  name_th?: string;
+  name_en?: string | null;
+  address?: string | null;
+  district?: string | null;
+  province?: string | null;
+  phone?: string | null;
+  website_url?: string | null;
+  social_url?: string | null;
+  active?: boolean;
+  latitude?: number;
+  longitude?: number;
+}

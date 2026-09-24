@@ -596,3 +596,61 @@ button.danger {
     gap: 0.2rem;
   }
 }
+
+.production-admin {
+  margin: 1.25rem 0 2rem;
+  padding: 1rem;
+  border: 1px solid #dce3de;
+  border-radius: 16px;
+  background: #f9fbf9;
+}
+
+.production-admin-head {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.8rem;
+  align-items: end;
+}
+
+.production-admin-head h2 {
+  margin: 0;
+}
+
+.production-admin-head p {
+  margin: 0.3rem 0 0;
+  color: #6a756d;
+}
+
+.production-place-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.production-place-card {
+  padding: 1rem;
+  border: 1px solid #dce3de;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.production-place-card.is-inactive {
+  opacity: 0.68;
+}
+
+.admin-map-link {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  border: 1px solid #bfd0c4;
+  border-radius: 12px;
+  color: #173f2c;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .production-admin-head {
+    grid-template-columns: 1fr;
+  }
+}

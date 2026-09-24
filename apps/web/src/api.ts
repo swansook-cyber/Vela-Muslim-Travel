@@ -1,6 +1,8 @@
 import type {
   AdminAuditEntry,
   AdminDashboard,
+  AdminPlaceResult,
+  AdminPlaceUpdate,
   AlongRouteResponse,
   CandidateResult,
   CandidateReviewState,
@@ -203,4 +205,44 @@ export async function fetchAdminAudit(
   }
 
   return response.json() as Promise<AdminAuditEntry[]>;
+}
+
+
+export async function fetchAdminPlaces(
+  adminKey: string,
+  includeInactive = true,
+): Promise<AdminPlaceResult[]> {
+  const url = new URL(`${API_BASE_URL}/admin/places`);
+  url.searchParams.set("include_inactive", String(includeInactive));
+
+  const response = await fetch(url, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<AdminPlaceResult[]>;
+}
+
+export async function updateAdminPlace(
+  adminKey: string,
+  placeId: string,
+  update: AdminPlaceUpdate,
+): Promise<AdminPlaceResult> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/places/${encodeURIComponent(placeId)}`,
+    {
+      method: "PATCH",
+      headers: adminHeaders(adminKey),
+      body: JSON.stringify(update),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<AdminPlaceResult>;
 }
