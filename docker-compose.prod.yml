@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vela_muslim_travel
+      POSTGRES_USER: vela
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - vela_muslim_travel_db:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vela -d vela_muslim_travel"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./apps/api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://vela:${POSTGRES_PASSWORD}@db:5432/vela_muslim_travel
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      ROUTING_PROVIDER: ${ROUTING_PROVIDER:-osrm}
+      OSRM_BASE_URL: ${OSRM_BASE_URL:-https://router.project-osrm.org}
+      GEOCODING_PROVIDER: ${GEOCODING_PROVIDER:-nominatim}
+      NOMINATIM_BASE_URL: ${NOMINATIM_BASE_URL:-https://nominatim.openstreetmap.org}
+      GEOCODING_USER_AGENT: ${GEOCODING_USER_AGENT:-VelaMuslimTravel/0.1}
+    expose:
+      - "8000"
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        VITE_API_BASE_URL: /api
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${WEB_PORT:-8080}:80"
+
+volumes:
+  vela_muslim_travel_db:
