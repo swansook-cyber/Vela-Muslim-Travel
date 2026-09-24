@@ -28,6 +28,8 @@ class Candidate:
     district: str | None
     province: str | None
     phone: str | None
+    latitude: float | None
+    longitude: float | None
     proposed_trust_status: str
     source_type: str
     source_reference: str | None
@@ -59,6 +61,27 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
     external_id = empty_to_none(row.get("external_id"))
     certification_number = empty_to_none(row.get("certification_number"))
 
+    latitude_raw = empty_to_none(row.get("latitude"))
+    longitude_raw = empty_to_none(row.get("longitude"))
+    if (latitude_raw is None) != (longitude_raw is None):
+        raise ValueError(
+            f"Row {row_number}: latitude and longitude must be provided together"
+        )
+
+    latitude: float | None = None
+    longitude: float | None = None
+    if latitude_raw is not None and longitude_raw is not None:
+        try:
+            latitude = float(latitude_raw)
+            longitude = float(longitude_raw)
+        except ValueError as exc:
+            raise ValueError(
+                f"Row {row_number}: latitude/longitude must be numeric"
+            ) from exc
+
+        if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
+            raise ValueError(f"Row {row_number}: coordinates are out of range")
+
     if not name:
         raise ValueError(f"Row {row_number}: name is required")
     if place_type not in ALLOWED_PLACE_TYPES:
@@ -69,6 +92,11 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
         raise ValueError(f"Row {row_number}: invalid source type {source_type!r}")
     if review_state not in ALLOWED_REVIEW_STATES:
         raise ValueError(f"Row {row_number}: invalid review state {review_state!r}")
+
+    if review_state in {"GEOCODED", "APPROVED", "PROMOTED"} and latitude is None:
+        raise ValueError(
+            f"Row {row_number}: review state {review_state} requires coordinates"
+        )
 
     if trust_status in CERTIFIED_STATUSES:
         if source_type != "OFFICIAL_CERTIFICATION" or not source_reference:
@@ -97,6 +125,8 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
         district=empty_to_none(row.get("district")),
         province=empty_to_none(row.get("province")),
         phone=empty_to_none(row.get("phone")),
+        latitude=latitude,
+        longitude=longitude,
         proposed_trust_status=trust_status,
         source_type=source_type,
         source_reference=source_reference,
@@ -130,6 +160,8 @@ UPSERT_CANDIDATE_SQL = text(
         district,
         province,
         phone,
+        latitude,
+        longitude,
         proposed_trust_status,
         source_type,
         source_reference,
@@ -148,6 +180,8 @@ UPSERT_CANDIDATE_SQL = text(
         :district,
         :province,
         :phone,
+        :latitude,
+        :longitude,
         CAST(:proposed_trust_status AS trust_status),
         CAST(:source_type AS verification_source_type),
         :source_reference,
@@ -168,6 +202,8 @@ UPSERT_CANDIDATE_SQL = text(
         district = EXCLUDED.district,
         province = EXCLUDED.province,
         phone = EXCLUDED.phone,
+        latitude = EXCLUDED.latitude,
+        longitude = EXCLUDED.longitude,
         proposed_trust_status = EXCLUDED.proposed_trust_status,
         source_type = EXCLUDED.source_type,
         source_reference = EXCLUDED.source_reference,
@@ -191,6 +227,8 @@ async def apply_candidates(candidates: list[Candidate]) -> None:
                     "district": candidate.district,
                     "province": candidate.province,
                     "phone": candidate.phone,
+                    "latitude": candidate.latitude,
+                    "longitude": candidate.longitude,
                     "proposed_trust_status": candidate.proposed_trust_status,
                     "source_type": candidate.source_type,
                     "source_reference": candidate.source_reference,

@@ -13,6 +13,8 @@ def candidate_row() -> dict[str, str]:
         "district": "Example district",
         "province": "Bangkok",
         "phone": "",
+        "latitude": "",
+        "longitude": "",
         "proposed_trust_status": "UNVERIFIED",
         "source_type": "PUBLIC_WEB_SOURCE",
         "source_reference": "https://example.com",
@@ -76,3 +78,23 @@ def test_pilot_candidate_queue_is_valid() -> None:
         candidate.proposed_trust_status == "HALAL_CERTIFIED_SERVICE"
         for candidate in candidates
     )
+
+
+def test_geocoded_candidate_requires_coordinates() -> None:
+    row = candidate_row()
+    row["review_state"] = "GEOCODED"
+
+    with pytest.raises(ValueError, match="requires coordinates"):
+        parse_candidate(row, 2)
+
+
+def test_candidate_accepts_reviewed_coordinates() -> None:
+    row = candidate_row()
+    row["review_state"] = "GEOCODED"
+    row["latitude"] = "14.529001"
+    row["longitude"] = "101.372001"
+
+    candidate = parse_candidate(row, 2)
+
+    assert candidate.latitude == pytest.approx(14.529001)
+    assert candidate.longitude == pytest.approx(101.372001)
