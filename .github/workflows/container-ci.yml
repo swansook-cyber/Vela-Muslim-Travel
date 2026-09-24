@@ -1,0 +1,42 @@
+name: Container CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/Dockerfile"
+      - "apps/web/Dockerfile"
+      - "apps/web/nginx.conf"
+      - "docker-compose.prod.yml"
+      - "deploy/**"
+      - ".github/workflows/container-ci.yml"
+  pull_request:
+    paths:
+      - "apps/api/Dockerfile"
+      - "apps/web/Dockerfile"
+      - "apps/web/nginx.conf"
+      - "docker-compose.prod.yml"
+      - "deploy/**"
+      - ".github/workflows/container-ci.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_PASSWORD: ci-postgres-password
+      ADMIN_API_KEY: ci-admin-key
+      WEB_PORT: "8080"
+      CORS_ORIGINS: http://localhost:8080
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate compose
+        run: docker compose -f docker-compose.prod.yml config
+
+      - name: Build API image
+        run: docker build -t vela-muslim-travel-api:ci apps/api
+
+      - name: Build web image
+        run: docker build -t vela-muslim-travel-web:ci apps/web
