@@ -1,8 +1,8 @@
 import { FormEvent, useState } from "react";
 
-import { fetchAlongRoute } from "./api";
+import { fetchAlongRoute, fetchNearby } from "./api";
 import { MapView } from "./MapView";
-import type { AlongRouteResponse, PlaceType } from "./types";
+import type { AlongRouteResponse, PlaceResult, PlaceType } from "./types";
 
 const allTypes: { value: PlaceType; label: string }[] = [
   { value: "RESTAURANT", label: "ร้านอาหาร" },
@@ -33,10 +33,15 @@ export default function App() {
   const [types, setTypes] = useState<PlaceType[]>(
     allTypes.map((item) => item.value),
   );
-  const [result, setResult] = useState<AlongRouteResponse | null>(null);
+  const [routeResult, setRouteResult] = useState<AlongRouteResponse | null>(
+    null,
+  );
+  const [nearbyPlaces, setNearbyPlaces] = useState<PlaceResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [locating, setLocating] = useState(false);
+
+  const visiblePlaces = routeResult?.places ?? nearbyPlaces ?? [];
 
   function useCurrentLocation() {
     if (!navigator.geolocation) {
@@ -83,9 +88,30 @@ export default function App() {
         corridorRadiusM: Number(corridorKm) * 1000,
         placeTypes: types,
       });
-      setResult(response);
+      setNearbyPlaces(null);
+      setRouteResult(response);
     } catch (err) {
       setError(err instanceof Error ? err.message : "ไม่สามารถค้นหาเส้นทางได้");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function searchNearby() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const places = await fetchNearby({
+        latitude: Number(originLat),
+        longitude: Number(originLng),
+        radiusM: Number(corridorKm) * 1000,
+        placeTypes: types,
+      });
+      setRouteResult(null);
+      setNearbyPlaces(places);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ไม่สามารถค้นหาใกล้ฉันได้");
     } finally {
       setLoading(false);
     }
@@ -105,13 +131,13 @@ export default function App() {
         <p className="eyebrow">VelaLab</p>
         <h1>Vela Muslim Travel</h1>
         <p>
-          ค้นหาร้านอาหาร ที่พัก มัสยิด และห้องละหมาดที่อยู่ระหว่างเส้นทาง
+          ค้นหาร้านอาหาร ที่พัก มัสยิด และห้องละหมาดทั้งใกล้ตัวและระหว่างเส้นทาง
         </p>
       </header>
 
       <section className="workspace">
         <form className="search-panel" onSubmit={submit}>
-          <h2>ค้นหาระหว่างทาง</h2>
+          <h2>ค้นหาสำหรับการเดินทาง</h2>
 
           <button
             type="button"
@@ -148,7 +174,7 @@ export default function App() {
           </div>
 
           <label>
-            ระยะห่างจากเส้นทาง
+            รัศมีค้นหา / ระยะจากเส้นทาง
             <select value={corridorKm} onChange={(e) => setCorridorKm(e.target.value)}>
               <option value="2">2 กม.</option>
               <option value="5">5 กม.</option>
@@ -173,28 +199,48 @@ export default function App() {
             </div>
           </fieldset>
 
-          <button disabled={loading || types.length === 0}>
-            {loading ? "กำลังค้นหา…" : "ค้นหาตามเส้นทาง"}
-          </button>
+          <div className="action-stack">
+            <button disabled={loading || types.length === 0}>
+              {loading ? "กำลังค้นหา…" : "ค้นหาตามเส้นทาง"}
+            </button>
+            <button
+              type="button"
+              className="secondary"
+              disabled={loading || types.length === 0}
+              onClick={searchNearby}
+            >
+              ค้นหารอบต้นทาง
+            </button>
+          </div>
+
           <p className="hint">
-            พิกัดเริ่มต้นเป็นเพียงชุดทดสอบ Phase 0 และเปลี่ยนได้
+            Phase 0 ยังใช้พิกัดสำหรับปลายทาง ระบบค้นหาชื่อสถานที่จะเพิ่มในขั้นถัดไป
           </p>
           {error && <p className="error">{error}</p>}
         </form>
 
-        <MapView result={result} />
+        <MapView route={routeResult?.route ?? null} places={visiblePlaces} />
       </section>
 
-      {result && (
+      {(routeResult || nearbyPlaces) && (
         <section className="results">
           <div className="summary">
-            <strong>{formatDistance(result.route.distance_m)}</strong>
-            <span>{formatDuration(result.route.duration_s)}</span>
-            <span>{result.places.length} สถานที่บนเส้นทาง</span>
+            {routeResult ? (
+              <>
+                <strong>{formatDistance(routeResult.route.distance_m)}</strong>
+                <span>{formatDuration(routeResult.route.duration_s)}</span>
+                <span>{visiblePlaces.length} สถานที่บนเส้นทาง</span>
+              </>
+            ) : (
+              <>
+                <strong>{visiblePlaces.length} สถานที่ใกล้ต้นทาง</strong>
+                <span>ภายใน {corridorKm} กม.</span>
+              </>
+            )}
           </div>
 
           <div className="place-list">
-            {result.places.map((place) => (
+            {visiblePlaces.map((place) => (
               <article key={place.id} className="place-card">
                 <div>
                   <span className="type">{place.place_type}</span>
@@ -203,7 +249,10 @@ export default function App() {
                 </div>
                 <div className="place-meta">
                   {place.distance_m != null && (
-                    <span>ห่างเส้นทาง {formatDistance(place.distance_m)}</span>
+                    <span>
+                      {routeResult ? "ห่างเส้นทาง " : "ระยะ "}
+                      {formatDistance(place.distance_m)}
+                    </span>
                   )}
                   <span>{place.trust_status || "UNVERIFIED"}</span>
                 </div>
