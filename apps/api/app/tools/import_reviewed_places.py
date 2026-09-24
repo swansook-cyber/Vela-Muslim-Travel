@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import csv
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 from sqlalchemy import text
@@ -47,8 +48,8 @@ class ReviewedPlace:
     trust_status: str
     source_type: str
     source_reference: str | None
-    verified_at: str | None
-    expires_at: str | None
+    verified_at: datetime | None
+    expires_at: datetime | None
     review_note: str | None
 
 
@@ -57,6 +58,18 @@ def empty_to_none(value: str | None) -> str | None:
         return None
     value = value.strip()
     return value or None
+
+
+def parse_datetime(value: str | None, field_name: str, row_number: int) -> datetime | None:
+    normalized = empty_to_none(value)
+    if normalized is None:
+        return None
+    try:
+        return datetime.fromisoformat(normalized)
+    except ValueError as exc:
+        raise ValueError(
+            f"Row {row_number}: {field_name} must be an ISO-8601 datetime"
+        ) from exc
 
 
 def parse_row(row: dict[str, str], row_number: int) -> ReviewedPlace | None:
@@ -125,8 +138,8 @@ def parse_row(row: dict[str, str], row_number: int) -> ReviewedPlace | None:
         trust_status=trust_status,
         source_type=source_type,
         source_reference=source_reference,
-        verified_at=empty_to_none(row.get("verified_at")),
-        expires_at=empty_to_none(row.get("expires_at")),
+        verified_at=parse_datetime(row.get("verified_at"), "verified_at", row_number),
+        expires_at=parse_datetime(row.get("expires_at"), "expires_at", row_number),
         review_note=empty_to_none(row.get("review_note")),
     )
 
