@@ -496,3 +496,20 @@ button.danger {
     display: grid;
   }
 }
+
+
+.feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.feature-chips span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #edf4ef;
+  color: #365442;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
