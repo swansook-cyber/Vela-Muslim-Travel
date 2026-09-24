@@ -3,66 +3,61 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from sqlalchemy import text
+import asyncpg
 
-from .db import SessionLocal
+from .config import get_settings
 
 MIGRATIONS_DIR = Path(__file__).resolve().parent.parent / "migrations"
 
 
-async def ensure_migration_table() -> None:
-    async with SessionLocal() as session, session.begin():
-        await session.execute(
-            text(
-                """
-                CREATE TABLE IF NOT EXISTS schema_migrations (
-                    version text PRIMARY KEY,
-                    applied_at timestamptz NOT NULL DEFAULT now()
-                )
-                """
-            )
-        )
-
-
-async def applied_versions() -> set[str]:
-    async with SessionLocal() as session:
-        rows = (
-            await session.execute(
-                text("SELECT version FROM schema_migrations ORDER BY version")
-            )
-        ).scalars().all()
-    return set(rows)
-
-
-async def apply_migration(path: Path) -> None:
-    sql = path.read_text(encoding="utf-8")
-    version = path.stem
-
-    async with SessionLocal() as session, session.begin():
-        await session.execute(text(sql))
-        await session.execute(
-            text(
-                """
-                INSERT INTO schema_migrations (version)
-                VALUES (:version)
-                ON CONFLICT (version) DO NOTHING
-                """
-            ),
-            {"version": version},
-        )
+def migration_dsn() -> str:
+    return get_settings().database_url.replace(
+        "postgresql+asyncpg://",
+        "postgresql://",
+        1,
+    )
 
 
 async def run_migrations() -> list[str]:
-    await ensure_migration_table()
-    applied = await applied_versions()
+    connection = await asyncpg.connect(migration_dsn())
     executed: list[str] = []
 
-    for path in sorted(MIGRATIONS_DIR.glob("*.sql")):
-        version = path.stem
-        if version in applied:
-            continue
-        await apply_migration(path)
-        executed.append(version)
+    try:
+        await connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS schema_migrations (
+                version text PRIMARY KEY,
+                applied_at timestamptz NOT NULL DEFAULT now()
+            )
+            """
+        )
+
+        rows = await connection.fetch(
+            "SELECT version FROM schema_migrations ORDER BY version"
+        )
+        applied = {row["version"] for row in rows}
+
+        for path in sorted(MIGRATIONS_DIR.glob("*.sql")):
+            version = path.stem
+            if version in applied:
+                continue
+
+            sql = path.read_text(encoding="utf-8")
+            async with connection.transaction():
+                await connection.execute(sql)
+                await connection.execute(
+                    """
+                    INSERT INTO schema_migrations (version)
+                    VALUES ($1)
+                    ON CONFLICT (version) DO NOTHING
+                    """,
+                    version,
+                )
+
+            executed.append(version)
+            applied.add(version)
+    finally:
+        await connection.close()
 
     return executed
 
