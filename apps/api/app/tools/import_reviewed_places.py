@@ -97,6 +97,17 @@ def parse_row(row: dict[str, str], row_number: int) -> ReviewedPlace | None:
             "and source_reference"
         )
 
+    if place_type == "ACCOMMODATION" and trust_status == "HALAL_CERTIFIED":
+        raise ValueError(
+            f"Row {row_number}: accommodation must use HALAL_CERTIFIED_SERVICE "
+            "for a certified service claim"
+        )
+
+    if place_type == "RESTAURANT" and trust_status == "HALAL_CERTIFIED_SERVICE":
+        raise ValueError(
+            f"Row {row_number}: restaurant certification must use HALAL_CERTIFIED"
+        )
+
     return ReviewedPlace(
         slug=slug,
         name_th=name_th,
@@ -199,7 +210,7 @@ INSERT_VERIFICATION_SQL = text(
         note,
         verified_by
     )
-    VALUES (
+    SELECT
         :place_id,
         'MUSLIM_TRAVEL_STATUS',
         CAST(:trust_status AS trust_status),
@@ -209,6 +220,16 @@ INSERT_VERIFICATION_SQL = text(
         CAST(:expires_at AS timestamptz),
         :note,
         'CONTROLLED_IMPORT'
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM place_verifications existing
+        WHERE existing.place_id = :place_id
+          AND existing.claim_type = 'MUSLIM_TRAVEL_STATUS'
+          AND existing.trust_status = CAST(:trust_status AS trust_status)
+          AND existing.source_type = CAST(:source_type AS verification_source_type)
+          AND existing.source_reference IS NOT DISTINCT FROM :source_reference
+          AND existing.verified_at IS NOT DISTINCT FROM CAST(:verified_at AS timestamptz)
+          AND existing.expires_at IS NOT DISTINCT FROM CAST(:expires_at AS timestamptz)
     )
     """
 )
