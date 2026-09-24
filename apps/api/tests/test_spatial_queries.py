@@ -4,10 +4,18 @@ from datetime import datetime
 import pytest
 from sqlalchemy import text
 
+from app.admin_queries import (
+    get_candidate,
+    list_candidates,
+    promote_candidate,
+    update_candidate_review,
+)
+from app.admin_schemas import CandidateReviewState
 from app.db import SessionLocal
 from app.queries import find_nearby_places, find_place_by_slug, find_places_along_route
 from app.routing import RouteResult
 from app.schemas import NearbyRequest, PlaceType
+from app.tools.import_candidates import Candidate, apply_candidates
 from app.tools.import_reviewed_places import ReviewedPlace, apply_places
 
 pytestmark = pytest.mark.integration
@@ -147,3 +155,66 @@ async def test_reviewed_import_is_idempotent_for_same_verification() -> None:
         )
 
     assert count == 1
+
+
+@pytest.mark.asyncio
+async def test_candidate_can_be_reviewed_and_promoted() -> None:
+    candidate_input = Candidate(
+        name="TEST promoted candidate",
+        place_type="RESTAURANT",
+        address="TEST address",
+        district="TEST district",
+        province="TEST",
+        phone=None,
+        proposed_trust_status="UNVERIFIED",
+        source_type="FIELD_CHECK",
+        source_reference="synthetic://candidate-promotion",
+        external_provider="synthetic",
+        external_id="candidate-promotion-1",
+        certification_number=None,
+        certification_expires_at=None,
+        review_state="DISCOVERED",
+        review_note="Integration test only",
+    )
+    await apply_candidates([candidate_input])
+
+    async with SessionLocal() as session:
+        rows = await list_candidates(
+            session,
+            review_state=CandidateReviewState.DISCOVERED,
+            limit=100,
+        )
+        candidate = next(
+            row
+            for row in rows
+            if row["external_id"] == candidate_input.external_id
+        )
+
+        reviewed = await update_candidate_review(
+            session=session,
+            candidate_id=candidate["id"],
+            latitude=13.25,
+            longitude=100.25,
+            review_state=CandidateReviewState.APPROVED,
+            review_note="Coordinates checked by integration test",
+        )
+
+        place_id = await promote_candidate(
+            session=session,
+            candidate=reviewed,
+            slug="test-promoted-candidate",
+            name_th="TEST promoted candidate",
+        )
+        await session.commit()
+
+    assert place_id
+
+    async with SessionLocal() as session:
+        place = await find_place_by_slug(session, "test-promoted-candidate")
+        candidate_after = await get_candidate(session, candidate["id"])
+
+    assert place is not None
+    assert place["province"] == "TEST"
+    assert place["trust_status"] == "UNVERIFIED"
+    assert candidate_after is not None
+    assert candidate_after["review_state"] == "APPROVED"
