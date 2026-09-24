@@ -1,4 +1,9 @@
-import type { AlongRouteResponse, Coordinate, PlaceType } from "./types";
+import type {
+  AlongRouteResponse,
+  Coordinate,
+  PlaceResult,
+  PlaceType,
+} from "./types";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
@@ -34,4 +39,33 @@ export async function fetchAlongRoute(
   }
 
   return response.json() as Promise<AlongRouteResponse>;
+}
+
+
+export interface NearbyInput extends Coordinate {
+  radiusM: number;
+  placeTypes: PlaceType[];
+}
+
+export async function fetchNearby(input: NearbyInput): Promise<PlaceResult[]> {
+  const response = await fetch(`${API_BASE_URL}/places/nearby`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      latitude: input.latitude,
+      longitude: input.longitude,
+      radius_m: input.radiusM,
+      place_types: input.placeTypes,
+      limit: 100,
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(detail || `API request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<PlaceResult[]>;
 }
