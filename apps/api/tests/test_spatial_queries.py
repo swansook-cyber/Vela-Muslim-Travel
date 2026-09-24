@@ -181,6 +181,8 @@ async def test_candidate_can_be_reviewed_and_promoted() -> None:
         district="TEST district",
         province="TEST",
         phone=None,
+        latitude=None,
+        longitude=None,
         proposed_trust_status="UNVERIFIED",
         source_type="FIELD_CHECK",
         source_reference="synthetic://candidate-promotion",
