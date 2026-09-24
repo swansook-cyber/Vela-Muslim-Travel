@@ -91,6 +91,11 @@ function formatDuration(seconds: number): string {
   return hours > 0 ? `${hours} ชม. ${rest} นาที` : `${minutes} นาที`;
 }
 
+function formatRouteProgress(progress: number, totalSeconds: number): string {
+  const elapsed = Math.max(0, Math.min(1, progress)) * totalSeconds;
+  return `ประมาณ ${formatDuration(elapsed)} จากต้นทาง`;
+}
+
 export default function App() {
   const [originLat, setOriginLat] = useState("8.1646");
   const [originLng, setOriginLng] = useState("99.6804");
@@ -429,6 +434,14 @@ export default function App() {
                     <span>
                       {routeResult ? "ห่างเส้นทาง " : "ระยะ "}
                       {formatDistance(place.distance_m)}
+                    </span>
+                  )}
+                  {routeResult && place.route_progress != null && (
+                    <span>
+                      {formatRouteProgress(
+                        place.route_progress,
+                        routeResult.route.duration_s,
+                      )}
                     </span>
                   )}
                   <strong
