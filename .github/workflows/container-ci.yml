@@ -35,6 +35,9 @@ jobs:
       - name: Validate compose
         run: docker compose -f docker-compose.prod.yml config
 
+      - name: Check backup script syntax
+        run: sh -n deploy/backup-db.sh
+
       - name: Build API image
         run: docker build -t vela-muslim-travel-api:ci apps/api
 
