@@ -16,6 +16,53 @@ const allTypes: { value: PlaceType; label: string }[] = [
   { value: "PRAYER_ROOM", label: "ห้องละหมาด" },
 ];
 
+const typeLabels: Record<PlaceType, string> = {
+  RESTAURANT: "ร้านอาหาร",
+  ACCOMMODATION: "ที่พัก",
+  MOSQUE: "มัสยิด",
+  PRAYER_ROOM: "ห้องละหมาด",
+};
+
+const trustLabels: Record<string, string> = {
+  HALAL_CERTIFIED: "ฮาลาลรับรอง",
+  HALAL_CERTIFIED_SERVICE: "มีบริการที่ได้รับรองฮาลาล",
+  MUSLIM_OWNED: "ร้าน/กิจการมุสลิม",
+  MUSLIM_FRIENDLY: "รองรับนักเดินทางมุสลิม",
+  UNVERIFIED: "ยังไม่ได้ยืนยัน",
+};
+
+function safeHttpUrl(value: string | null | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:"
+      ? url.toString()
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function verificationLabel(value: string | null | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return `ตรวจล่าสุด ${date.toLocaleDateString("th-TH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  })}`;
+}
+
 function formatDistance(meters: number): string {
   return meters >= 1000
     ? `${(meters / 1000).toFixed(1)} กม.`
@@ -332,9 +379,28 @@ export default function App() {
             {visiblePlaces.map((place) => (
               <article key={place.id} className="place-card">
                 <div>
-                  <span className="type">{place.place_type}</span>
+                  <span className="type">{typeLabels[place.place_type]}</span>
                   <h3>{place.name_th}</h3>
                   <p>{[place.district, place.province].filter(Boolean).join(" · ")}</p>
+                  <div className="place-actions">
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      นำทาง
+                    </a>
+                    {place.phone && <a href={`tel:${place.phone}`}>โทร</a>}
+                    {safeHttpUrl(place.source_reference) && (
+                      <a
+                        href={safeHttpUrl(place.source_reference) ?? undefined}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        ดูหลักฐาน
+                      </a>
+                    )}
+                  </div>
                 </div>
                 <div className="place-meta">
                   {place.distance_m != null && (
@@ -343,7 +409,14 @@ export default function App() {
                       {formatDistance(place.distance_m)}
                     </span>
                   )}
-                  <span>{place.trust_status || "UNVERIFIED"}</span>
+                  <strong className="trust-badge">
+                    {trustLabels[place.trust_status || "UNVERIFIED"] ||
+                      place.trust_status ||
+                      "ยังไม่ได้ยืนยัน"}
+                  </strong>
+                  {verificationLabel(place.verified_at) && (
+                    <span>{verificationLabel(place.verified_at)}</span>
+                  )}
                 </div>
               </article>
             ))}
