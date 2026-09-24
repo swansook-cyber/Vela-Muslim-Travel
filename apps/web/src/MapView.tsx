@@ -1,5 +1,13 @@
 import { useEffect, useRef } from "react";
-import maplibregl, { type GeoJSONSource, type Map } from "maplibre-gl";
+import {
+  GeoJSONSource,
+  LngLatBounds,
+  Map,
+  Marker,
+  NavigationControl,
+  Popup,
+  type StyleSpecification,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import type { AlongRouteResponse } from "./types";
@@ -8,7 +16,7 @@ interface MapViewProps {
   result: AlongRouteResponse | null;
 }
 
-const style: maplibregl.StyleSpecification = {
+const style: StyleSpecification = {
   version: 8,
   sources: {
     osm: {
@@ -30,25 +38,26 @@ const style: maplibregl.StyleSpecification = {
 export function MapView({ result }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Map | null>(null);
-  const markersRef = useRef<maplibregl.Marker[]>([]);
+  const markersRef = useRef<Marker[]>([]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) {
       return;
     }
 
-    mapRef.current = new maplibregl.Map({
+    const map = new Map({
       container: containerRef.current,
       style,
       center: [100.5, 13.0],
       zoom: 5,
     });
 
-    mapRef.current.addControl(new maplibregl.NavigationControl(), "top-right");
+    mapRef.current = map;
+    map.addControl(new NavigationControl(), "top-right");
 
     return () => {
       markersRef.current.forEach((marker) => marker.remove());
-      mapRef.current?.remove();
+      map.remove();
       mapRef.current = null;
     };
   }, []);
@@ -86,17 +95,17 @@ export function MapView({ result }: MapViewProps) {
 
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = result.places.map((place) =>
-        new maplibregl.Marker()
+        new Marker()
           .setLngLat([place.longitude, place.latitude])
           .setPopup(
-            new maplibregl.Popup({ offset: 20 }).setText(
+            new Popup({ offset: 20 }).setText(
               `${place.name_th} · ${place.place_type}`,
             ),
           )
           .addTo(map),
       );
 
-      const bounds = new maplibregl.LngLatBounds();
+      const bounds = new LngLatBounds();
       result.route.geometry.coordinates.forEach(([longitude, latitude]) => {
         bounds.extend([longitude, latitude]);
       });
