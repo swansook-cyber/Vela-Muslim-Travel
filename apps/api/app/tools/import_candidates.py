@@ -39,7 +39,13 @@ class Candidate:
     review_note: str | None
 
 
-ALLOWED_REVIEW_STATES = {"DISCOVERED", "GEOCODED", "APPROVED", "REJECTED"}
+ALLOWED_REVIEW_STATES = {
+    "DISCOVERED",
+    "GEOCODED",
+    "APPROVED",
+    "PROMOTED",
+    "REJECTED",
+}
 
 
 def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
