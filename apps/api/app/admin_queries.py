@@ -220,4 +220,17 @@ async def promote_candidate(
         },
     )
 
+    await session.execute(
+        text(
+            """
+            UPDATE place_candidates
+            SET
+                review_state = 'PROMOTED',
+                updated_at = now()
+            WHERE id = CAST(:candidate_id AS uuid)
+            """
+        ),
+        {"candidate_id": candidate["id"]},
+    )
+
     return str(place_id)
