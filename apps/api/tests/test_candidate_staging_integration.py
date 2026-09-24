@@ -1,14 +1,15 @@
 import os
 
 import pytest
-from sqlalchemy import text
-
-from app.db import SessionLocal
 
 pytestmark = pytest.mark.integration
 
 if os.getenv("RUN_INTEGRATION") != "1":
     pytest.skip("PostGIS integration tests are disabled", allow_module_level=True)
+
+from sqlalchemy import text
+
+from app.db import SessionLocal
 
 
 @pytest.mark.asyncio
