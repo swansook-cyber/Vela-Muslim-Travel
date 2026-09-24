@@ -3,6 +3,26 @@ from datetime import datetime
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .verification import certification_is_current
+
+
+def validate_verification_claim(
+    *,
+    trust_status: str,
+    source_type: str,
+    source_reference: str | None,
+    expires_at: datetime | None,
+) -> None:
+    certified = {"HALAL_CERTIFIED", "HALAL_CERTIFIED_SERVICE"}
+    if trust_status not in certified:
+        return
+
+    if source_type != "OFFICIAL_CERTIFICATION" or not source_reference:
+        raise ValueError("Certified status requires official source evidence")
+
+    if not certification_is_current(trust_status, expires_at):
+        raise ValueError("Certified status requires a current expiry date")
+
 
 async def add_place_verification(
     session: AsyncSession,

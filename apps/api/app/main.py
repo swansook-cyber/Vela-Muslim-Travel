@@ -6,6 +6,11 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .admin_places import get_admin_place, list_admin_places, update_admin_place
+from .admin_verifications import (
+    add_place_verification,
+    list_place_verifications,
+    validate_verification_claim,
+)
 from .admin_queries import (
     get_admin_dashboard,
     get_candidate,
@@ -20,6 +25,8 @@ from .admin_schemas import (
     AdminDashboard,
     AdminPlaceResult,
     AdminPlaceUpdate,
+    AdminVerificationCreate,
+    AdminVerificationResult,
     CandidatePromoteRequest,
     CandidatePromoteResponse,
     CandidateResult,
@@ -216,6 +223,75 @@ async def admin_update_place(
     )
     await session.commit()
     return AdminPlaceResult(**row)
+
+
+@app.get(
+    "/admin/places/{place_id}/verifications",
+    response_model=list[AdminVerificationResult],
+)
+async def admin_place_verifications(
+    place_id: str,
+    session: DbSession,
+    _admin: AdminGuard,
+) -> list[AdminVerificationResult]:
+    place = await get_admin_place(session, place_id)
+    if place is None:
+        raise HTTPException(status_code=404, detail="Place not found")
+
+    rows = await list_place_verifications(session, place_id)
+    return [AdminVerificationResult(**row) for row in rows]
+
+
+@app.post(
+    "/admin/places/{place_id}/verifications",
+    response_model=AdminVerificationResult,
+)
+async def admin_add_place_verification(
+    place_id: str,
+    payload: AdminVerificationCreate,
+    session: DbSession,
+    _admin: AdminGuard,
+) -> AdminVerificationResult:
+    place = await get_admin_place(session, place_id)
+    if place is None:
+        raise HTTPException(status_code=404, detail="Place not found")
+
+    try:
+        validate_verification_claim(
+            trust_status=payload.trust_status,
+            source_type=payload.source_type,
+            source_reference=payload.source_reference,
+            expires_at=payload.expires_at,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    verification_id = await add_place_verification(
+        session,
+        place_id=place_id,
+        trust_status=payload.trust_status,
+        source_type=payload.source_type,
+        source_reference=payload.source_reference,
+        verified_at=payload.verified_at,
+        expires_at=payload.expires_at,
+        note=payload.note,
+    )
+    await log_admin_action(
+        session,
+        action="ADD_VERIFICATION",
+        entity_type="place",
+        entity_id=place_id,
+        details={
+            "verification_id": verification_id,
+            "trust_status": payload.trust_status,
+            "source_type": payload.source_type,
+        },
+    )
+    await session.commit()
+
+    rows = await list_place_verifications(session, place_id)
+    row = next(item for item in rows if item["id"] == verification_id)
+    return AdminVerificationResult(**row)
 
 
 @app.get("/admin/candidates", response_model=list[CandidateResult])
