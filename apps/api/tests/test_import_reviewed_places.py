@@ -46,3 +46,33 @@ def test_certified_status_accepts_official_evidence() -> None:
     place = parse_row(row, 2)
     assert place is not None
     assert place.trust_status == "HALAL_CERTIFIED"
+
+
+def test_accommodation_rejects_whole_place_certified_label() -> None:
+    row = base_row()
+    row["place_type"] = "ACCOMMODATION"
+    row["trust_status"] = "HALAL_CERTIFIED"
+    row["source_type"] = "OFFICIAL_CERTIFICATION"
+
+    with pytest.raises(ValueError, match="HALAL_CERTIFIED_SERVICE"):
+        parse_row(row, 2)
+
+
+def test_accommodation_accepts_certified_service_label() -> None:
+    row = base_row()
+    row["place_type"] = "ACCOMMODATION"
+    row["trust_status"] = "HALAL_CERTIFIED_SERVICE"
+    row["source_type"] = "OFFICIAL_CERTIFICATION"
+
+    place = parse_row(row, 2)
+    assert place is not None
+    assert place.trust_status == "HALAL_CERTIFIED_SERVICE"
+
+
+def test_restaurant_rejects_certified_service_label() -> None:
+    row = base_row()
+    row["trust_status"] = "HALAL_CERTIFIED_SERVICE"
+    row["source_type"] = "OFFICIAL_CERTIFICATION"
+
+    with pytest.raises(ValueError, match="HALAL_CERTIFIED"):
+        parse_row(row, 2)
