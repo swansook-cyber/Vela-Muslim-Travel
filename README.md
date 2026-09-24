@@ -65,3 +65,21 @@ packages/
 The application must not treat every Muslim-friendly listing as halal-certified.
 
 Each place carries a clear status, verification source, and verification date. Certification claims must be distinguishable from owner-declared, community-reported, and unverified information.
+
+
+## Current implementation status
+
+Phase 0 now includes:
+
+- FastAPI API with PostGIS spatial search,
+- `Near Me` query,
+- `Along My Route` query ordered by route progress,
+- replaceable routing-provider adapter,
+- controlled reviewed-place importer,
+- verification-evidence guardrails,
+- PostGIS integration tests in GitHub Actions,
+- React + Vite + MapLibre route-search web client,
+- browser geolocation for route origin,
+- web and API CI pipelines.
+
+The next major gate is a manually reviewed real-world pilot dataset and an end-to-end route test using that data.
