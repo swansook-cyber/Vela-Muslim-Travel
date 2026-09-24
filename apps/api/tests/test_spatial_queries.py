@@ -1,13 +1,13 @@
 import os
 
 import pytest
+from sqlalchemy import text
 
 from app.db import SessionLocal
 from app.queries import find_nearby_places, find_place_by_slug, find_places_along_route
 from app.routing import RouteResult
 from app.schemas import NearbyRequest, PlaceType
 from app.tools.import_reviewed_places import ReviewedPlace, apply_places
-from sqlalchemy import text
 
 pytestmark = pytest.mark.integration
 
