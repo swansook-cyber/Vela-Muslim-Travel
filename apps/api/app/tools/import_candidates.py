@@ -202,14 +202,26 @@ UPSERT_CANDIDATE_SQL = text(
         district = EXCLUDED.district,
         province = EXCLUDED.province,
         phone = EXCLUDED.phone,
-        latitude = EXCLUDED.latitude,
-        longitude = EXCLUDED.longitude,
+        latitude = COALESCE(EXCLUDED.latitude, place_candidates.latitude),
+        longitude = COALESCE(EXCLUDED.longitude, place_candidates.longitude),
         proposed_trust_status = EXCLUDED.proposed_trust_status,
         source_type = EXCLUDED.source_type,
         source_reference = EXCLUDED.source_reference,
         certification_number = EXCLUDED.certification_number,
         certification_expires_at = EXCLUDED.certification_expires_at,
-        review_note = EXCLUDED.review_note,
+        review_state = CASE
+            WHEN place_candidates.review_state IN ('APPROVED', 'PROMOTED', 'REJECTED')
+                THEN place_candidates.review_state
+            WHEN place_candidates.review_state = 'GEOCODED'
+                 AND EXCLUDED.review_state = 'DISCOVERED'
+                THEN place_candidates.review_state
+            ELSE EXCLUDED.review_state
+        END,
+        review_note = CASE
+            WHEN place_candidates.review_state = 'DISCOVERED'
+                THEN COALESCE(EXCLUDED.review_note, place_candidates.review_note)
+            ELSE place_candidates.review_note
+        END,
         updated_at = now()
     """
 )

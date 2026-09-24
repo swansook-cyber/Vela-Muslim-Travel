@@ -83,3 +83,60 @@ async def test_admin_dashboard_counts_staged_candidates() -> None:
     assert dashboard["candidates_total"] >= 12
     assert dashboard["discovered"] >= 12
     assert dashboard["production_places"] >= 4
+
+
+@pytest.mark.asyncio
+async def test_candidate_reimport_preserves_review_progress() -> None:
+    from pathlib import Path
+
+    from app.tools.import_candidates import apply_candidates, load_candidates
+
+    candidate_path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(candidate_path)
+    target = candidates[0]
+
+    async with SessionLocal() as session:
+        await session.execute(
+            text(
+                """
+                UPDATE place_candidates
+                SET
+                    latitude = 13.750000,
+                    longitude = 100.500000,
+                    review_state = 'GEOCODED',
+                    review_note = 'manual reviewed coordinates'
+                WHERE external_provider = :provider
+                  AND external_id = :external_id
+                """
+            ),
+            {
+                "provider": target.external_provider,
+                "external_id": target.external_id,
+            },
+        )
+        await session.commit()
+
+    await apply_candidates(candidates)
+
+    async with SessionLocal() as session:
+        row = (
+            await session.execute(
+                text(
+                    """
+                    SELECT latitude, longitude, review_state::text, review_note
+                    FROM place_candidates
+                    WHERE external_provider = :provider
+                      AND external_id = :external_id
+                    """
+                ),
+                {
+                    "provider": target.external_provider,
+                    "external_id": target.external_id,
+                },
+            )
+        ).mappings().one()
+
+    assert row["latitude"] == pytest.approx(13.75)
+    assert row["longitude"] == pytest.approx(100.5)
+    assert row["review_state"] == "GEOCODED"
+    assert row["review_note"] == "manual reviewed coordinates"
