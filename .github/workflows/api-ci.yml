@@ -84,5 +84,8 @@ jobs:
           psql -h localhost -U vela -d vela_muslim_travel -f ../../database/schema.sql
           psql -h localhost -U vela -d vela_muslim_travel -f ../../database/seeds/001_phase0_test_fixtures.sql
 
+      - name: Stage real-world pilot candidates
+        run: python -m app.tools.import_candidates ../../database/seeds/pilot_candidates_review_queue.csv --apply
+
       - name: Spatial integration tests
         run: pytest -q -m integration
