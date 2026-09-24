@@ -1,3 +1,5 @@
+import asyncio
+import time
 from dataclasses import dataclass
 
 import httpx
@@ -20,23 +22,52 @@ class GeocodingError(RuntimeError):
     pass
 
 
-async def search_places(query: str, limit: int = 5) -> list[GeocodingResult]:
-    normalized = query.strip()
-    if len(normalized) < 2:
-        return []
+_cache: dict[str, tuple[float, list[GeocodingResult]]] = {}
+_provider_lock = asyncio.Lock()
+_last_provider_request_at = 0.0
 
-    if settings.geocoding_provider.lower() != "nominatim":
-        raise GeocodingError(
-            f"Unsupported geocoding provider: {settings.geocoding_provider}"
-        )
+
+def _cache_key(query: str, limit: int) -> str:
+    return f"{query.casefold()}|{limit}"
+
+
+def _get_cached(key: str) -> list[GeocodingResult] | None:
+    cached = _cache.get(key)
+    if cached is None:
+        return None
+
+    expires_at, results = cached
+    if expires_at <= time.monotonic():
+        _cache.pop(key, None)
+        return None
+
+    return list(results)
+
+
+def _set_cached(key: str, results: list[GeocodingResult]) -> None:
+    if len(_cache) >= settings.geocoding_cache_max_entries:
+        oldest_key = min(_cache, key=lambda item: _cache[item][0])
+        _cache.pop(oldest_key, None)
+
+    _cache[key] = (
+        time.monotonic() + settings.geocoding_cache_ttl_seconds,
+        list(results),
+    )
+
+
+async def _search_nominatim(
+    query: str,
+    limit: int,
+) -> list[GeocodingResult]:
+    global _last_provider_request_at
 
     url = f"{settings.nominatim_base_url.rstrip('/')}/search"
     params = {
-        "q": normalized,
+        "q": query,
         "format": "jsonv2",
         "countrycodes": "th",
         "addressdetails": "1",
-        "limit": min(max(limit, 1), 5),
+        "limit": limit,
         "accept-language": "th,en",
     }
     headers = {
@@ -44,8 +75,16 @@ async def search_places(query: str, limit: int = 5) -> list[GeocodingResult]:
         "Accept": "application/json",
     }
 
-    async with httpx.AsyncClient(timeout=10.0, headers=headers) as client:
-        response = await client.get(url, params=params)
+    async with _provider_lock:
+        elapsed = time.monotonic() - _last_provider_request_at
+        delay = settings.geocoding_min_interval_seconds - elapsed
+        if delay > 0:
+            await asyncio.sleep(delay)
+
+        async with httpx.AsyncClient(timeout=10.0, headers=headers) as client:
+            response = await client.get(url, params=params)
+
+        _last_provider_request_at = time.monotonic()
 
     if response.status_code != 200:
         raise GeocodingError(
@@ -71,4 +110,25 @@ async def search_places(query: str, limit: int = 5) -> list[GeocodingResult]:
             )
         )
 
+    return results
+
+
+async def search_places(query: str, limit: int = 5) -> list[GeocodingResult]:
+    normalized = query.strip()
+    if len(normalized) < 2:
+        return []
+
+    safe_limit = min(max(limit, 1), 5)
+    key = _cache_key(normalized, safe_limit)
+    cached = _get_cached(key)
+    if cached is not None:
+        return cached
+
+    if settings.geocoding_provider.lower() != "nominatim":
+        raise GeocodingError(
+            f"Unsupported geocoding provider: {settings.geocoding_provider}"
+        )
+
+    results = await _search_nominatim(normalized, safe_limit)
+    _set_cached(key, results)
     return results

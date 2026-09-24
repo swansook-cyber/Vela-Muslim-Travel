@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     geocoding_user_agent: str = (
         "VelaMuslimTravel/0.1 (+https://github.com/swansook-cyber/Vela-Muslim-Travel)"
     )
+    geocoding_cache_ttl_seconds: int = 86400
+    geocoding_cache_max_entries: int = 256
+    geocoding_min_interval_seconds: float = 1.1
 
     @property
     def cors_origin_list(self) -> list[str]:
