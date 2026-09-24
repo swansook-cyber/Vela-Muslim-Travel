@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from app.verification import certification_is_current
 
@@ -12,7 +12,7 @@ def test_certified_status_requires_expiry() -> None:
 
 
 def test_expired_certification_is_not_current() -> None:
-    now = datetime(2026, 9, 25, tzinfo=timezone.utc)
+    now = datetime(2026, 9, 25, tzinfo=UTC)
     assert not certification_is_current(
         "HALAL_CERTIFIED",
         now - timedelta(seconds=1),
@@ -21,7 +21,7 @@ def test_expired_certification_is_not_current() -> None:
 
 
 def test_future_certification_is_current() -> None:
-    now = datetime(2026, 9, 25, tzinfo=timezone.utc)
+    now = datetime(2026, 9, 25, tzinfo=UTC)
     assert certification_is_current(
         "HALAL_CERTIFIED_SERVICE",
         now + timedelta(days=1),

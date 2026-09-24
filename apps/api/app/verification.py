@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 CERTIFIED_STATUSES = {"HALAL_CERTIFIED", "HALAL_CERTIFIED_SERVICE"}
 
@@ -15,9 +15,9 @@ def certification_is_current(
     if expires_at is None:
         return False
 
-    current = now or datetime.now(timezone.utc)
+    current = now or datetime.now(UTC)
     expiry = expires_at
     if expiry.tzinfo is None:
-        expiry = expiry.replace(tzinfo=timezone.utc)
+        expiry = expiry.replace(tzinfo=UTC)
 
     return expiry > current
