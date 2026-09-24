@@ -82,3 +82,88 @@ WHERE p.source_status = 'TEST_FIXTURE'
     WHERE pv.place_id = p.id
       AND pv.claim_type = 'TEST_ONLY'
   );
+
+
+INSERT INTO restaurant_details (
+  place_id,
+  cuisine,
+  opening_hours,
+  parking,
+  takeaway,
+  delivery,
+  price_level
+)
+SELECT
+  id,
+  ARRAY['TEST Thai'],
+  '{"mon":{"open":"08:00","close":"20:00"}}'::jsonb,
+  true,
+  true,
+  false,
+  2
+FROM places
+WHERE slug = 'test-route-restaurant-south'
+ON CONFLICT (place_id) DO UPDATE SET
+  cuisine = EXCLUDED.cuisine,
+  opening_hours = EXCLUDED.opening_hours,
+  parking = EXCLUDED.parking,
+  takeaway = EXCLUDED.takeaway,
+  delivery = EXCLUDED.delivery,
+  price_level = EXCLUDED.price_level;
+
+INSERT INTO accommodation_details (
+  place_id,
+  halal_food_available,
+  prayer_space_available,
+  alcohol_policy,
+  bidet_available,
+  family_friendly,
+  parking,
+  nearest_mosque_distance_m,
+  check_in_time,
+  check_out_time
+)
+SELECT
+  id,
+  true,
+  true,
+  'TEST_NO_ALCOHOL',
+  true,
+  true,
+  true,
+  900,
+  '14:00'::time,
+  '12:00'::time
+FROM places
+WHERE slug = 'test-route-accommodation-north'
+ON CONFLICT (place_id) DO UPDATE SET
+  halal_food_available = EXCLUDED.halal_food_available,
+  prayer_space_available = EXCLUDED.prayer_space_available,
+  alcohol_policy = EXCLUDED.alcohol_policy,
+  bidet_available = EXCLUDED.bidet_available,
+  family_friendly = EXCLUDED.family_friendly,
+  parking = EXCLUDED.parking,
+  nearest_mosque_distance_m = EXCLUDED.nearest_mosque_distance_m,
+  check_in_time = EXCLUDED.check_in_time,
+  check_out_time = EXCLUDED.check_out_time;
+
+INSERT INTO mosque_details (
+  place_id,
+  friday_prayer,
+  women_prayer_area,
+  ablution_available,
+  parking
+)
+SELECT
+  id,
+  true,
+  true,
+  true,
+  true
+FROM places
+WHERE slug = 'test-route-mosque-middle'
+ON CONFLICT (place_id) DO UPDATE SET
+  friday_prayer = EXCLUDED.friday_prayer,
+  women_prayer_area = EXCLUDED.women_prayer_area,
+  ablution_available = EXCLUDED.ablution_available,
+  parking = EXCLUDED.parking;
