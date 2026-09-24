@@ -63,6 +63,21 @@ function verificationLabel(value: string | null | undefined): string | null {
   })}`;
 }
 
+function placeFeatures(place: PlaceResult): string[] {
+  const features: string[] = [];
+
+  if (place.halal_food_available) features.push("มีอาหารฮาลาล");
+  if (place.prayer_space_available) features.push("มีพื้นที่ละหมาด");
+  if (place.bidet_available) features.push("มีสายฉีดชำระ");
+  if (place.family_friendly) features.push("เหมาะกับครอบครัว");
+  if (place.friday_prayer) features.push("ละหมาดวันศุกร์");
+  if (place.women_prayer_area) features.push("พื้นที่ละหมาดผู้หญิง");
+  if (place.ablution_available) features.push("มีที่อาบน้ำละหมาด");
+  if (place.parking) features.push("มีที่จอดรถ");
+
+  return features.slice(0, 5);
+}
+
 function formatDistance(meters: number): string {
   return meters >= 1000
     ? `${(meters / 1000).toFixed(1)} กม.`
@@ -382,6 +397,13 @@ export default function App() {
                   <span className="type">{typeLabels[place.place_type]}</span>
                   <h3>{place.name_th}</h3>
                   <p>{[place.district, place.province].filter(Boolean).join(" · ")}</p>
+                  {placeFeatures(place).length > 0 && (
+                    <div className="feature-chips">
+                      {placeFeatures(place).map((feature) => (
+                        <span key={feature}>{feature}</span>
+                      ))}
+                    </div>
+                  )}
                   <div className="place-actions">
                     <a
                       href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
