@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -35,19 +36,32 @@ class PlaceResult(BaseModel):
     place_type: PlaceType
     name_th: str
     name_en: str | None = None
+    address: str | None = None
+    district: str | None = None
     province: str | None = None
+    phone: str | None = None
+    website_url: str | None = None
+    social_url: str | None = None
     latitude: float
     longitude: float
     distance_m: float | None = None
     route_progress: float | None = None
     trust_status: str | None = None
     verification_source_type: str | None = None
+    source_reference: str | None = None
     verified_at: str | None = None
+    expires_at: str | None = None
+
+
+class GeoJsonLineString(BaseModel):
+    type: Literal["LineString"] = "LineString"
+    coordinates: list[list[float]]
 
 
 class RouteSummary(BaseModel):
     distance_m: float
     duration_s: float
+    geometry: GeoJsonLineString
 
 
 class AlongRouteResponse(BaseModel):
