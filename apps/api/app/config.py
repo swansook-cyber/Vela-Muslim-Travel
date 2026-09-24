@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     osrm_base_url: str = "https://router.project-osrm.org"
     route_request_timeout_seconds: float = 15.0
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
+    admin_api_key: str | None = None
 
     @property
     def cors_origin_list(self) -> list[str]:
