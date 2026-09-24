@@ -1,3 +1,4 @@
+from datetime import time
 from enum import StrEnum
 from typing import Literal
 
@@ -63,8 +64,8 @@ class PlaceResult(BaseModel):
     bidet_available: bool | None = None
     family_friendly: bool | None = None
     nearest_mosque_distance_m: int | None = None
-    check_in_time: str | None = None
-    check_out_time: str | None = None
+    check_in_time: time | None = None
+    check_out_time: time | None = None
     friday_prayer: bool | None = None
     women_prayer_area: bool | None = None
     ablution_available: bool | None = None
