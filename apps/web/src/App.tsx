@@ -454,7 +454,14 @@ export default function App() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      นำทาง
+                      Google Maps
+                    </a>
+                    <a
+                      href={`https://maps.apple.com/?daddr=${place.latitude},${place.longitude}&dirflg=d`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Apple Maps
                     </a>
                     {place.phone && <a href={`tel:${place.phone}`}>โทร</a>}
                     {safeHttpUrl(place.source_reference) && (
