@@ -36,7 +36,10 @@ async def list_candidates(
         f"""
         SELECT {CANDIDATE_COLUMNS}
         FROM place_candidates
-        WHERE (:review_state IS NULL OR review_state::text = :review_state)
+        WHERE (
+            CAST(:review_state AS text) IS NULL
+            OR review_state::text = CAST(:review_state AS text)
+        )
         ORDER BY updated_at DESC
         LIMIT :limit
         """
