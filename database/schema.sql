@@ -1,0 +1,126 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TYPE place_type AS ENUM (
+  'RESTAURANT',
+  'ACCOMMODATION',
+  'MOSQUE',
+  'PRAYER_ROOM'
+);
+
+CREATE TYPE trust_status AS ENUM (
+  'HALAL_CERTIFIED',
+  'HALAL_CERTIFIED_SERVICE',
+  'MUSLIM_OWNED',
+  'MUSLIM_FRIENDLY',
+  'UNVERIFIED'
+);
+
+CREATE TYPE verification_source_type AS ENUM (
+  'OFFICIAL_CERTIFICATION',
+  'BUSINESS_OWNER',
+  'FIELD_CHECK',
+  'COMMUNITY_REPORT',
+  'PUBLIC_WEB_SOURCE',
+  'UNKNOWN'
+);
+
+CREATE TABLE places (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug text NOT NULL UNIQUE,
+  place_type place_type NOT NULL,
+  name_th text NOT NULL,
+  name_en text,
+  location geography(Point, 4326) NOT NULL,
+  address text,
+  district text,
+  province text,
+  postal_code text,
+  phone text,
+  website_url text,
+  social_url text,
+  active boolean NOT NULL DEFAULT true,
+  source_status text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_places_location ON places USING gist (location);
+CREATE INDEX idx_places_type_active ON places (place_type, active);
+CREATE INDEX idx_places_province ON places (province);
+
+CREATE TABLE place_verifications (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  place_id uuid NOT NULL REFERENCES places(id) ON DELETE CASCADE,
+  claim_type text NOT NULL,
+  trust_status trust_status NOT NULL,
+  source_type verification_source_type NOT NULL DEFAULT 'UNKNOWN',
+  source_reference text,
+  verified_at timestamptz,
+  expires_at timestamptz,
+  note text,
+  verified_by text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_place_verifications_place_id
+  ON place_verifications(place_id);
+
+CREATE INDEX idx_place_verifications_status
+  ON place_verifications(trust_status);
+
+CREATE TABLE restaurant_details (
+  place_id uuid PRIMARY KEY REFERENCES places(id) ON DELETE CASCADE,
+  cuisine text[],
+  opening_hours jsonb,
+  parking boolean,
+  takeaway boolean,
+  delivery boolean,
+  price_level smallint CHECK (price_level BETWEEN 1 AND 4)
+);
+
+CREATE TABLE accommodation_details (
+  place_id uuid PRIMARY KEY REFERENCES places(id) ON DELETE CASCADE,
+  halal_food_available boolean,
+  prayer_space_available boolean,
+  alcohol_policy text,
+  bidet_available boolean,
+  family_friendly boolean,
+  parking boolean,
+  nearest_mosque_distance_m integer CHECK (nearest_mosque_distance_m >= 0),
+  check_in_time time,
+  check_out_time time
+);
+
+CREATE TABLE mosque_details (
+  place_id uuid PRIMARY KEY REFERENCES places(id) ON DELETE CASCADE,
+  friday_prayer boolean,
+  women_prayer_area boolean,
+  ablution_available boolean,
+  parking boolean
+);
+
+-- Example route-corridor query.
+-- :route_geom is a WGS84 LineString supplied by the API.
+-- :radius_m is the selected route corridor in meters.
+--
+-- SELECT
+--   p.id,
+--   p.name_th,
+--   p.place_type,
+--   ST_Distance(
+--     p.location,
+--     ST_GeogFromText(ST_AsText(:route_geom))
+--   ) AS distance_from_route_m,
+--   ST_LineLocatePoint(
+--     :route_geom,
+--     ST_ClosestPoint(:route_geom, p.location::geometry)
+--   ) AS route_progress
+-- FROM places p
+-- WHERE p.active = true
+--   AND ST_DWithin(
+--     p.location,
+--     ST_GeogFromText(ST_AsText(:route_geom)),
+--     :radius_m
+--   )
+-- ORDER BY route_progress;
