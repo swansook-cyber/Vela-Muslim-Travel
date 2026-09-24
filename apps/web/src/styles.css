@@ -141,6 +141,13 @@ button:disabled {
   opacity: 0.55;
 }
 
+button.secondary {
+  margin-bottom: 14px;
+  border: 1px solid #bfd0c4;
+  background: #eef5f0;
+  color: #173f2c;
+}
+
 .hint,
 .error {
   font-size: 0.82rem;
