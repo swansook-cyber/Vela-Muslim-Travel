@@ -20,11 +20,13 @@ from .admin_schemas import (
 )
 from .config import get_settings
 from .db import get_db
+from .geocoding import GeocodingError, search_places
 from .queries import find_nearby_places, find_place_by_slug, find_places_along_route
 from .routing import RoutingError, get_route
 from .schemas import (
     AlongRouteRequest,
     AlongRouteResponse,
+    GeocodeResult,
     GeoJsonLineString,
     NearbyRequest,
     PlaceResult,
@@ -59,6 +61,28 @@ async def health(session: DbSession) -> dict:
         raise HTTPException(status_code=503, detail="Database unavailable") from exc
 
     return {"status": "ok", "version": app.version}
+
+
+@app.get("/geocode/search", response_model=list[GeocodeResult])
+async def geocode_search(q: str) -> list[GeocodeResult]:
+    if len(q.strip()) < 2:
+        return []
+
+    try:
+        results = await search_places(q)
+    except GeocodingError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return [
+        GeocodeResult(
+            display_name=item.display_name,
+            latitude=item.latitude,
+            longitude=item.longitude,
+            category=item.category,
+            place_type=item.place_type,
+        )
+        for item in results
+    ]
 
 
 @app.get("/places/{slug}", response_model=PlaceResult)
