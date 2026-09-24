@@ -67,3 +67,11 @@ class RouteSummary(BaseModel):
 class AlongRouteResponse(BaseModel):
     route: RouteSummary
     places: list[PlaceResult]
+
+
+class GeocodeResult(BaseModel):
+    display_name: str
+    latitude: float
+    longitude: float
+    category: str | None = None
+    place_type: str | None = None
