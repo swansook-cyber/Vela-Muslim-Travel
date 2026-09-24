@@ -1,6 +1,8 @@
+from pathlib import Path
+
 import pytest
 
-from app.tools.import_candidates import parse_candidate
+from app.tools.import_candidates import load_candidates, parse_candidate
 
 
 def candidate_row() -> dict[str, str]:
@@ -59,3 +61,18 @@ def test_accommodation_whole_property_certified_label_is_rejected() -> None:
 
     with pytest.raises(ValueError, match="HALAL_CERTIFIED_SERVICE"):
         parse_candidate(row, 2)
+
+
+def test_pilot_candidate_queue_is_valid() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) >= 2
+    assert any(
+        candidate.proposed_trust_status == "HALAL_CERTIFIED"
+        for candidate in candidates
+    )
+    assert any(
+        candidate.proposed_trust_status == "HALAL_CERTIFIED_SERVICE"
+        for candidate in candidates
+    )
