@@ -58,6 +58,7 @@ export type CandidateReviewState =
   | "DISCOVERED"
   | "GEOCODED"
   | "APPROVED"
+  | "PROMOTED"
   | "REJECTED";
 
 export interface CandidateResult {
