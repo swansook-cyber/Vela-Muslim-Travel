@@ -1,8 +1,13 @@
 import { FormEvent, useState } from "react";
 
-import { fetchAlongRoute, fetchNearby } from "./api";
+import { fetchAlongRoute, fetchNearby, searchDestination } from "./api";
 import { MapView } from "./MapView";
-import type { AlongRouteResponse, PlaceResult, PlaceType } from "./types";
+import type {
+  AlongRouteResponse,
+  GeocodeResult,
+  PlaceResult,
+  PlaceType,
+} from "./types";
 
 const allTypes: { value: PlaceType; label: string }[] = [
   { value: "RESTAURANT", label: "ร้านอาหาร" },
@@ -29,15 +34,17 @@ export default function App() {
   const [originLng, setOriginLng] = useState("99.6804");
   const [destinationLat, setDestinationLat] = useState("14.5289");
   const [destinationLng, setDestinationLng] = useState("101.3722");
+  const [destinationQuery, setDestinationQuery] = useState("");
+  const [destinationResults, setDestinationResults] = useState<GeocodeResult[]>([]);
+  const [selectedDestination, setSelectedDestination] = useState("");
   const [corridorKm, setCorridorKm] = useState("5");
   const [types, setTypes] = useState<PlaceType[]>(
     allTypes.map((item) => item.value),
   );
-  const [routeResult, setRouteResult] = useState<AlongRouteResponse | null>(
-    null,
-  );
+  const [routeResult, setRouteResult] = useState<AlongRouteResponse | null>(null);
   const [nearbyPlaces, setNearbyPlaces] = useState<PlaceResult[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [geocoding, setGeocoding] = useState(false);
   const [error, setError] = useState("");
   const [locating, setLocating] = useState(false);
 
@@ -68,6 +75,39 @@ export default function App() {
         maximumAge: 60_000,
       },
     );
+  }
+
+  async function findDestination() {
+    const query = destinationQuery.trim();
+    if (query.length < 2) {
+      setError("กรุณาพิมพ์ชื่อปลายทางอย่างน้อย 2 ตัวอักษร");
+      return;
+    }
+
+    setGeocoding(true);
+    setError("");
+    setDestinationResults([]);
+
+    try {
+      const results = await searchDestination(query);
+      setDestinationResults(results);
+      if (results.length === 0) {
+        setError("ไม่พบปลายทาง ลองระบุชื่ออำเภอ จังหวัด หรือสถานที่ให้ชัดขึ้น");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ค้นหาปลายทางไม่สำเร็จ");
+    } finally {
+      setGeocoding(false);
+    }
+  }
+
+  function chooseDestination(item: GeocodeResult) {
+    setDestinationLat(item.latitude.toFixed(6));
+    setDestinationLng(item.longitude.toFixed(6));
+    setSelectedDestination(item.display_name);
+    setDestinationQuery(item.display_name);
+    setDestinationResults([]);
+    setError("");
   }
 
   async function submit(event: FormEvent) {
@@ -148,30 +188,79 @@ export default function App() {
             {locating ? "กำลังหาตำแหน่ง…" : "ใช้ตำแหน่งปัจจุบันเป็นต้นทาง"}
           </button>
 
-          <div className="coordinate-grid">
+          <div className="destination-search">
             <label>
-              ต้นทาง Latitude
-              <input value={originLat} onChange={(e) => setOriginLat(e.target.value)} />
+              ปลายทาง
+              <div className="inline-action">
+                <input
+                  value={destinationQuery}
+                  onChange={(event) => {
+                    setDestinationQuery(event.target.value);
+                    setSelectedDestination("");
+                    setDestinationResults([]);
+                  }}
+                  placeholder="เช่น เขาใหญ่, ชะอำ, เพชรบุรี"
+                />
+                <button
+                  type="button"
+                  className="compact"
+                  onClick={findDestination}
+                  disabled={geocoding}
+                >
+                  {geocoding ? "ค้นหา…" : "ค้นหา"}
+                </button>
+              </div>
             </label>
-            <label>
-              ต้นทาง Longitude
-              <input value={originLng} onChange={(e) => setOriginLng(e.target.value)} />
-            </label>
-            <label>
-              ปลายทาง Latitude
-              <input
-                value={destinationLat}
-                onChange={(e) => setDestinationLat(e.target.value)}
-              />
-            </label>
-            <label>
-              ปลายทาง Longitude
-              <input
-                value={destinationLng}
-                onChange={(e) => setDestinationLng(e.target.value)}
-              />
-            </label>
+
+            {destinationResults.length > 0 && (
+              <div className="destination-results">
+                {destinationResults.map((item) => (
+                  <button
+                    key={`${item.latitude}-${item.longitude}-${item.display_name}`}
+                    type="button"
+                    className="destination-option"
+                    onClick={() => chooseDestination(item)}
+                  >
+                    {item.display_name}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {selectedDestination && (
+              <p className="selected-destination">
+                ปลายทางที่เลือก: {selectedDestination}
+              </p>
+            )}
           </div>
+
+          <details className="advanced">
+            <summary>พิกัด / ตัวเลือกขั้นสูง</summary>
+            <div className="coordinate-grid">
+              <label>
+                ต้นทาง Latitude
+                <input value={originLat} onChange={(e) => setOriginLat(e.target.value)} />
+              </label>
+              <label>
+                ต้นทาง Longitude
+                <input value={originLng} onChange={(e) => setOriginLng(e.target.value)} />
+              </label>
+              <label>
+                ปลายทาง Latitude
+                <input
+                  value={destinationLat}
+                  onChange={(e) => setDestinationLat(e.target.value)}
+                />
+              </label>
+              <label>
+                ปลายทาง Longitude
+                <input
+                  value={destinationLng}
+                  onChange={(e) => setDestinationLng(e.target.value)}
+                />
+              </label>
+            </div>
+          </details>
 
           <label>
             รัศมีค้นหา / ระยะจากเส้นทาง
@@ -214,7 +303,7 @@ export default function App() {
           </div>
 
           <p className="hint">
-            Phase 0 ยังใช้พิกัดสำหรับปลายทาง ระบบค้นหาชื่อสถานที่จะเพิ่มในขั้นถัดไป
+            การค้นหาชื่อสถานที่เกิดขึ้นเมื่อกดปุ่มค้นหาเท่านั้น ไม่ทำ autocomplete ต่อเนื่อง
           </p>
           {error && <p className="error">{error}</p>}
         </form>
