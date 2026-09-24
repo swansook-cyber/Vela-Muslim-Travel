@@ -1,0 +1,2 @@
+slug,name_th,name_en,place_type,latitude,longitude,address,district,province,postal_code,phone,website_url,social_url,review_state,trust_status,source_type,source_reference,verified_at,expires_at,review_note
+example-halal-restaurant,ร้านตัวอย่าง,Example Restaurant,RESTAURANT,13.7563,100.5018,ที่อยู่ตัวอย่าง,เขตตัวอย่าง,กรุงเทพมหานคร,10000,+66 2 000 0000,,,APPROVED,UNVERIFIED,PUBLIC_WEB_SOURCE,https://example.com,2026-09-24T00:00:00+07:00,,Example only - replace before import
