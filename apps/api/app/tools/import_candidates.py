@@ -103,6 +103,16 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
             f"Row {row_number}: review state {review_state} requires coordinates"
         )
 
+    if place_type == "ACCOMMODATION" and trust_status == "HALAL_CERTIFIED":
+        raise ValueError(
+            f"Row {row_number}: accommodation must use HALAL_CERTIFIED_SERVICE"
+        )
+
+    if place_type == "RESTAURANT" and trust_status == "HALAL_CERTIFIED_SERVICE":
+        raise ValueError(
+            f"Row {row_number}: restaurant must use HALAL_CERTIFIED"
+        )
+
     if trust_status in CERTIFIED_STATUSES:
         if source_type != "OFFICIAL_CERTIFICATION" or not source_reference:
             raise ValueError(
@@ -116,16 +126,6 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
             raise ValueError(
                 f"Row {row_number}: certified candidate requires certification_expires_at"
             )
-
-    if place_type == "ACCOMMODATION" and trust_status == "HALAL_CERTIFIED":
-        raise ValueError(
-            f"Row {row_number}: accommodation must use HALAL_CERTIFIED_SERVICE"
-        )
-
-    if place_type == "RESTAURANT" and trust_status == "HALAL_CERTIFIED_SERVICE":
-        raise ValueError(
-            f"Row {row_number}: restaurant must use HALAL_CERTIFIED"
-        )
 
     return Candidate(
         name=name,
