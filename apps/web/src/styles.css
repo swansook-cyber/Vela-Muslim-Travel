@@ -336,3 +336,27 @@ button.secondary {
     width: 100%;
   }
 }
+
+
+.place-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 10px;
+}
+
+.place-actions a {
+  color: #24583b;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.place-actions a:hover {
+  text-decoration: underline;
+}
+
+.trust-badge {
+  color: #244d36;
+  font-size: 0.82rem;
+}
