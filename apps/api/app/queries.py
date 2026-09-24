@@ -41,7 +41,33 @@ PLACE_COLUMNS_SQL = """
     verification.verification_source_type,
     verification.source_reference,
     verification.verified_at,
-    verification.expires_at
+    verification.expires_at,
+    COALESCE(restaurant.parking, accommodation.parking, mosque.parking) AS parking,
+    restaurant.cuisine,
+    restaurant.opening_hours,
+    restaurant.takeaway,
+    restaurant.delivery,
+    restaurant.price_level,
+    accommodation.halal_food_available,
+    accommodation.prayer_space_available,
+    accommodation.alcohol_policy,
+    accommodation.bidet_available,
+    accommodation.family_friendly,
+    accommodation.nearest_mosque_distance_m,
+    accommodation.check_in_time,
+    accommodation.check_out_time,
+    mosque.friday_prayer,
+    mosque.women_prayer_area,
+    mosque.ablution_available
+"""
+
+PLACE_DETAIL_JOINS_SQL = """
+LEFT JOIN restaurant_details restaurant
+  ON restaurant.place_id = p.id
+LEFT JOIN accommodation_details accommodation
+  ON accommodation.place_id = p.id
+LEFT JOIN mosque_details mosque
+  ON mosque.place_id = p.id
 """
 
 
@@ -59,6 +85,7 @@ async def find_place_by_slug(
             {PLACE_COLUMNS_SQL}
         FROM places p
         {LATEST_VERIFICATION_SQL}
+        {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
           AND p.slug = :slug
         LIMIT 1
@@ -83,6 +110,7 @@ async def find_nearby_places(
             ) AS distance_m
         FROM places p
         {LATEST_VERIFICATION_SQL}
+        {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
           AND ST_DWithin(
                 p.location,
@@ -141,6 +169,7 @@ async def find_places_along_route(
         FROM places p
         CROSS JOIN route
         {LATEST_VERIFICATION_SQL}
+        {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
           AND ST_DWithin(
                 p.location,
