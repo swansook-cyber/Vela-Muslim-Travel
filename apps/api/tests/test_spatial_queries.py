@@ -33,6 +33,21 @@ async def test_place_detail_returns_latest_verification() -> None:
     assert row["place_type"] == "MOSQUE"
     assert row["trust_status"] == "UNVERIFIED"
     assert row["source_reference"] == "synthetic://phase0-test-fixture"
+    assert row["ablution_available"] is True
+    assert row["friday_prayer"] is True
+    assert row["parking"] is True
+
+
+@pytest.mark.asyncio
+async def test_accommodation_detail_fields_are_returned() -> None:
+    async with SessionLocal() as session:
+        row = await find_place_by_slug(session, "test-route-accommodation-north")
+
+    assert row is not None
+    assert row["halal_food_available"] is True
+    assert row["prayer_space_available"] is True
+    assert row["bidet_available"] is True
+    assert row["nearest_mosque_distance_m"] == 900
 
 
 @pytest.mark.asyncio
