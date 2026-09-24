@@ -29,6 +29,7 @@ CREATE TYPE candidate_review_state AS ENUM (
   'DISCOVERED',
   'GEOCODED',
   'APPROVED',
+  'PROMOTED',
   'REJECTED'
 );
 
