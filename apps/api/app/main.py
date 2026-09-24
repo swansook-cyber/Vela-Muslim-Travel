@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .admin_places import get_admin_place, list_admin_places, update_admin_place
 from .admin_queries import (
     get_admin_dashboard,
     get_candidate,
@@ -17,6 +18,8 @@ from .admin_queries import (
 from .admin_schemas import (
     AdminAuditEntry,
     AdminDashboard,
+    AdminPlaceResult,
+    AdminPlaceUpdate,
     CandidatePromoteRequest,
     CandidatePromoteResponse,
     CandidateResult,
@@ -156,6 +159,63 @@ async def admin_audit(
 ) -> list[AdminAuditEntry]:
     rows = await list_admin_audit(session, limit=min(max(limit, 1), 200))
     return [AdminAuditEntry(**row) for row in rows]
+
+
+@app.get("/admin/places", response_model=list[AdminPlaceResult])
+async def admin_places(
+    session: DbSession,
+    _admin: AdminGuard,
+    include_inactive: bool = True,
+    limit: int = 200,
+) -> list[AdminPlaceResult]:
+    rows = await list_admin_places(
+        session,
+        include_inactive=include_inactive,
+        limit=min(max(limit, 1), 500),
+    )
+    return [AdminPlaceResult(**row) for row in rows]
+
+
+@app.patch("/admin/places/{place_id}", response_model=AdminPlaceResult)
+async def admin_update_place(
+    place_id: str,
+    update: AdminPlaceUpdate,
+    session: DbSession,
+    _admin: AdminGuard,
+) -> AdminPlaceResult:
+    existing = await get_admin_place(session, place_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Place not found")
+
+    changes = update.model_dump(exclude_unset=True)
+
+    if ("latitude" in changes) != ("longitude" in changes):
+        raise HTTPException(
+            status_code=422,
+            detail="Latitude and longitude must be updated together",
+        )
+
+    try:
+        row = await update_admin_place(session, place_id, changes)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    if row is None:
+        raise HTTPException(status_code=404, detail="Place not found")
+
+    await log_admin_action(
+        session,
+        action="UPDATE_PLACE",
+        entity_type="place",
+        entity_id=place_id,
+        details={
+            "changed_fields": sorted(changes.keys()),
+            "active": row["active"],
+            "slug": row["slug"],
+        },
+    )
+    await session.commit()
+    return AdminPlaceResult(**row)
 
 
 @app.get("/admin/candidates", response_model=list[CandidateResult])
