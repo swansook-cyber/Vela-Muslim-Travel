@@ -4,17 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - "apps/api/Dockerfile"
-      - "apps/web/Dockerfile"
-      - "apps/web/nginx.conf"
+      - "apps/api/**"
+      - "apps/web/**"
+      - "database/**"
       - "docker-compose.prod.yml"
       - "deploy/**"
       - ".github/workflows/container-ci.yml"
   pull_request:
     paths:
-      - "apps/api/Dockerfile"
-      - "apps/web/Dockerfile"
-      - "apps/web/nginx.conf"
+      - "apps/api/**"
+      - "apps/web/**"
+      - "database/**"
       - "docker-compose.prod.yml"
       - "deploy/**"
       - ".github/workflows/container-ci.yml"
