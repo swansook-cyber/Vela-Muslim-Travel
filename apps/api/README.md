@@ -83,3 +83,34 @@ The default Phase 0 adapter uses the public OSRM demo endpoint for development o
 ## Data integrity
 
 The API returns the most recent verification record for each place. A listing must not be promoted to a certified status without traceable evidence.
+
+
+## Candidate staging
+
+Discovery candidates can be validated without entering production:
+
+```bash
+python -m app.tools.import_candidates ../../database/seeds/pilot_candidates_review_queue.csv
+```
+
+To stage them in Postgres:
+
+```bash
+python -m app.tools.import_candidates ../../database/seeds/pilot_candidates_review_queue.csv --apply
+```
+
+The default mode is dry-run.
+
+## Admin review API
+
+Admin endpoints are disabled until `ADMIN_API_KEY` is configured.
+
+When enabled, requests must send `X-Admin-Key`.
+
+Available Phase 0 admin operations:
+
+- `GET /admin/candidates`
+- `PATCH /admin/candidates/{candidate_id}`
+- `POST /admin/candidates/{candidate_id}/promote`
+
+Do not put the admin key in the public PWA.
