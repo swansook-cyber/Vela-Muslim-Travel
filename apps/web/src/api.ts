@@ -1,6 +1,7 @@
 import type {
   AlongRouteResponse,
   Coordinate,
+  GeocodeResult,
   PlaceResult,
   PlaceType,
 } from "./types";
@@ -68,4 +69,19 @@ export async function fetchNearby(input: NearbyInput): Promise<PlaceResult[]> {
   }
 
   return response.json() as Promise<PlaceResult[]>;
+}
+
+
+export async function searchDestination(query: string): Promise<GeocodeResult[]> {
+  const url = new URL(`${API_BASE_URL}/geocode/search`);
+  url.searchParams.set("q", query);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(detail || `Geocoding request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<GeocodeResult[]>;
 }
