@@ -15,46 +15,65 @@ from app.db import SessionLocal
 @pytest.mark.asyncio
 async def test_admin_place_can_be_edited_and_soft_deactivated() -> None:
     async with SessionLocal() as session:
-        place_id = (
+        original = (
             await session.execute(
                 text(
                     """
-                    SELECT id::text
+                    SELECT
+                        id::text,
+                        name_th,
+                        ST_Y(location::geometry) AS latitude,
+                        ST_X(location::geometry) AS longitude,
+                        active
                     FROM places
                     WHERE slug = 'test-route-restaurant-south'
                     """
                 )
             )
-        ).scalar_one()
+        ).mappings().one()
+        place_id = original["id"]
 
-        updated = await update_admin_place(
-            session,
-            place_id,
-            {
-                "name_th": "TEST ร้านอาหาร จุดใต้ แก้ไข",
-                "latitude": 11.801,
-                "longitude": 99.951,
-                "active": False,
-            },
-        )
-        await session.commit()
+        try:
+            updated = await update_admin_place(
+                session,
+                place_id,
+                {
+                    "name_th": "TEST ร้านอาหาร จุดใต้ แก้ไข",
+                    "latitude": 11.801,
+                    "longitude": 99.951,
+                    "active": False,
+                },
+            )
+            await session.commit()
 
-        assert updated is not None
-        assert updated["name_th"].endswith("แก้ไข")
-        assert updated["active"] is False
-        assert updated["latitude"] == pytest.approx(11.801)
-        assert updated["longitude"] == pytest.approx(99.951)
+            assert updated is not None
+            assert updated["name_th"].endswith("แก้ไข")
+            assert updated["active"] is False
+            assert updated["latitude"] == pytest.approx(11.801)
+            assert updated["longitude"] == pytest.approx(99.951)
 
-        fetched = await get_admin_place(session, place_id)
-        assert fetched is not None
-        assert fetched["active"] is False
+            fetched = await get_admin_place(session, place_id)
+            assert fetched is not None
+            assert fetched["active"] is False
 
-        active_only = await list_admin_places(
-            session,
-            include_inactive=False,
-            limit=100,
-        )
-        assert all(row["id"] != place_id for row in active_only)
+            active_only = await list_admin_places(
+                session,
+                include_inactive=False,
+                limit=100,
+            )
+            assert all(row["id"] != place_id for row in active_only)
+        finally:
+            await update_admin_place(
+                session,
+                place_id,
+                {
+                    "name_th": original["name_th"],
+                    "latitude": original["latitude"],
+                    "longitude": original["longitude"],
+                    "active": original["active"],
+                },
+            )
+            await session.commit()
 
 
 @pytest.mark.asyncio

@@ -16,41 +16,50 @@ from app.db import SessionLocal
 @pytest.mark.asyncio
 async def test_place_update_can_be_audited() -> None:
     async with SessionLocal() as session:
-        place_id = (
+        original = (
             await session.execute(
                 text(
                     """
-                    SELECT id::text
+                    SELECT id::text, phone
                     FROM places
                     WHERE slug = 'test-route-accommodation-north'
                     """
                 )
             )
-        ).scalar_one()
+        ).mappings().one()
+        place_id = original["id"]
 
-        row = await update_admin_place(
-            session,
-            place_id,
-            {"phone": "+66 00 000 0000"},
-        )
-        assert row is not None
+        try:
+            row = await update_admin_place(
+                session,
+                place_id,
+                {"phone": "+66 00 000 0000"},
+            )
+            assert row is not None
 
-        await log_admin_action(
-            session,
-            action="UPDATE_PLACE",
-            entity_type="place",
-            entity_id=place_id,
-            details={"changed_fields": ["phone"]},
-        )
-        await session.commit()
+            await log_admin_action(
+                session,
+                action="TEST_UPDATE_PLACE",
+                entity_type="place",
+                entity_id=place_id,
+                details={"changed_fields": ["phone"]},
+            )
+            await session.commit()
 
-        fetched = await get_admin_place(session, place_id)
-        audit = await list_admin_audit(session, limit=20)
+            fetched = await get_admin_place(session, place_id)
+            audit = await list_admin_audit(session, limit=20)
 
-    assert fetched is not None
-    assert fetched["phone"] == "+66 00 000 0000"
-    assert any(
-        item["action"] == "UPDATE_PLACE"
-        and item["entity_id"] == place_id
-        for item in audit
-    )
+            assert fetched is not None
+            assert fetched["phone"] == "+66 00 000 0000"
+            assert any(
+                item["action"] == "TEST_UPDATE_PLACE"
+                and item["entity_id"] == place_id
+                for item in audit
+            )
+        finally:
+            await update_admin_place(
+                session,
+                place_id,
+                {"phone": original["phone"]},
+            )
+            await session.commit()
