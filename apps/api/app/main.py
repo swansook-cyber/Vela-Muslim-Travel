@@ -22,7 +22,6 @@ from .config import get_settings
 from .db import get_db
 from .queries import find_nearby_places, find_place_by_slug, find_places_along_route
 from .routing import RoutingError, get_route
-from .security import require_admin
 from .schemas import (
     AlongRouteRequest,
     AlongRouteResponse,
@@ -31,6 +30,7 @@ from .schemas import (
     PlaceResult,
     RouteSummary,
 )
+from .security import require_admin
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
 AdminGuard = Annotated[None, Depends(require_admin)]
