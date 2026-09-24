@@ -99,6 +99,9 @@ function formatRouteProgress(progress: number, totalSeconds: number): string {
 export default function App() {
   const [originLat, setOriginLat] = useState("");
   const [originLng, setOriginLng] = useState("");
+  const [originQuery, setOriginQuery] = useState("");
+  const [originResults, setOriginResults] = useState<GeocodeResult[]>([]);
+  const [selectedOrigin, setSelectedOrigin] = useState("");
   const [destinationLat, setDestinationLat] = useState("");
   const [destinationLng, setDestinationLng] = useState("");
   const [destinationQuery, setDestinationQuery] = useState("");
@@ -130,6 +133,9 @@ export default function App() {
       (position) => {
         setOriginLat(position.coords.latitude.toFixed(6));
         setOriginLng(position.coords.longitude.toFixed(6));
+        setSelectedOrigin("ตำแหน่งปัจจุบัน");
+        setOriginQuery("ตำแหน่งปัจจุบัน");
+        setOriginResults([]);
         setLocating(false);
       },
       () => {
@@ -142,6 +148,39 @@ export default function App() {
         maximumAge: 60_000,
       },
     );
+  }
+
+  async function findOrigin() {
+    const query = originQuery.trim();
+    if (query.length < 2) {
+      setError("กรุณาพิมพ์ชื่อต้นทางอย่างน้อย 2 ตัวอักษร");
+      return;
+    }
+
+    setGeocoding(true);
+    setError("");
+    setOriginResults([]);
+
+    try {
+      const results = await searchDestination(query);
+      setOriginResults(results);
+      if (results.length === 0) {
+        setError("ไม่พบต้นทาง ลองระบุชื่ออำเภอ จังหวัด หรือสถานที่ให้ชัดขึ้น");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ค้นหาต้นทางไม่สำเร็จ");
+    } finally {
+      setGeocoding(false);
+    }
+  }
+
+  function chooseOrigin(item: GeocodeResult) {
+    setOriginLat(item.latitude.toFixed(6));
+    setOriginLng(item.longitude.toFixed(6));
+    setSelectedOrigin(item.display_name);
+    setOriginQuery(item.display_name);
+    setOriginResults([]);
+    setError("");
   }
 
   async function findDestination() {
@@ -284,6 +323,52 @@ export default function App() {
       <section className="workspace">
         <form className="search-panel" onSubmit={submit}>
           <h2>ค้นหาสำหรับการเดินทาง</h2>
+
+          <div className="destination-search">
+            <label>
+              ต้นทาง
+              <div className="inline-action">
+                <input
+                  value={originQuery}
+                  onChange={(event) => {
+                    setOriginQuery(event.target.value);
+                    setSelectedOrigin("");
+                    setOriginResults([]);
+                  }}
+                  placeholder="เช่น ทุ่งสง, เพชรบุรี, บ้านฉัน"
+                />
+                <button
+                  type="button"
+                  className="compact"
+                  onClick={findOrigin}
+                  disabled={geocoding}
+                >
+                  {geocoding ? "ค้นหา…" : "ค้นหา"}
+                </button>
+              </div>
+            </label>
+
+            {originResults.length > 0 && (
+              <div className="destination-results">
+                {originResults.map((item) => (
+                  <button
+                    key={`origin-${item.latitude}-${item.longitude}-${item.display_name}`}
+                    type="button"
+                    className="destination-option"
+                    onClick={() => chooseOrigin(item)}
+                  >
+                    {item.display_name}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {selectedOrigin && (
+              <p className="selected-destination">
+                ต้นทางที่เลือก: {selectedOrigin}
+              </p>
+            )}
+          </div>
 
           <button
             type="button"
