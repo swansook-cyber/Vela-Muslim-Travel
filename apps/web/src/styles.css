@@ -148,6 +148,15 @@ button.secondary {
   color: #173f2c;
 }
 
+.action-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.action-stack .secondary {
+  margin-bottom: 0;
+}
+
 .hint,
 .error {
   font-size: 0.82rem;
