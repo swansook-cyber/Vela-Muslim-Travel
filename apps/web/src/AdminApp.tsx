@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  fetchAdminDashboard,
   fetchCandidates,
   promoteCandidate,
   searchDestination,
   updateCandidate,
 } from "./api";
 import type {
+  AdminDashboard,
   CandidateResult,
   CandidateReviewState,
   GeocodeResult,
@@ -52,6 +54,7 @@ export default function AdminApp() {
   );
   const [filter, setFilter] = useState<CandidateReviewState | "">("DISCOVERED");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
+  const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
@@ -89,8 +92,12 @@ export default function AdminApp() {
     sessionStorage.setItem("vela-admin-key", adminKey);
 
     try {
-      const items = await fetchCandidates(adminKey, filter || undefined);
+      const [items, stats] = await Promise.all([
+        fetchCandidates(adminKey, filter || undefined),
+        fetchAdminDashboard(adminKey),
+      ]);
       setCandidates(items);
+      setDashboard(stats);
       initializeDrafts(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "โหลด candidate ไม่สำเร็จ");
@@ -258,7 +265,19 @@ export default function AdminApp() {
       {message && <p className="admin-message">{message}</p>}
       {error && <p className="error">{error}</p>}
 
-      <div className="admin-summary">{filteredCount} candidates</div>
+      {dashboard && (
+        <section className="admin-dashboard">
+          <div><strong>{dashboard.candidates_total}</strong><span>Candidate ทั้งหมด</span></div>
+          <div><strong>{dashboard.discovered}</strong><span>รอตรวจ</span></div>
+          <div><strong>{dashboard.geocoded}</strong><span>มีพิกัดแล้ว</span></div>
+          <div><strong>{dashboard.approved}</strong><span>อนุมัติแล้ว</span></div>
+          <div><strong>{dashboard.production_places}</strong><span>Production places</span></div>
+          <div><strong>{dashboard.certifications_expiring_30d}</strong><span>หลักฐานใกล้หมดอายุ 30 วัน</span></div>
+          <div><strong>{dashboard.expired_verifications}</strong><span>หลักฐานหมดอายุ</span></div>
+        </section>
+      )}
+
+      <div className="admin-summary">{filteredCount} candidates ในรายการปัจจุบัน</div>
 
       <section className="candidate-list">
         {candidates.map((candidate) => {

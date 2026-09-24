@@ -1,4 +1,5 @@
 import type {
+  AdminDashboard,
   AlongRouteResponse,
   CandidateResult,
   CandidateReviewState,
@@ -167,4 +168,19 @@ export async function promoteCandidate(
   }
 
   return response.json();
+}
+
+
+export async function fetchAdminDashboard(
+  adminKey: string,
+): Promise<AdminDashboard> {
+  const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<AdminDashboard>;
 }

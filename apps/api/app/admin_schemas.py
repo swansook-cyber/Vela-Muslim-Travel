@@ -53,3 +53,15 @@ class CandidatePromoteResponse(BaseModel):
     candidate_id: str
     place_id: str
     slug: str
+
+
+class AdminDashboard(BaseModel):
+    candidates_total: int
+    discovered: int
+    geocoded: int
+    approved: int
+    promoted: int
+    rejected: int
+    production_places: int
+    expired_verifications: int
+    certifications_expiring_30d: int

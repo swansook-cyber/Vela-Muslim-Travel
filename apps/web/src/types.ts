@@ -101,3 +101,16 @@ export interface CandidateResult {
   created_at: string;
   updated_at: string;
 }
+
+
+export interface AdminDashboard {
+  candidates_total: number;
+  discovered: number;
+  geocoded: number;
+  approved: number;
+  promoted: number;
+  rejected: number;
+  production_places: number;
+  expired_verifications: number;
+  certifications_expiring_30d: number;
+}

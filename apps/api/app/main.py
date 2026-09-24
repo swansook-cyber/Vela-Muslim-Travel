@@ -6,12 +6,14 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .admin_queries import (
+    get_admin_dashboard,
     get_candidate,
     list_candidates,
     promote_candidate,
     update_candidate_review,
 )
 from .admin_schemas import (
+    AdminDashboard,
     CandidatePromoteRequest,
     CandidatePromoteResponse,
     CandidateResult,
@@ -131,6 +133,15 @@ async def along_route(
         ),
         places=[PlaceResult(**row) for row in rows],
     )
+
+
+@app.get("/admin/dashboard", response_model=AdminDashboard)
+async def admin_dashboard(
+    session: DbSession,
+    _admin: AdminGuard,
+) -> AdminDashboard:
+    row = await get_admin_dashboard(session)
+    return AdminDashboard(**row)
 
 
 @app.get("/admin/candidates", response_model=list[CandidateResult])

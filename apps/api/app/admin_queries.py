@@ -234,3 +234,48 @@ async def promote_candidate(
     )
 
     return str(place_id)
+
+
+async def get_admin_dashboard(session: AsyncSession) -> dict:
+    sql = text(
+        """
+        SELECT
+            (SELECT count(*) FROM place_candidates) AS candidates_total,
+            (
+                SELECT count(*) FROM place_candidates
+                WHERE review_state = 'DISCOVERED'
+            ) AS discovered,
+            (
+                SELECT count(*) FROM place_candidates
+                WHERE review_state = 'GEOCODED'
+            ) AS geocoded,
+            (
+                SELECT count(*) FROM place_candidates
+                WHERE review_state = 'APPROVED'
+            ) AS approved,
+            (
+                SELECT count(*) FROM place_candidates
+                WHERE review_state = 'PROMOTED'
+            ) AS promoted,
+            (
+                SELECT count(*) FROM place_candidates
+                WHERE review_state = 'REJECTED'
+            ) AS rejected,
+            (SELECT count(*) FROM places WHERE active = true) AS production_places,
+            (
+                SELECT count(*)
+                FROM place_verifications
+                WHERE expires_at IS NOT NULL
+                  AND expires_at < now()
+            ) AS expired_verifications,
+            (
+                SELECT count(*)
+                FROM place_verifications
+                WHERE expires_at IS NOT NULL
+                  AND expires_at >= now()
+                  AND expires_at < now() + interval '30 days'
+            ) AS certifications_expiring_30d
+        """
+    )
+    row = (await session.execute(sql)).mappings().one()
+    return dict(row)

@@ -71,3 +71,15 @@ async def test_official_certification_candidates_keep_official_evidence() -> Non
         assert row["source_type"] == "OFFICIAL_CERTIFICATION"
         assert row["certification_number"]
         assert row["source_reference"]
+
+
+@pytest.mark.asyncio
+async def test_admin_dashboard_counts_staged_candidates() -> None:
+    from app.admin_queries import get_admin_dashboard
+
+    async with SessionLocal() as session:
+        dashboard = await get_admin_dashboard(session)
+
+    assert dashboard["candidates_total"] >= 12
+    assert dashboard["discovered"] >= 12
+    assert dashboard["production_places"] >= 4
