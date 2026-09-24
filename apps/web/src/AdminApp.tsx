@@ -9,6 +9,7 @@ import {
 import type {
   CandidateResult,
   CandidateReviewState,
+  GeocodeResult,
 } from "./types";
 
 const reviewStates: Array<{ value: CandidateReviewState | ""; label: string }> = [
@@ -53,6 +54,9 @@ export default function AdminApp() {
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(false);
+  const [geocodeSuggestions, setGeocodeSuggestions] = useState<
+    Record<string, GeocodeResult[]>
+  >({});
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -129,25 +133,36 @@ export default function AdminApp() {
         return;
       }
 
-      const first = results[0];
-      updateDraft(candidate.id, {
-        latitude: first.latitude.toFixed(6),
-        longitude: first.longitude.toFixed(6),
-        note: [
-          drafts[candidate.id]?.note,
-          `พิกัดค้นพบ: ${first.display_name}`,
-        ]
-          .filter(Boolean)
-          .join("\n"),
-      });
+      setGeocodeSuggestions((current) => ({
+        ...current,
+        [candidate.id]: results,
+      }));
       setMessage(
-        "พบพิกัดตัวเลือกแรกแล้ว กรุณาตรวจบนแผนที่/แหล่งข้อมูลก่อนกดอนุมัติ",
+        `พบ ${results.length} พิกัดสำหรับ ${candidate.name} กรุณาเลือกและตรวจสอบก่อนบันทึก`,
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : "ค้นหาพิกัดไม่สำเร็จ");
     } finally {
       setLoading(false);
     }
+  }
+
+  function chooseCoordinate(candidate: CandidateResult, item: GeocodeResult) {
+    const currentNote = drafts[candidate.id]?.note || "";
+    const geocodeNote = `พิกัดที่เลือก: ${item.display_name}`;
+
+    updateDraft(candidate.id, {
+      latitude: item.latitude.toFixed(6),
+      longitude: item.longitude.toFixed(6),
+      note: [currentNote, geocodeNote].filter(Boolean).join("\n"),
+    });
+    setGeocodeSuggestions((current) => ({
+      ...current,
+      [candidate.id]: [],
+    }));
+    setMessage(
+      "เลือกพิกัดแล้ว กรุณาเปิดแผนที่ตรวจตำแหน่งก่อนบันทึกเป็น GEOCODED หรือ APPROVED",
+    );
   }
 
   async function saveState(
@@ -334,6 +349,38 @@ export default function AdminApp() {
               >
                 ค้นหาพิกัดจากชื่อ/ที่อยู่
               </button>
+
+              {(geocodeSuggestions[candidate.id]?.length ?? 0) > 0 && (
+                <div className="geocode-suggestions">
+                  {geocodeSuggestions[candidate.id].map((item) => (
+                    <button
+                      key={`${item.latitude}-${item.longitude}-${item.display_name}`}
+                      type="button"
+                      className="geocode-suggestion"
+                      onClick={() => chooseCoordinate(candidate, item)}
+                    >
+                      <strong>{item.display_name}</strong>
+                      <span>
+                        {item.latitude.toFixed(6)}, {item.longitude.toFixed(6)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {draft.latitude && draft.longitude && (
+                <p className="coordinate-review-link">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      `${draft.latitude},${draft.longitude}`,
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    เปิดพิกัดนี้บน Google Maps เพื่อตรวจสอบ
+                  </a>
+                </p>
+              )}
 
               <label>
                 Review note

@@ -513,3 +513,29 @@ button.danger {
   font-size: 0.75rem;
   font-weight: 700;
 }
+
+.geocode-suggestions {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.geocode-suggestion {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border: 1px solid rgba(120, 120, 120, 0.25);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.geocode-suggestion span {
+  font-size: 0.82rem;
+  opacity: 0.72;
+}
+
+.coordinate-review-link {
+  margin: 0.65rem 0 0;
+}
