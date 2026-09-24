@@ -51,6 +51,23 @@ class PlaceResult(BaseModel):
     source_reference: str | None = None
     verified_at: str | None = None
     expires_at: str | None = None
+    parking: bool | None = None
+    cuisine: list[str] | None = None
+    opening_hours: dict | None = None
+    takeaway: bool | None = None
+    delivery: bool | None = None
+    price_level: int | None = None
+    halal_food_available: bool | None = None
+    prayer_space_available: bool | None = None
+    alcohol_policy: str | None = None
+    bidet_available: bool | None = None
+    family_friendly: bool | None = None
+    nearest_mosque_distance_m: int | None = None
+    check_in_time: str | None = None
+    check_out_time: str | None = None
+    friday_prayer: bool | None = None
+    women_prayer_area: bool | None = None
+    ablution_available: bool | None = None
 
 
 class GeoJsonLineString(BaseModel):
