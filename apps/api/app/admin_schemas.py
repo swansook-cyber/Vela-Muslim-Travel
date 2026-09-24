@@ -10,6 +10,7 @@ class CandidateReviewState(StrEnum):
     DISCOVERED = "DISCOVERED"
     GEOCODED = "GEOCODED"
     APPROVED = "APPROVED"
+    PROMOTED = "PROMOTED"
     REJECTED = "REJECTED"
 
 
