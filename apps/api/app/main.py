@@ -9,8 +9,8 @@ from .admin_queries import (
     get_admin_dashboard,
     get_candidate,
     list_admin_audit,
-    log_admin_action,
     list_candidates,
+    log_admin_action,
     promote_candidate,
     update_candidate_review,
 )
