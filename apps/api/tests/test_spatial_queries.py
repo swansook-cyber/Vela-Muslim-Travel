@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import pytest
 from sqlalchemy import text
@@ -120,7 +121,7 @@ async def test_reviewed_import_is_idempotent_for_same_verification() -> None:
         trust_status="UNVERIFIED",
         source_type="FIELD_CHECK",
         source_reference="synthetic://idempotent",
-        verified_at="2026-09-24T00:00:00+07:00",
+        verified_at=datetime.fromisoformat("2026-09-24T00:00:00+07:00"),
         expires_at=None,
         review_note="Integration test only",
     )
