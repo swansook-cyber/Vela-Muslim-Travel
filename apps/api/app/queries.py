@@ -11,7 +11,9 @@ LEFT JOIN LATERAL (
     SELECT
         pv.trust_status::text AS trust_status,
         pv.source_type::text AS verification_source_type,
-        pv.verified_at
+        pv.source_reference,
+        pv.verified_at,
+        pv.expires_at
     FROM place_verifications pv
     WHERE pv.place_id = p.id
     ORDER BY
@@ -21,9 +23,50 @@ LEFT JOIN LATERAL (
 ) verification ON true
 """
 
+PLACE_COLUMNS_SQL = """
+    p.id::text,
+    p.slug,
+    p.place_type::text,
+    p.name_th,
+    p.name_en,
+    p.address,
+    p.district,
+    p.province,
+    p.phone,
+    p.website_url,
+    p.social_url,
+    ST_Y(p.location::geometry) AS latitude,
+    ST_X(p.location::geometry) AS longitude,
+    verification.trust_status,
+    verification.verification_source_type,
+    verification.source_reference,
+    verification.verified_at,
+    verification.expires_at
+"""
+
 
 def _place_types_value(place_types: list[PlaceType] | None) -> list[str] | None:
     return [item.value for item in place_types] if place_types else None
+
+
+async def find_place_by_slug(
+    session: AsyncSession,
+    slug: str,
+) -> dict | None:
+    sql = text(
+        f"""
+        SELECT
+            {PLACE_COLUMNS_SQL}
+        FROM places p
+        {LATEST_VERIFICATION_SQL}
+        WHERE p.active = true
+          AND p.slug = :slug
+        LIMIT 1
+        """
+    )
+
+    row = (await session.execute(sql, {"slug": slug})).mappings().first()
+    return dict(row) if row else None
 
 
 async def find_nearby_places(
@@ -33,21 +76,11 @@ async def find_nearby_places(
     sql = text(
         f"""
         SELECT
-            p.id::text,
-            p.slug,
-            p.place_type::text,
-            p.name_th,
-            p.name_en,
-            p.province,
-            ST_Y(p.location::geometry) AS latitude,
-            ST_X(p.location::geometry) AS longitude,
+            {PLACE_COLUMNS_SQL},
             ST_Distance(
                 p.location,
                 ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
-            ) AS distance_m,
-            verification.trust_status,
-            verification.verification_source_type,
-            verification.verified_at
+            ) AS distance_m
         FROM places p
         {LATEST_VERIFICATION_SQL}
         WHERE p.active = true
@@ -96,14 +129,7 @@ async def find_places_along_route(
             SELECT ST_SetSRID(ST_GeomFromGeoJSON(:route_geojson), 4326) AS geom
         )
         SELECT
-            p.id::text,
-            p.slug,
-            p.place_type::text,
-            p.name_th,
-            p.name_en,
-            p.province,
-            ST_Y(p.location::geometry) AS latitude,
-            ST_X(p.location::geometry) AS longitude,
+            {PLACE_COLUMNS_SQL},
             ST_Distance(
                 p.location,
                 route.geom::geography
@@ -111,10 +137,7 @@ async def find_places_along_route(
             ST_LineLocatePoint(
                 route.geom,
                 ST_ClosestPoint(route.geom, p.location::geometry)
-            ) AS route_progress,
-            verification.trust_status,
-            verification.verification_source_type,
-            verification.verified_at
+            ) AS route_progress
         FROM places p
         CROSS JOIN route
         {LATEST_VERIFICATION_SQL}
