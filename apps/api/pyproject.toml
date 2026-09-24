@@ -29,3 +29,7 @@ asyncio_default_fixture_loop_scope = "session"
 markers = [
   "integration: tests that require a running PostGIS database"
 ]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["migrations*"]
