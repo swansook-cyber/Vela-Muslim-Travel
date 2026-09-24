@@ -43,3 +43,12 @@ export interface AlongRouteResponse {
   };
   places: PlaceResult[];
 }
+
+
+export interface GeocodeResult {
+  display_name: string;
+  latitude: number;
+  longitude: number;
+  category?: string | null;
+  place_type?: string | null;
+}
