@@ -1,0 +1,235 @@
+from __future__ import annotations
+
+import argparse
+import asyncio
+import csv
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+
+from sqlalchemy import text
+
+from app.db import SessionLocal
+from app.tools.import_reviewed_places import (
+    ALLOWED_PLACE_TYPES,
+    ALLOWED_SOURCE_TYPES,
+    ALLOWED_TRUST_STATUSES,
+    CERTIFIED_STATUSES,
+    empty_to_none,
+    parse_datetime,
+)
+
+
+@dataclass(slots=True)
+class Candidate:
+    name: str
+    place_type: str
+    address: str | None
+    district: str | None
+    province: str | None
+    phone: str | None
+    proposed_trust_status: str
+    source_type: str
+    source_reference: str | None
+    external_provider: str | None
+    external_id: str | None
+    certification_number: str | None
+    certification_expires_at: datetime | None
+    review_state: str
+    review_note: str | None
+
+
+ALLOWED_REVIEW_STATES = {"DISCOVERED", "GEOCODED", "APPROVED", "REJECTED"}
+
+
+def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
+    name = row.get("name", "").strip()
+    place_type = row.get("place_type", "").strip().upper()
+    trust_status = row.get("proposed_trust_status", "").strip().upper()
+    source_type = row.get("source_type", "").strip().upper()
+    review_state = row.get("review_state", "DISCOVERED").strip().upper()
+    source_reference = empty_to_none(row.get("source_reference"))
+    external_provider = empty_to_none(row.get("external_provider"))
+    external_id = empty_to_none(row.get("external_id"))
+    certification_number = empty_to_none(row.get("certification_number"))
+
+    if not name:
+        raise ValueError(f"Row {row_number}: name is required")
+    if place_type not in ALLOWED_PLACE_TYPES:
+        raise ValueError(f"Row {row_number}: invalid place_type {place_type!r}")
+    if trust_status not in ALLOWED_TRUST_STATUSES:
+        raise ValueError(f"Row {row_number}: invalid trust status {trust_status!r}")
+    if source_type not in ALLOWED_SOURCE_TYPES:
+        raise ValueError(f"Row {row_number}: invalid source type {source_type!r}")
+    if review_state not in ALLOWED_REVIEW_STATES:
+        raise ValueError(f"Row {row_number}: invalid review state {review_state!r}")
+
+    if trust_status in CERTIFIED_STATUSES:
+        if source_type != "OFFICIAL_CERTIFICATION" or not source_reference:
+            raise ValueError(
+                f"Row {row_number}: certified candidate requires official evidence"
+            )
+        if not certification_number:
+            raise ValueError(
+                f"Row {row_number}: certified candidate requires certification_number"
+            )
+
+    if place_type == "ACCOMMODATION" and trust_status == "HALAL_CERTIFIED":
+        raise ValueError(
+            f"Row {row_number}: accommodation must use HALAL_CERTIFIED_SERVICE"
+        )
+
+    if place_type == "RESTAURANT" and trust_status == "HALAL_CERTIFIED_SERVICE":
+        raise ValueError(
+            f"Row {row_number}: restaurant must use HALAL_CERTIFIED"
+        )
+
+    return Candidate(
+        name=name,
+        place_type=place_type,
+        address=empty_to_none(row.get("address")),
+        district=empty_to_none(row.get("district")),
+        province=empty_to_none(row.get("province")),
+        phone=empty_to_none(row.get("phone")),
+        proposed_trust_status=trust_status,
+        source_type=source_type,
+        source_reference=source_reference,
+        external_provider=external_provider,
+        external_id=external_id,
+        certification_number=certification_number,
+        certification_expires_at=parse_datetime(
+            row.get("certification_expires_at"),
+            "certification_expires_at",
+            row_number,
+        ),
+        review_state=review_state,
+        review_note=empty_to_none(row.get("review_note")),
+    )
+
+
+def load_candidates(path: Path) -> list[Candidate]:
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        return [
+            parse_candidate(row, row_number)
+            for row_number, row in enumerate(csv.DictReader(handle), start=2)
+        ]
+
+
+UPSERT_CANDIDATE_SQL = text(
+    """
+    INSERT INTO place_candidates (
+        name,
+        place_type,
+        address,
+        district,
+        province,
+        phone,
+        proposed_trust_status,
+        source_type,
+        source_reference,
+        external_provider,
+        external_id,
+        certification_number,
+        certification_expires_at,
+        review_state,
+        review_note,
+        updated_at
+    )
+    VALUES (
+        :name,
+        CAST(:place_type AS place_type),
+        :address,
+        :district,
+        :province,
+        :phone,
+        CAST(:proposed_trust_status AS trust_status),
+        CAST(:source_type AS verification_source_type),
+        :source_reference,
+        :external_provider,
+        :external_id,
+        :certification_number,
+        :certification_expires_at,
+        CAST(:review_state AS candidate_review_state),
+        :review_note,
+        now()
+    )
+    ON CONFLICT (external_provider, external_id)
+      WHERE external_provider IS NOT NULL AND external_id IS NOT NULL
+    DO UPDATE SET
+        name = EXCLUDED.name,
+        place_type = EXCLUDED.place_type,
+        address = EXCLUDED.address,
+        district = EXCLUDED.district,
+        province = EXCLUDED.province,
+        phone = EXCLUDED.phone,
+        proposed_trust_status = EXCLUDED.proposed_trust_status,
+        source_type = EXCLUDED.source_type,
+        source_reference = EXCLUDED.source_reference,
+        certification_number = EXCLUDED.certification_number,
+        certification_expires_at = EXCLUDED.certification_expires_at,
+        review_note = EXCLUDED.review_note,
+        updated_at = now()
+    """
+)
+
+
+async def apply_candidates(candidates: list[Candidate]) -> None:
+    async with SessionLocal() as session, session.begin():
+        for candidate in candidates:
+            await session.execute(
+                UPSERT_CANDIDATE_SQL,
+                {
+                    "name": candidate.name,
+                    "place_type": candidate.place_type,
+                    "address": candidate.address,
+                    "district": candidate.district,
+                    "province": candidate.province,
+                    "phone": candidate.phone,
+                    "proposed_trust_status": candidate.proposed_trust_status,
+                    "source_type": candidate.source_type,
+                    "source_reference": candidate.source_reference,
+                    "external_provider": candidate.external_provider,
+                    "external_id": candidate.external_id,
+                    "certification_number": candidate.certification_number,
+                    "certification_expires_at": candidate.certification_expires_at,
+                    "review_state": candidate.review_state,
+                    "review_note": candidate.review_note,
+                },
+            )
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Validate and optionally stage discovered place candidates."
+    )
+    parser.add_argument("csv_path", type=Path)
+    parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="Write candidates to place_candidates. Default is dry-run.",
+    )
+    return parser
+
+
+async def async_main() -> int:
+    args = build_parser().parse_args()
+    candidates = load_candidates(args.csv_path)
+
+    print(f"Validated candidate records: {len(candidates)}")
+    for candidate in candidates:
+        print(
+            f"- {candidate.name}: {candidate.place_type} "
+            f"[{candidate.proposed_trust_status}] {candidate.review_state}"
+        )
+
+    if not args.apply:
+        print("Dry run only. Re-run with --apply to write candidate staging data.")
+        return 0
+
+    await apply_candidates(candidates)
+    print(f"Staged {len(candidates)} candidates.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(asyncio.run(async_main()))
