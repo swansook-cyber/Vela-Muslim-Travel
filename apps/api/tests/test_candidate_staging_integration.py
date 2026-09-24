@@ -140,3 +140,26 @@ async def test_candidate_reimport_preserves_review_progress() -> None:
     assert row["longitude"] == pytest.approx(100.5)
     assert row["review_state"] == "GEOCODED"
     assert row["review_note"] == "manual reviewed coordinates"
+
+
+@pytest.mark.asyncio
+async def test_admin_audit_log_records_review_action() -> None:
+    from app.admin_queries import list_admin_audit, log_admin_action
+
+    async with SessionLocal() as session:
+        await log_admin_action(
+            session,
+            action="TEST_REVIEW",
+            entity_type="place_candidate",
+            entity_id="integration-test",
+            details={"state": "GEOCODED"},
+        )
+        await session.commit()
+
+        rows = await list_admin_audit(session, limit=10)
+
+    assert any(
+        row["action"] == "TEST_REVIEW"
+        and row["entity_id"] == "integration-test"
+        for row in rows
+    )

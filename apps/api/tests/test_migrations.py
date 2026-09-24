@@ -34,3 +34,23 @@ async def test_migration_runner_is_idempotent() -> None:
         ).scalar_one()
 
     assert count == 1
+
+
+@pytest.mark.asyncio
+async def test_admin_audit_migration_is_recorded() -> None:
+    await run_migrations()
+
+    async with SessionLocal() as session:
+        count = (
+            await session.execute(
+                text(
+                    """
+                    SELECT count(*)
+                    FROM schema_migrations
+                    WHERE version = '0002_admin_audit_log'
+                    """
+                )
+            )
+        ).scalar_one()
+
+    assert count == 1

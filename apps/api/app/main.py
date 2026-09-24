@@ -8,11 +8,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .admin_queries import (
     get_admin_dashboard,
     get_candidate,
+    list_admin_audit,
+    log_admin_action,
     list_candidates,
     promote_candidate,
     update_candidate_review,
 )
 from .admin_schemas import (
+    AdminAuditEntry,
     AdminDashboard,
     CandidatePromoteRequest,
     CandidatePromoteResponse,
@@ -145,6 +148,16 @@ async def admin_dashboard(
     return AdminDashboard(**row)
 
 
+@app.get("/admin/audit", response_model=list[AdminAuditEntry])
+async def admin_audit(
+    session: DbSession,
+    _admin: AdminGuard,
+    limit: int = 50,
+) -> list[AdminAuditEntry]:
+    rows = await list_admin_audit(session, limit=min(max(limit, 1), 200))
+    return [AdminAuditEntry(**row) for row in rows]
+
+
 @app.get("/admin/candidates", response_model=list[CandidateResult])
 async def admin_candidates(
     session: DbSession,
@@ -196,6 +209,17 @@ async def admin_update_candidate(
         review_state=review_state,
         review_note=review_note,
     )
+    await log_admin_action(
+        session,
+        action="REVIEW_CANDIDATE",
+        entity_type="place_candidate",
+        entity_id=candidate_id,
+        details={
+            "review_state": review_state.value,
+            "latitude": latitude,
+            "longitude": longitude,
+        },
+    )
     await session.commit()
     return CandidateResult(**row)
 
@@ -240,6 +264,17 @@ async def admin_promote_candidate(
         candidate=candidate,
         slug=request.slug,
         name_th=request.name_th or candidate["name"],
+    )
+    await log_admin_action(
+        session,
+        action="PROMOTE_CANDIDATE",
+        entity_type="place_candidate",
+        entity_id=candidate_id,
+        details={
+            "place_id": place_id,
+            "slug": request.slug,
+            "trust_status": candidate["proposed_trust_status"],
+        },
     )
     await session.commit()
 

@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -279,3 +281,63 @@ async def get_admin_dashboard(session: AsyncSession) -> dict:
     )
     row = (await session.execute(sql)).mappings().one()
     return dict(row)
+
+
+async def log_admin_action(
+    session: AsyncSession,
+    *,
+    action: str,
+    entity_type: str,
+    entity_id: str | None,
+    details: dict | None = None,
+) -> None:
+    await session.execute(
+        text(
+            """
+            INSERT INTO admin_audit_log (
+                action,
+                entity_type,
+                entity_id,
+                details
+            )
+            VALUES (
+                :action,
+                :entity_type,
+                :entity_id,
+                CAST(:details AS jsonb)
+            )
+            """
+        ),
+        {
+            "action": action,
+            "entity_type": entity_type,
+            "entity_id": entity_id,
+            "details": json.dumps(details or {}, ensure_ascii=False),
+        },
+    )
+
+
+async def list_admin_audit(
+    session: AsyncSession,
+    limit: int = 50,
+) -> list[dict]:
+    rows = (
+        await session.execute(
+            text(
+                """
+                SELECT
+                    id::text,
+                    action,
+                    entity_type,
+                    entity_id,
+                    details,
+                    created_at
+                FROM admin_audit_log
+                ORDER BY created_at DESC
+                LIMIT :limit
+                """
+            ),
+            {"limit": limit},
+        )
+    ).mappings().all()
+    return [dict(row) for row in rows]

@@ -73,6 +73,21 @@ CREATE UNIQUE INDEX idx_place_candidates_external_ref
   ON place_candidates(external_provider, external_id)
   WHERE external_provider IS NOT NULL AND external_id IS NOT NULL;
 
+CREATE TABLE admin_audit_log (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  action text NOT NULL,
+  entity_type text NOT NULL,
+  entity_id text,
+  details jsonb NOT NULL DEFAULT '{}'::jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_admin_audit_log_created_at
+  ON admin_audit_log(created_at DESC);
+
+CREATE INDEX idx_admin_audit_log_entity
+  ON admin_audit_log(entity_type, entity_id);
+
 CREATE TABLE places (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   slug text NOT NULL UNIQUE,

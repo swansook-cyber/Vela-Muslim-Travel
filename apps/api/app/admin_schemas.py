@@ -65,3 +65,12 @@ class AdminDashboard(BaseModel):
     production_places: int
     expired_verifications: int
     certifications_expiring_30d: int
+
+
+class AdminAuditEntry(BaseModel):
+    id: str
+    action: str
+    entity_type: str
+    entity_id: str | None = None
+    details: dict
+    created_at: datetime
