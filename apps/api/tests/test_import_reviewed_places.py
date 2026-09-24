@@ -1,6 +1,6 @@
 import pytest
 
-from tools.import_reviewed_places import parse_row
+from app.tools.import_reviewed_places import parse_row
 
 
 def base_row() -> dict[str, str]:
