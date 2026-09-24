@@ -30,6 +30,23 @@ export interface PlaceResult {
   source_reference?: string | null;
   verified_at?: string | null;
   expires_at?: string | null;
+  parking?: boolean | null;
+  cuisine?: string[] | null;
+  opening_hours?: Record<string, unknown> | null;
+  takeaway?: boolean | null;
+  delivery?: boolean | null;
+  price_level?: number | null;
+  halal_food_available?: boolean | null;
+  prayer_space_available?: boolean | null;
+  alcohol_policy?: string | null;
+  bidet_available?: boolean | null;
+  family_friendly?: boolean | null;
+  nearest_mosque_distance_m?: number | null;
+  check_in_time?: string | null;
+  check_out_time?: string | null;
+  friday_prayer?: boolean | null;
+  women_prayer_area?: boolean | null;
+  ablution_available?: boolean | null;
 }
 
 export interface AlongRouteResponse {
