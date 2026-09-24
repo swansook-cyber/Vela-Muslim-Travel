@@ -16,6 +16,7 @@ const reviewStates: Array<{ value: CandidateReviewState | ""; label: string }> =
   { value: "DISCOVERED", label: "รอตรวจ" },
   { value: "GEOCODED", label: "มีพิกัดแล้ว" },
   { value: "APPROVED", label: "อนุมัติแล้ว" },
+  { value: "PROMOTED", label: "เข้า production แล้ว" },
   { value: "REJECTED", label: "ปฏิเสธ" },
 ];
 
