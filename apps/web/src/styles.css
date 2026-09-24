@@ -360,3 +360,139 @@ button.secondary {
   color: #244d36;
   font-size: 0.82rem;
 }
+
+
+textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #cdd7d0;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  resize: vertical;
+}
+
+.admin-page {
+  max-width: 1180px;
+}
+
+.admin-toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 220px 180px;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid #dce3de;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.admin-toolbar label {
+  margin: 0;
+}
+
+.admin-message {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #eaf4ed;
+  color: #24583b;
+  font-weight: 700;
+}
+
+.admin-summary {
+  margin: 12px 0;
+  color: #607067;
+  font-size: 0.9rem;
+}
+
+.candidate-list {
+  display: grid;
+  gap: 16px;
+}
+
+.candidate-card {
+  padding: 20px;
+  border: 1px solid #dce3de;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.candidate-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: start;
+}
+
+.candidate-head h2 {
+  margin: 5px 0;
+}
+
+.candidate-head p {
+  margin: 0;
+  color: #6a756d;
+}
+
+.candidate-facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.candidate-facts > div {
+  padding: 10px;
+  border-radius: 10px;
+  background: #f5f7f5;
+}
+
+.candidate-facts dt {
+  color: #718077;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.candidate-facts dd {
+  margin: 4px 0 0;
+  word-break: break-word;
+}
+
+.candidate-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+button.danger {
+  background: #8f2f2f;
+}
+
+.promote-box {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 10px;
+  align-items: end;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f2f6f3;
+}
+
+.promote-box label {
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .admin-toolbar,
+  .candidate-facts,
+  .candidate-actions,
+  .promote-box {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-head {
+    display: grid;
+  }
+}
