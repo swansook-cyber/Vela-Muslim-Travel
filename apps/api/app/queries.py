@@ -13,7 +13,11 @@ LEFT JOIN LATERAL (
         pv.source_type::text AS verification_source_type,
         pv.source_reference,
         pv.verified_at,
-        pv.expires_at
+        pv.expires_at,
+        (
+            pv.expires_at IS NOT NULL
+            AND pv.expires_at < now()
+        ) AS verification_expired
     FROM place_verifications pv
     WHERE pv.place_id = p.id
     ORDER BY
@@ -42,6 +46,7 @@ PLACE_COLUMNS_SQL = """
     verification.source_reference,
     verification.verified_at,
     verification.expires_at,
+    COALESCE(verification.verification_expired, false) AS verification_expired,
     COALESCE(restaurant.parking, accommodation.parking, mosque.parking) AS parking,
     restaurant.cuisine,
     restaurant.opening_hours,

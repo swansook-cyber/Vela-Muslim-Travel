@@ -539,3 +539,8 @@ button.danger {
 .coordinate-review-link {
   margin: 0.65rem 0 0;
 }
+
+.trust-expired {
+  text-decoration: line-through;
+  opacity: 0.78;
+}

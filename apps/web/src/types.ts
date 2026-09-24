@@ -30,6 +30,7 @@ export interface PlaceResult {
   source_reference?: string | null;
   verified_at?: string | null;
   expires_at?: string | null;
+  verification_expired?: boolean;
   parking?: boolean | null;
   cuisine?: string[] | null;
   opening_hours?: Record<string, unknown> | null;

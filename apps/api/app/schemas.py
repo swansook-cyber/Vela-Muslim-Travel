@@ -52,6 +52,7 @@ class PlaceResult(BaseModel):
     source_reference: str | None = None
     verified_at: str | None = None
     expires_at: str | None = None
+    verification_expired: bool = False
     parking: bool | None = None
     cuisine: list[str] | None = None
     opening_hours: dict | None = None

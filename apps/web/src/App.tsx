@@ -431,10 +431,18 @@ export default function App() {
                       {formatDistance(place.distance_m)}
                     </span>
                   )}
-                  <strong className="trust-badge">
-                    {trustLabels[place.trust_status || "UNVERIFIED"] ||
-                      place.trust_status ||
-                      "ยังไม่ได้ยืนยัน"}
+                  <strong
+                    className={
+                      place.verification_expired
+                        ? "trust-badge trust-expired"
+                        : "trust-badge"
+                    }
+                  >
+                    {place.verification_expired
+                      ? "หลักฐานหมดอายุ"
+                      : trustLabels[place.trust_status || "UNVERIFIED"] ||
+                        place.trust_status ||
+                        "ยังไม่ได้ยืนยัน"}
                   </strong>
                   {verificationLabel(place.verified_at) && (
                     <span>{verificationLabel(place.verified_at)}</span>

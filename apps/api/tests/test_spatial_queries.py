@@ -3,6 +3,7 @@ from datetime import datetime
 
 import pytest
 from sqlalchemy import text
+from sqlalchemy import text
 
 from app.admin_queries import (
     get_candidate,
@@ -233,3 +234,35 @@ async def test_candidate_can_be_reviewed_and_promoted() -> None:
     assert place["trust_status"] == "UNVERIFIED"
     assert candidate_after is not None
     assert candidate_after["review_state"] == "PROMOTED"
+
+
+@pytest.mark.asyncio
+async def test_expired_verification_is_flagged() -> None:
+    async with SessionLocal() as session:
+        await session.execute(
+            text(
+                """
+                UPDATE place_verifications
+                SET expires_at = now() - interval '1 day'
+                WHERE place_id = (
+                    SELECT id
+                    FROM places
+                    WHERE slug = 'test-route-restaurant-south'
+                )
+                """
+            )
+        )
+        await session.commit()
+
+        rows = await find_nearby_places(
+            session,
+            NearbyRequest(
+                latitude=11.8,
+                longitude=99.95,
+                radius_m=5000,
+                limit=10,
+            ),
+        )
+
+    row = next(item for item in rows if item["slug"] == "test-route-restaurant-south")
+    assert row["verification_expired"] is True
