@@ -3,6 +3,7 @@ import type {
   AdminDashboard,
   AdminPlaceResult,
   AdminPlaceUpdate,
+  AdminVerificationResult,
   AlongRouteResponse,
   CandidateResult,
   CandidateReviewState,
@@ -245,4 +246,51 @@ export async function updateAdminPlace(
   }
 
   return response.json() as Promise<AdminPlaceResult>;
+}
+
+
+export async function fetchPlaceVerifications(
+  adminKey: string,
+  placeId: string,
+): Promise<AdminVerificationResult[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/places/${encodeURIComponent(placeId)}/verifications`,
+    { headers: adminHeaders(adminKey) },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<AdminVerificationResult[]>;
+}
+
+export interface AddVerificationInput {
+  trust_status: string;
+  source_type: string;
+  source_reference?: string;
+  verified_at: string;
+  expires_at?: string;
+  note?: string;
+}
+
+export async function addPlaceVerification(
+  adminKey: string,
+  placeId: string,
+  input: AddVerificationInput,
+): Promise<AdminVerificationResult> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/places/${encodeURIComponent(placeId)}/verifications`,
+    {
+      method: "POST",
+      headers: adminHeaders(adminKey),
+      body: JSON.stringify(input),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<AdminVerificationResult>;
 }

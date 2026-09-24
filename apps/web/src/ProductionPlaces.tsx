@@ -1,7 +1,15 @@
 import { useState } from "react";
 
-import { fetchAdminPlaces, updateAdminPlace } from "./api";
-import type { AdminPlaceResult } from "./types";
+import {
+  addPlaceVerification,
+  fetchAdminPlaces,
+  fetchPlaceVerifications,
+  updateAdminPlace,
+} from "./api";
+import type {
+  AdminPlaceResult,
+  AdminVerificationResult,
+} from "./types";
 
 interface Props {
   adminKey: string;
@@ -15,9 +23,50 @@ interface Draft {
   longitude: string;
 }
 
+interface VerificationDraft {
+  trust_status: string;
+  source_type: string;
+  source_reference: string;
+  expires_at: string;
+  note: string;
+}
+
+const trustOptions = [
+  "UNVERIFIED",
+  "MUSLIM_OWNED",
+  "MUSLIM_FRIENDLY",
+  "HALAL_CERTIFIED",
+  "HALAL_CERTIFIED_SERVICE",
+];
+
+const sourceOptions = [
+  "UNKNOWN",
+  "PUBLIC_WEB_SOURCE",
+  "COMMUNITY_REPORT",
+  "FIELD_CHECK",
+  "BUSINESS_OWNER",
+  "OFFICIAL_CERTIFICATION",
+];
+
+function defaultVerificationDraft(): VerificationDraft {
+  return {
+    trust_status: "UNVERIFIED",
+    source_type: "PUBLIC_WEB_SOURCE",
+    source_reference: "",
+    expires_at: "",
+    note: "",
+  };
+}
+
 export function ProductionPlaces({ adminKey }: Props) {
   const [places, setPlaces] = useState<AdminPlaceResult[]>([]);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
+  const [verificationDrafts, setVerificationDrafts] = useState<
+    Record<string, VerificationDraft>
+  >({});
+  const [verificationHistory, setVerificationHistory] = useState<
+    Record<string, AdminVerificationResult[]>
+  >({});
   const [includeInactive, setIncludeInactive] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -38,6 +87,14 @@ export function ProductionPlaces({ adminKey }: Props) {
         ]),
       ),
     );
+
+    setVerificationDrafts((current) => {
+      const next = { ...current };
+      for (const place of items) {
+        next[place.id] ??= defaultVerificationDraft();
+      }
+      return next;
+    });
   }
 
   async function load() {
@@ -63,6 +120,19 @@ export function ProductionPlaces({ adminKey }: Props) {
 
   function patchDraft(placeId: string, patch: Partial<Draft>) {
     setDrafts((current) => ({
+      ...current,
+      [placeId]: {
+        ...current[placeId],
+        ...patch,
+      },
+    }));
+  }
+
+  function patchVerification(
+    placeId: string,
+    patch: Partial<VerificationDraft>,
+  ) {
+    setVerificationDrafts((current) => ({
       ...current,
       [placeId]: {
         ...current[placeId],
@@ -125,12 +195,60 @@ export function ProductionPlaces({ adminKey }: Props) {
     }
   }
 
+  async function loadVerificationHistory(place: AdminPlaceResult) {
+    setLoading(true);
+    setError("");
+
+    try {
+      const rows = await fetchPlaceVerifications(adminKey, place.id);
+      setVerificationHistory((current) => ({
+        ...current,
+        [place.id]: rows,
+      }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "โหลดประวัติหลักฐานไม่สำเร็จ");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function addVerification(place: AdminPlaceResult) {
+    const draft = verificationDrafts[place.id] || defaultVerificationDraft();
+
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      await addPlaceVerification(adminKey, place.id, {
+        trust_status: draft.trust_status,
+        source_type: draft.source_type,
+        source_reference: draft.source_reference || undefined,
+        verified_at: new Date().toISOString(),
+        expires_at: draft.expires_at
+          ? new Date(draft.expires_at).toISOString()
+          : undefined,
+        note: draft.note || undefined,
+      });
+      setMessage(`เพิ่มหลักฐานใหม่ให้ ${place.name_th} แล้ว`);
+      setVerificationDrafts((current) => ({
+        ...current,
+        [place.id]: defaultVerificationDraft(),
+      }));
+      await loadVerificationHistory(place);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "เพิ่มหลักฐานไม่สำเร็จ");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="production-admin">
       <div className="production-admin-head">
         <div>
           <h2>Production Places</h2>
-          <p>แก้ไขข้อมูลหรือปิดใช้งานสถานที่โดยไม่ลบประวัติ</p>
+          <p>แก้ไขข้อมูล ปิดใช้งาน และเพิ่มหลักฐานใหม่โดยไม่ลบประวัติเดิม</p>
         </div>
         <label className="check">
           <input
@@ -151,6 +269,9 @@ export function ProductionPlaces({ adminKey }: Props) {
       <div className="production-place-list">
         {places.map((place) => {
           const draft = drafts[place.id];
+          const verification =
+            verificationDrafts[place.id] || defaultVerificationDraft();
+          const history = verificationHistory[place.id] || [];
           if (!draft) return null;
 
           return (
@@ -244,6 +365,112 @@ export function ProductionPlaces({ adminKey }: Props) {
                   ตรวจบนแผนที่
                 </a>
               </div>
+
+              <details className="verification-editor">
+                <summary>หลักฐาน / Trust Status</summary>
+                <div className="verification-grid">
+                  <label>
+                    Trust status
+                    <select
+                      value={verification.trust_status}
+                      onChange={(event) =>
+                        patchVerification(place.id, {
+                          trust_status: event.target.value,
+                        })
+                      }
+                    >
+                      {trustOptions.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Source type
+                    <select
+                      value={verification.source_type}
+                      onChange={(event) =>
+                        patchVerification(place.id, {
+                          source_type: event.target.value,
+                        })
+                      }
+                    >
+                      {sourceOptions.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Source URL
+                    <input
+                      value={verification.source_reference}
+                      onChange={(event) =>
+                        patchVerification(place.id, {
+                          source_reference: event.target.value,
+                        })
+                      }
+                    />
+                  </label>
+                  <label>
+                    วันหมดอายุ (ถ้ามี)
+                    <input
+                      type="date"
+                      value={verification.expires_at}
+                      onChange={(event) =>
+                        patchVerification(place.id, {
+                          expires_at: event.target.value,
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+                <label>
+                  Note
+                  <textarea
+                    rows={2}
+                    value={verification.note}
+                    onChange={(event) =>
+                      patchVerification(place.id, { note: event.target.value })
+                    }
+                  />
+                </label>
+                <div className="candidate-actions">
+                  <button
+                    type="button"
+                    onClick={() => addVerification(place)}
+                    disabled={loading}
+                  >
+                    เพิ่มหลักฐานใหม่
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => loadVerificationHistory(place)}
+                    disabled={loading}
+                  >
+                    ดูประวัติ
+                  </button>
+                </div>
+
+                {history.length > 0 && (
+                  <div className="verification-history">
+                    {history.map((item) => (
+                      <div key={item.id}>
+                        <strong>{item.trust_status}</strong>
+                        <span>{item.source_type}</span>
+                        <span>
+                          {item.verified_at
+                            ? new Date(item.verified_at).toLocaleDateString("th-TH")
+                            : "ไม่ระบุวันที่"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </details>
             </article>
           );
         })}

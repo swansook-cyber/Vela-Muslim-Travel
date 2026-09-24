@@ -159,3 +159,16 @@ export interface AdminPlaceUpdate {
   latitude?: number;
   longitude?: number;
 }
+
+
+export interface AdminVerificationResult {
+  id: string;
+  trust_status: string;
+  source_type: string;
+  source_reference?: string | null;
+  verified_at?: string | null;
+  expires_at?: string | null;
+  note?: string | null;
+  verified_by?: string | null;
+  created_at: string;
+}
