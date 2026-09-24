@@ -3,7 +3,6 @@ from datetime import datetime
 
 import pytest
 from sqlalchemy import text
-from sqlalchemy import text
 
 from app.admin_queries import (
     get_candidate,
