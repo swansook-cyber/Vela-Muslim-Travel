@@ -88,12 +88,14 @@ def parse_row(row: dict[str, str], row_number: int) -> ReviewedPlace | None:
     if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
         raise ValueError(f"Row {row_number}: coordinates are out of range")
 
-    if trust_status in CERTIFIED_STATUSES:
-        if source_type != "OFFICIAL_CERTIFICATION" or not source_reference:
-            raise ValueError(
-                f"Row {row_number}: certified status requires OFFICIAL_CERTIFICATION "
-                "and source_reference"
-            )
+    if (
+        trust_status in CERTIFIED_STATUSES
+        and (source_type != "OFFICIAL_CERTIFICATION" or not source_reference)
+    ):
+        raise ValueError(
+            f"Row {row_number}: certified status requires OFFICIAL_CERTIFICATION "
+            "and source_reference"
+        )
 
     return ReviewedPlace(
         slug=slug,
@@ -213,39 +215,38 @@ INSERT_VERIFICATION_SQL = text(
 
 
 async def apply_places(places: list[ReviewedPlace]) -> None:
-    async with SessionLocal() as session:
-        async with session.begin():
-            for place in places:
-                values = {
-                    "slug": place.slug,
-                    "place_type": place.place_type,
-                    "name_th": place.name_th,
-                    "name_en": place.name_en,
-                    "latitude": place.latitude,
-                    "longitude": place.longitude,
-                    "address": place.address,
-                    "district": place.district,
-                    "province": place.province,
-                    "postal_code": place.postal_code,
-                    "phone": place.phone,
-                    "website_url": place.website_url,
-                    "social_url": place.social_url,
-                }
-                result = await session.execute(UPSERT_PLACE_SQL, values)
-                place_id = result.scalar_one()
+    async with SessionLocal() as session, session.begin():
+        for place in places:
+            values = {
+                "slug": place.slug,
+                "place_type": place.place_type,
+                "name_th": place.name_th,
+                "name_en": place.name_en,
+                "latitude": place.latitude,
+                "longitude": place.longitude,
+                "address": place.address,
+                "district": place.district,
+                "province": place.province,
+                "postal_code": place.postal_code,
+                "phone": place.phone,
+                "website_url": place.website_url,
+                "social_url": place.social_url,
+            }
+            result = await session.execute(UPSERT_PLACE_SQL, values)
+            place_id = result.scalar_one()
 
-                await session.execute(
-                    INSERT_VERIFICATION_SQL,
-                    {
-                        "place_id": place_id,
-                        "trust_status": place.trust_status,
-                        "source_type": place.source_type,
-                        "source_reference": place.source_reference,
-                        "verified_at": place.verified_at,
-                        "expires_at": place.expires_at,
-                        "note": place.review_note,
-                    },
-                )
+            await session.execute(
+                INSERT_VERIFICATION_SQL,
+                {
+                    "place_id": place_id,
+                    "trust_status": place.trust_status,
+                    "source_type": place.source_type,
+                    "source_reference": place.source_reference,
+                    "verified_at": place.verified_at,
+                    "expires_at": place.expires_at,
+                    "note": place.review_note,
+                },
+            )
 
 
 def build_parser() -> argparse.ArgumentParser:
