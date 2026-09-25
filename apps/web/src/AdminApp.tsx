@@ -76,6 +76,16 @@ interface Draft {
   slug: string;
 }
 
+function isCandidateReviewTask(
+  candidate: CandidateResult,
+): candidate is CandidateReviewTask {
+  return (
+    "approval_blockers" in candidate &&
+    "maps_search_url" in candidate &&
+    "ready_to_approve" in candidate
+  );
+}
+
 export default function AdminApp() {
   const [adminKey, setAdminKey] = useState(
     () => sessionStorage.getItem("vela-admin-key") || "",
@@ -457,8 +467,9 @@ export default function AdminApp() {
             slug: suggestedSlug(candidate),
           };
           const evidenceUrl = safeHttpUrl(candidate.source_reference);
-          const reviewTask: CandidateReviewTask | null =
-            "approval_blockers" in candidate ? candidate : null;
+          const reviewTask = isCandidateReviewTask(candidate)
+            ? candidate
+            : null;
 
           return (
             <article className="candidate-card" key={candidate.id}>
