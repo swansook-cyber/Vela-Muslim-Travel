@@ -320,6 +320,15 @@ Primary discovery evidence:
 Primary evidence:
 - https://cicot.or.th/th/mosque/lists/2/3
 
+- **Address reconciliation update (2026-09-25):** current CICOT lists
+  `ม.2 ต.ปากช่อง`, while older Thailand halal travel guides identify
+  Pakistan Yannatul Firdaus Mosque at Kaek Market / Trok Chumchon Surao near
+  Pak Chong Bus Station, `Mu 11`. Current local mosque directories also use
+  Tessaban 22 Road / Trok Chumchon Surao. These may be different address
+  conventions for the same mosque, but the discrepancy must be resolved before
+  approval. A manual hold is now explicit; no coordinate is inferred from the
+  historical guide.
+
 ### ร้านอาหารอิสลามตลาดแขก อ.ปากช่อง
 
 - Existing Google business ID `ChIJu4-pVzEqHDERNKY1RFId_Yc` still resolves to
