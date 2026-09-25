@@ -467,6 +467,11 @@ async def admin_update_candidate(
         if update.review_note is not None
         else existing["review_note"]
     )
+    review_hold_reason = (
+        (update.review_hold_reason.strip() or None)
+        if update.review_hold_reason is not None
+        else existing["review_hold_reason"]
+    )
 
     if (latitude is None) != (longitude is None):
         raise HTTPException(
@@ -479,6 +484,7 @@ async def admin_update_candidate(
             **existing,
             "latitude": latitude,
             "longitude": longitude,
+            "review_hold_reason": review_hold_reason,
         }
         blockers = candidate_approval_blockers(
             approval_candidate,
@@ -498,6 +504,7 @@ async def admin_update_candidate(
         longitude=longitude,
         review_state=review_state,
         review_note=review_note,
+        review_hold_reason=review_hold_reason,
     )
     await log_admin_action(
         session,
@@ -508,6 +515,7 @@ async def admin_update_candidate(
             "review_state": review_state.value,
             "latitude": latitude,
             "longitude": longitude,
+            "review_hold_reason": review_hold_reason,
         },
     )
     await session.commit()
