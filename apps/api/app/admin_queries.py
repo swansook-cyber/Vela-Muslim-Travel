@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -108,7 +109,7 @@ async def update_candidate_review(
     review_state: CandidateReviewState,
     review_note: str | None,
     review_hold_reason: str | None = None,
-    source_checked_at=None,
+    source_checked_at: datetime | None = None,
 ) -> dict:
     sql = text(
         f"""
@@ -119,7 +120,10 @@ async def update_candidate_review(
             review_state = CAST(:review_state AS candidate_review_state),
             review_note = :review_note,
             review_hold_reason = :review_hold_reason,
-            source_checked_at = COALESCE(:source_checked_at, source_checked_at),
+            source_checked_at = COALESCE(
+                CAST(:source_checked_at AS timestamptz),
+                source_checked_at
+            ),
             updated_at = now()
         WHERE id = CAST(:candidate_id AS uuid)
         RETURNING {CANDIDATE_COLUMNS}
