@@ -463,6 +463,21 @@ Primary discovery evidence:
   phone matches Wongnai. Trust remains `UNVERIFIED`.
 
 
+
+### Coordinate verification update — 2026-09-25 (นครราชสีมา / เขาใหญ่)
+
+- **Ayah Restaurant Halal** — GEOCODED at
+  `14.6574375, 101.345671875` from the current Google business Plus Code
+  `M84W+X7F`, recovered and decoded with Google's official Open Location Code
+  algorithm. The current Google business identity remains consistent, but
+  external sources also use `16/6 Moo 5 Mittraphap Road`; the address-identity
+  discrepancy therefore remains an explicit manual hold.
+- Other Khao Yai candidates remain unchanged in this pass because no direct
+  coordinate, embedded-map coordinate or Plus Code with sufficient provenance
+  was obtained. Their current business/source identities remain available for
+  continued review.
+
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
