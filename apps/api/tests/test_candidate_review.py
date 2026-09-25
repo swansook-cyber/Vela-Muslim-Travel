@@ -116,8 +116,8 @@ def test_candidate_maps_search_prefers_google_place_id() -> None:
 
     url = candidate_maps_search_url(candidate)
 
+    assert "query=" in url
     assert "query_place_id=ChIJexact123" in url
-    assert "&query=" not in url
 
 
 def test_candidate_maps_search_falls_back_to_name_and_address() -> None:
