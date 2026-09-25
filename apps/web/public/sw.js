@@ -1,4 +1,4 @@
-const CACHE_NAME = "vela-muslim-travel-shell-v1";
+const CACHE_NAME = "vela-muslim-travel-shell-v2";
 const SHELL_URLS = ["/", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -23,6 +23,16 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+function isCacheableStaticRequest(request, url) {
+  if (url.pathname.startsWith("/api/")) {
+    return false;
+  }
+
+  return ["script", "style", "image", "font", "manifest"].includes(
+    request.destination,
+  );
+}
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") {
@@ -34,16 +44,26 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (url.pathname.startsWith("/api/")) {
+    return;
+  }
+
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put("/", copy));
+          if (url.pathname === "/" && response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put("/", copy));
+          }
           return response;
         })
         .catch(() => caches.match("/")),
     );
+    return;
+  }
+
+  if (!isCacheableStaticRequest(request, url)) {
     return;
   }
 

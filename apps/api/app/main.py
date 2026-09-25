@@ -65,6 +65,15 @@ app = FastAPI(
     description="Route-first Muslim travel discovery API for Thailand.",
 )
 
+@app.middleware("http")
+async def admin_no_store_middleware(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/admin"):
+        response.headers["Cache-Control"] = "no-store, private"
+        response.headers["Pragma"] = "no-cache"
+    return response
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
