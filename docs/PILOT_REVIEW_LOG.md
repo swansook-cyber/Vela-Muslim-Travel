@@ -478,6 +478,17 @@ Primary discovery evidence:
   continued review.
 
 
+
+### Coordinate verification update — 2026-09-25 (นครศรีธรรมราช accommodation)
+
+- **The Twin Lotus Hotel** — GEOCODED at `8.399505, 99.977287` from a
+  published hotel GPS coordinate at the same 6 Pattanakarn-Kukwang Road
+  address. Current Google Hotels and the hotel's official site independently
+  match the address and phone. The CICOT evidence remains strictly scoped to
+  certificate `100C5470010356` for **ครัวฮาลาล** through 2026-10-22; this is
+  not represented as whole-property halal certification.
+
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
