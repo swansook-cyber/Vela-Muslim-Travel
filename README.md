@@ -92,3 +92,14 @@ Phase 0 now includes:
 - production Docker Compose full-stack smoke tests.
 
 The next major gate is completing manual coordinate review for the curated pilot candidates, promoting only approved records, and running an end-to-end route test from southern Thailand toward Khao Yai using production data.
+
+
+## Pilot review status
+
+The northbound pilot discovery queue currently contains **24 curated discovery candidates** across all target corridor provinces. The candidate-coverage gate now verifies:
+
+- at least one restaurant in every target province,
+- at least one mosque in every target province,
+- accommodation candidates in at least two target provinces.
+
+This means the discovery queue is ready for systematic manual review, but the public pilot is **not** production-ready yet. Exact coordinates, evidence review, duplicate checks, approval, and promotion are still required before listings can appear in route results.
