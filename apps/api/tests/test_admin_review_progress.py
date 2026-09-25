@@ -64,3 +64,39 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
         "ready_to_approve": 1,
         "blocked": 1,
     }
+
+
+@pytest.mark.asyncio
+async def test_review_progress_endpoint_returns_typed_summary(monkeypatch) -> None:
+    from app import main
+
+    async def fake_load_candidate_review_progress(session):
+        return {
+            "pending": 3,
+            "ready_to_approve": 1,
+            "blocked": 2,
+            "provinces": [
+                {
+                    "province": "นครศรีธรรมราช",
+                    "pending": 3,
+                    "ready_to_approve": 1,
+                    "blocked": 2,
+                }
+            ],
+        }
+
+    monkeypatch.setattr(
+        main,
+        "load_candidate_review_progress",
+        fake_load_candidate_review_progress,
+    )
+
+    result = await main.admin_candidate_review_progress(
+        session=None,
+        _admin=None,
+    )
+
+    assert result.pending == 3
+    assert result.ready_to_approve == 1
+    assert result.blocked == 2
+    assert result.provinces[0].province == "นครศรีธรรมราช"
