@@ -76,6 +76,7 @@ interface Draft {
   longitude: string;
   note: string;
   holdReason: string;
+  sourceCheckedAt: string;
   slug: string;
 }
 
@@ -167,6 +168,7 @@ export default function AdminApp() {
           longitude: item.longitude?.toString() || "",
           note: item.review_note || "",
           holdReason: item.review_hold_reason || "",
+          sourceCheckedAt: item.source_checked_at || "",
           slug: suggestedSlug(item),
         };
       }
@@ -319,6 +321,7 @@ export default function AdminApp() {
         review_state: state,
         review_note: draft?.note || undefined,
         review_hold_reason: draft?.holdReason ?? "",
+        source_checked_at: draft?.sourceCheckedAt || undefined,
       });
       setMessage(`อัปเดต ${candidate.name} เป็น ${state} แล้ว`);
       await load();
@@ -599,6 +602,7 @@ export default function AdminApp() {
             longitude: "",
             note: "",
             holdReason: "",
+            sourceCheckedAt: candidate.source_checked_at || "",
             slug: suggestedSlug(candidate),
           };
           const evidenceUrl = safeHttpUrl(candidate.source_reference);
@@ -642,6 +646,14 @@ export default function AdminApp() {
                           "th-TH",
                         )
                       : "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Source checked</dt>
+                  <dd>
+                    {candidate.source_checked_at
+                      ? new Date(candidate.source_checked_at).toLocaleString("th-TH")
+                      : "ยังไม่ได้ยืนยัน"}
                   </dd>
                 </div>
               </dl>
@@ -765,6 +777,29 @@ export default function AdminApp() {
                   ถ้ามีข้อความในช่องนี้ ระบบจะไม่อนุญาตให้ APPROVED
                 </small>
               </label>
+
+              <div className="source-check-control">
+                <div>
+                  <strong>Source cross-check</strong>
+                  <small>
+                    {draft.sourceCheckedAt
+                      ? `ตรวจล่าสุด ${new Date(draft.sourceCheckedAt).toLocaleString("th-TH")}`
+                      : "ยังไม่ได้ยืนยันการตรวจ source"}
+                  </small>
+                </div>
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() =>
+                    updateDraft(candidate.id, {
+                      sourceCheckedAt: new Date().toISOString(),
+                    })
+                  }
+                  disabled={loading}
+                >
+                  ยืนยันว่าตรวจ source ตอนนี้
+                </button>
+              </div>
 
               <div className="candidate-actions">
                 <button
