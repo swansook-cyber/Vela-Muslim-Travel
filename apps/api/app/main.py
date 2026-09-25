@@ -10,7 +10,6 @@ from .admin_candidate_readiness import (
     load_candidate_readiness,
 )
 from .admin_places import get_admin_place, list_admin_places, update_admin_place
-from .admin_review_progress import load_candidate_review_progress
 from .admin_queries import (
     get_admin_dashboard,
     get_candidate,
@@ -20,6 +19,7 @@ from .admin_queries import (
     promote_candidate,
     update_candidate_review,
 )
+from .admin_review_progress import load_candidate_review_progress
 from .admin_schemas import (
     AdminAuditEntry,
     AdminDashboard,
