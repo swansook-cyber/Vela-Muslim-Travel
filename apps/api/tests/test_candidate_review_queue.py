@@ -91,3 +91,33 @@ async def test_review_queue_rejects_non_review_state() -> None:
 
     assert exc_info.value.status_code == 422
     assert "DISCOVERED or GEOCODED" in str(exc_info.value.detail)
+
+
+@pytest.mark.asyncio
+async def test_review_queue_uses_exact_google_place_id(monkeypatch) -> None:
+    row = candidate_row(CandidateReviewState.DISCOVERED.value)
+    row["external_provider"] = "google_business"
+    row["external_id"] = "ChIJexactQueue123"
+
+    async def fake_list_candidates(
+        session,
+        review_state,
+        province=None,
+        place_type=None,
+        limit=100,
+    ):
+        return [row]
+
+    monkeypatch.setattr(main, "list_candidates", fake_list_candidates)
+
+    tasks = await main.admin_candidate_review_queue(
+        session=None,
+        _admin=None,
+        review_state=CandidateReviewState.DISCOVERED,
+        province="นครราชสีมา",
+        place_type=None,
+        limit=100,
+    )
+
+    assert "query=" in tasks[0].maps_search_url
+    assert "query_place_id=ChIJexactQueue123" in tasks[0].maps_search_url
