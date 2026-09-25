@@ -36,6 +36,8 @@ class CandidateResult(BaseModel):
     review_note: str | None = None
     review_hold_reason: str | None = None
     source_checked_at: datetime | None = None
+    coordinate_checked_at: datetime | None = None
+    coordinate_checked_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
 
