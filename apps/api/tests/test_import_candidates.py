@@ -25,6 +25,7 @@ def candidate_row() -> dict[str, str]:
         "review_state": "DISCOVERED",
         "review_note": "",
         "review_hold_reason": "",
+        "source_checked_at": "",
     }
 
 
@@ -145,3 +146,27 @@ def test_pilot_queue_contains_explicit_review_holds() -> None:
 
     assert len(held) >= 7
     assert any("Temporarily Closed" in candidate.review_hold_reason for candidate in held)
+
+
+def test_candidate_parses_source_checked_at() -> None:
+    row = candidate_row()
+    row["source_checked_at"] = "2026-09-25T11:23:00+07:00"
+
+    candidate = parse_candidate(row, 2)
+
+    assert candidate.source_checked_at is not None
+    assert candidate.source_checked_at.isoformat() == "2026-09-25T11:23:00+07:00"
+
+
+def test_all_corridor_candidates_have_source_cross_check_time() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    corridor = [
+        candidate
+        for candidate in candidates
+        if candidate.province != "กรุงเทพมหานคร"
+    ]
+
+    assert len(corridor) == 23
+    assert all(candidate.source_checked_at is not None for candidate in corridor)
