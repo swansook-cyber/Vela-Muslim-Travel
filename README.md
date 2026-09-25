@@ -96,10 +96,10 @@ The next major gate is completing manual coordinate review for the curated pilot
 
 ## Pilot review status
 
-The northbound pilot discovery queue currently contains **24 curated discovery candidates** across all target corridor provinces. The candidate-coverage gate now verifies:
+The discovery seed currently contains **24 curated candidates total**: **23 candidates across the seven target corridor provinces** plus **1 Bangkok candidate outside the route corridor**. The candidate-coverage gate verifies the seven pilot provinces:
 
 - at least one restaurant in every target province,
 - at least one mosque in every target province,
 - accommodation candidates in at least two target provinces.
 
-This means the discovery queue is ready for systematic manual review, but the public pilot is **not** production-ready yet. Exact coordinates, evidence review, duplicate checks, approval, and promotion are still required before listings can appear in route results.
+A first public-source cross-check pass has now been recorded for all **23 corridor candidates** in `docs/PILOT_REVIEW_LOG.md`. The public pilot is still **not** production-ready: exact coordinate review, resolution of flagged evidence/address/phone/closure discrepancies, duplicate checks, approval, and promotion are required before listings can appear in route results.
