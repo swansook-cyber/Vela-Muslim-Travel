@@ -3,8 +3,11 @@ import json
 from sqlalchemy import bindparam, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .config import get_settings
 from .routing import RouteResult
 from .schemas import NearbyRequest, PlaceType
+
+settings = get_settings()
 
 LATEST_VERIFICATION_SQL = """
 LEFT JOIN LATERAL (
@@ -92,12 +95,21 @@ async def find_place_by_slug(
         {LATEST_VERIFICATION_SQL}
         {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
+          AND (:allow_test_fixtures OR p.source_status <> 'TEST_FIXTURE')
           AND p.slug = :slug
         LIMIT 1
         """
     )
 
-    row = (await session.execute(sql, {"slug": slug})).mappings().first()
+    row = (
+        await session.execute(
+            sql,
+            {
+                "slug": slug,
+                "allow_test_fixtures": settings.allow_test_fixtures,
+            },
+        )
+    ).mappings().first()
     return dict(row) if row else None
 
 
@@ -117,6 +129,7 @@ async def find_nearby_places(
         {LATEST_VERIFICATION_SQL}
         {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
+          AND (:allow_test_fixtures OR p.source_status <> 'TEST_FIXTURE')
           AND ST_DWithin(
                 p.location,
                 ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
@@ -136,6 +149,7 @@ async def find_nearby_places(
         "place_types_is_null": place_types is None,
         "place_types": place_types or ["__NONE__"],
         "limit": request.limit,
+        "allow_test_fixtures": settings.allow_test_fixtures,
     }
 
     rows = (await session.execute(sql, params)).mappings().all()
@@ -176,6 +190,7 @@ async def find_places_along_route(
         {LATEST_VERIFICATION_SQL}
         {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
+          AND (:allow_test_fixtures OR p.source_status <> 'TEST_FIXTURE')
           AND ST_DWithin(
                 p.location,
                 route.geom::geography,
@@ -194,6 +209,7 @@ async def find_places_along_route(
         "place_types_is_null": types_value is None,
         "place_types": types_value or ["__NONE__"],
         "limit": limit,
+        "allow_test_fixtures": settings.allow_test_fixtures,
     }
 
     rows = (await session.execute(sql, params)).mappings().all()

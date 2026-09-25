@@ -62,6 +62,7 @@ jobs:
       DATABASE_URL: postgresql+asyncpg://vela:vela_test@localhost:5432/vela_muslim_travel
       PGPASSWORD: vela_test
       RUN_INTEGRATION: "1"
+      ALLOW_TEST_FIXTURES: "true"
 
     defaults:
       run:

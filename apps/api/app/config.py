@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     )
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     admin_api_key: str | None = None
+    allow_test_fixtures: bool = False
     geocoding_provider: str = "nominatim"
     nominatim_base_url: str = "https://nominatim.openstreetmap.org"
     geocoding_user_agent: str = (
