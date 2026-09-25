@@ -252,7 +252,10 @@ async def admin_dashboard(
     _admin: AdminGuard,
 ) -> AdminDashboard:
     row = await get_admin_dashboard(session)
-    return AdminDashboard(**row)
+    return AdminDashboard(
+        **row,
+        google_places_resolver_enabled=bool(settings.google_places_api_key),
+    )
 
 
 @app.get("/admin/audit", response_model=list[AdminAuditEntry])
