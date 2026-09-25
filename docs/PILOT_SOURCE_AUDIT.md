@@ -47,3 +47,16 @@ previously uncovered northbound provinces:
 
 These records come from the CICOT mosque directory and remain
 `DISCOVERED` with empty coordinates until controlled geocode review.
+
+
+## Restaurant discovery coverage for corridor gaps
+
+Three additional restaurant candidates were added to avoid a mosque-only
+dataset in newly covered provinces:
+
+- Surat Halal Food — Kanchanadit, Surat Thani — Makan Halal Guide
+- Nen Nuea @ Prachuap Halal — Mueang Prachuap Khiri Khan — Makan Halal Guide
+- Muslim Kitchen Saraburi — Muak Lek, Saraburi — Wongnai
+
+These sources are discovery evidence only. All three remain `UNVERIFIED`
+and are not represented as officially halal-certified.
