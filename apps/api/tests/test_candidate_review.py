@@ -19,6 +19,7 @@ def base_candidate() -> dict:
         "source_reference": "https://example.com/place",
         "certification_number": None,
         "certification_expires_at": None,
+        "review_hold_reason": None,
     }
 
 
@@ -75,3 +76,14 @@ def test_expired_certified_candidate_is_blocked() -> None:
     blockers = candidate_approval_blockers(candidate)
 
     assert any("non-expired" in item for item in blockers)
+
+
+def test_candidate_approval_is_blocked_by_manual_review_hold() -> None:
+    candidate = base_candidate()
+    candidate["review_hold_reason"] = "Confirm reopening before approval"
+
+    blockers = candidate_approval_blockers(candidate)
+
+    assert blockers == [
+        "manual review hold: Confirm reopening before approval"
+    ]
