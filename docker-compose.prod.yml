@@ -31,6 +31,9 @@ services:
       GEOCODING_PROVIDER: ${GEOCODING_PROVIDER:-nominatim}
       NOMINATIM_BASE_URL: ${NOMINATIM_BASE_URL:-https://nominatim.openstreetmap.org}
       GEOCODING_USER_AGENT: ${GEOCODING_USER_AGENT:-VelaMuslimTravel/0.1}
+      GOOGLE_PLACES_API_KEY: ${GOOGLE_PLACES_API_KEY:-}
+      GOOGLE_PLACES_BASE_URL: ${GOOGLE_PLACES_BASE_URL:-https://places.googleapis.com}
+      GOOGLE_PLACES_TIMEOUT_SECONDS: ${GOOGLE_PLACES_TIMEOUT_SECONDS:-10}
     expose:
       - "8000"
     healthcheck:
