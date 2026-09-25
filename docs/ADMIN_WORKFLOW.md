@@ -85,6 +85,10 @@ The admin dashboard also exposes a manual-review progress summary. It counts onl
 records that are ready for approval from records still blocked by coordinate or
 evidence requirements.
 
+Reviewers can filter the active queue to show only ready or blocked records, and
+can select a province directly from the progress summary to load that province's
+queue. This changes only the review view; it never changes candidate state.
+
 
 The guarded review queue supports both `DISCOVERED` and `GEOCODED` candidates. This keeps source evidence, Google Maps review links, and approval blockers visible after coordinates are saved and before approval.
 
