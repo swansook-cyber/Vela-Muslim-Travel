@@ -52,6 +52,7 @@ CREATE TABLE place_candidates (
   certification_expires_at timestamptz,
   review_state candidate_review_state NOT NULL DEFAULT 'DISCOVERED',
   review_note text,
+  review_hold_reason text,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   CHECK (
