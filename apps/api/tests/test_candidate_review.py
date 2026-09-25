@@ -111,7 +111,7 @@ def test_candidate_approval_requires_coordinate_verification_date() -> None:
 
 def test_candidate_maps_search_prefers_google_place_id() -> None:
     candidate = base_candidate()
-    candidate["source_provider"] = "google_business"
+    candidate["external_provider"] = "google_business"
     candidate["external_id"] = "ChIJexact123"
 
     url = candidate_maps_search_url(candidate)
@@ -122,7 +122,7 @@ def test_candidate_maps_search_prefers_google_place_id() -> None:
 
 def test_candidate_maps_search_falls_back_to_name_and_address() -> None:
     candidate = base_candidate()
-    candidate["source_provider"] = "public_directory"
+    candidate["external_provider"] = "public_directory"
     candidate["external_id"] = None
 
     url = candidate_maps_search_url(candidate)
