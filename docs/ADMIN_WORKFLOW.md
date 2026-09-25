@@ -135,6 +135,18 @@ the current coordinate confirmation is cleared. Open the coordinate on Google
 Maps, visually confirm the correct venue, then press **ยืนยันพิกัดนี้แล้ว**.
 Only after that confirmation should the candidate be saved as `GEOCODED`.
 
+### Exact Google place review links
+
+When a candidate came from `google_business` or `google_places` and has a
+stored Google place ID, the Admin review link opens that exact place via
+`query_place_id`. It does not fall back to a free-text name/address search.
+This is especially important for the remaining coordinate-review candidates,
+where similar names or nearby businesses can otherwise produce a wrong pin.
+
+Candidates without a Google place ID continue to use the name/address search
+fallback and still require manual map verification before
+`coordinate_checked_at` is recorded.
+
 ### Single-candidate review mode
 
 Admin supports **ตรวจทีละรายการ** for mobile review. The mode displays one
