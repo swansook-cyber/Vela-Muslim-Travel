@@ -95,6 +95,10 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
         raise ValueError(f"Row {row_number}: invalid trust status {trust_status!r}")
     if source_type not in ALLOWED_SOURCE_TYPES:
         raise ValueError(f"Row {row_number}: invalid source type {source_type!r}")
+    if source_type != "UNKNOWN" and not source_reference:
+        raise ValueError(
+            f"Row {row_number}: non-UNKNOWN source requires source_reference"
+        )
     if review_state not in ALLOWED_REVIEW_STATES:
         raise ValueError(f"Row {row_number}: invalid review state {review_state!r}")
 

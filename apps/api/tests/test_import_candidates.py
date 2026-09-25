@@ -108,3 +108,20 @@ def test_certified_candidate_requires_expiry() -> None:
 
     with pytest.raises(ValueError, match="certification_expires_at"):
         parse_candidate(row, 2)
+
+
+def test_candidate_requires_reference_for_known_source() -> None:
+    row = candidate_row()
+    row["source_reference"] = ""
+
+    with pytest.raises(ValueError, match="requires source_reference"):
+        parse_candidate(row, 2)
+
+
+def test_unknown_source_may_omit_reference() -> None:
+    row = candidate_row()
+    row["source_type"] = "UNKNOWN"
+    row["source_reference"] = ""
+
+    candidate = parse_candidate(row, 2)
+    assert candidate.source_reference is None
