@@ -98,6 +98,7 @@ export interface CandidateResult {
   certification_expires_at?: string | null;
   review_state: CandidateReviewState;
   review_note?: string | null;
+  review_hold_reason?: string | null;
   created_at: string;
   updated_at: string;
 }
