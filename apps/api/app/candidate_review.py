@@ -8,6 +8,14 @@ CERTIFIED_STATUSES = {"HALAL_CERTIFIED", "HALAL_CERTIFIED_SERVICE"}
 
 
 def candidate_maps_search_url(candidate: dict) -> str:
+    provider = candidate.get("source_provider")
+    external_id = candidate.get("external_id")
+    if provider in {"google_business", "google_places"} and external_id:
+        return (
+            "https://www.google.com/maps/search/?api=1"
+            f"&query_place_id={quote_plus(str(external_id))}"
+        )
+
     query = " ".join(
         str(value).strip()
         for value in (
