@@ -20,12 +20,18 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
             "pending": 0,
             "ready_to_approve": 0,
             "blocked": 0,
+            "coordinate_pending": 0,
+            "manual_hold": 0,
+            "evidence_blocked": 0,
         }
     )
 
     pending = 0
     ready_to_approve = 0
     blocked = 0
+    coordinate_pending = 0
+    manual_hold = 0
+    evidence_blocked = 0
 
     for row in rows:
         if row["review_state"] not in active_states:
@@ -35,8 +41,27 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
 
         blockers = candidate_approval_blockers(row)
         province = row["province"]
+        has_coordinate_gap = row.get("latitude") is None or row.get("longitude") is None
+        has_manual_hold = bool(row.get("review_hold_reason"))
+        non_coordinate_or_hold_blockers = [
+            blocker
+            for blocker in blockers
+            if blocker != "reviewed coordinates are required"
+            and not blocker.startswith("manual review hold:")
+        ]
+
         pending += 1
         per_province[province]["pending"] += 1
+
+        if has_coordinate_gap:
+            coordinate_pending += 1
+            per_province[province]["coordinate_pending"] += 1
+        if has_manual_hold:
+            manual_hold += 1
+            per_province[province]["manual_hold"] += 1
+        if non_coordinate_or_hold_blockers:
+            evidence_blocked += 1
+            per_province[province]["evidence_blocked"] += 1
 
         if blockers:
             blocked += 1
@@ -49,6 +74,9 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
         "pending": pending,
         "ready_to_approve": ready_to_approve,
         "blocked": blocked,
+        "coordinate_pending": coordinate_pending,
+        "manual_hold": manual_hold,
+        "evidence_blocked": evidence_blocked,
         "provinces": [
             {
                 "province": province,
