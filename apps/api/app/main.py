@@ -31,6 +31,7 @@ from .admin_schemas import (
     CandidateProvinceReadiness,
     CandidateReadinessResponse,
     CandidateResult,
+    CandidateReviewTask,
     CandidateReviewState,
     CandidateReviewUpdate,
     PilotProvinceReadiness,
@@ -41,6 +42,7 @@ from .admin_verifications import (
     list_place_verifications,
     validate_verification_claim,
 )
+from .candidate_review import candidate_approval_blockers, candidate_maps_search_url
 from .config import get_settings
 from .db import get_db
 from .geocoding import GeocodingError, search_places
@@ -370,6 +372,39 @@ async def admin_add_place_verification(
     return AdminVerificationResult(**row)
 
 
+@app.get(
+    "/admin/candidates/review-queue",
+    response_model=list[CandidateReviewTask],
+)
+async def admin_candidate_review_queue(
+    session: DbSession,
+    _admin: AdminGuard,
+    province: str | None = None,
+    place_type: PlaceType | None = None,
+    limit: int = 100,
+) -> list[CandidateReviewTask]:
+    rows = await list_candidates(
+        session,
+        review_state=CandidateReviewState.DISCOVERED,
+        province=province,
+        place_type=place_type.value if place_type else None,
+        limit=min(max(limit, 1), 500),
+    )
+
+    tasks: list[CandidateReviewTask] = []
+    for row in rows:
+        blockers = candidate_approval_blockers(row)
+        tasks.append(
+            CandidateReviewTask(
+                **row,
+                maps_search_url=candidate_maps_search_url(row),
+                approval_blockers=blockers,
+                ready_to_approve=not blockers,
+            )
+        )
+    return tasks
+
+
 @app.get("/admin/candidates", response_model=list[CandidateResult])
 async def admin_candidates(
     session: DbSession,
@@ -415,11 +450,22 @@ async def admin_update_candidate(
             detail="Latitude and longitude must be set together",
         )
 
-    if review_state == CandidateReviewState.APPROVED and latitude is None:
-        raise HTTPException(
-            status_code=422,
-            detail="Approved candidates require reviewed coordinates",
+    if review_state == CandidateReviewState.APPROVED:
+        approval_candidate = {
+            **existing,
+            "latitude": latitude,
+            "longitude": longitude,
+        }
+        blockers = candidate_approval_blockers(
+            approval_candidate,
+            latitude=latitude,
+            longitude=longitude,
         )
+        if blockers:
+            raise HTTPException(
+                status_code=422,
+                detail="Cannot approve candidate: " + "; ".join(blockers),
+            )
 
     row = await update_candidate_review(
         session=session,
