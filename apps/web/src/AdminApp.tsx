@@ -315,6 +315,36 @@ export default function AdminApp() {
             ))}
           </select>
         </label>
+        <label>
+          จังหวัด
+          <select
+            value={provinceFilter}
+            onChange={(event) => setProvinceFilter(event.target.value)}
+          >
+            {pilotProvinces.map((province) => (
+              <option key={province || "all"} value={province}>
+                {province || "ทุกจังหวัดนำร่อง"}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          ประเภท
+          <select
+            value={typeFilter}
+            onChange={(event) =>
+              setTypeFilter(
+                event.target.value as "" | CandidateResult["place_type"],
+              )
+            }
+          >
+            {candidateTypes.map((item) => (
+              <option key={item.value || "all"} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
         <button type="button" onClick={load} disabled={loading}>
           {loading ? "กำลังทำงาน…" : "โหลดรายการ"}
         </button>
@@ -585,7 +615,15 @@ export default function AdminApp() {
                 <button
                   type="button"
                   onClick={() => saveState(candidate, "APPROVED")}
-                  disabled={loading}
+                  disabled={
+                    loading ||
+                    (reviewTask !== null && !reviewTask.ready_to_approve)
+                  }
+                  title={
+                    reviewTask !== null && !reviewTask.ready_to_approve
+                      ? "ต้องแก้ approval blockers ก่อนอนุมัติ"
+                      : undefined
+                  }
                 >
                   อนุมัติ
                 </button>
