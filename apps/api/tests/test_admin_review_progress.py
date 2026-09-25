@@ -15,6 +15,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "source_reference": "https://example.com/a",
             "proposed_trust_status": "UNVERIFIED",
             "certification_expires_at": None,
+            "review_hold_reason": "Confirm phone",
         },
         {
             "province": "นครศรีธรรมราช",
@@ -25,6 +26,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "source_reference": "https://example.com/b",
             "proposed_trust_status": "UNVERIFIED",
             "certification_expires_at": None,
+            "review_hold_reason": None,
         },
         {
             "province": "นครราชสีมา",
@@ -35,6 +37,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "source_reference": "https://example.com/c",
             "proposed_trust_status": "UNVERIFIED",
             "certification_expires_at": None,
+            "review_hold_reason": None,
         },
     ]
 
@@ -52,6 +55,9 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
     assert result["pending"] == 2
     assert result["ready_to_approve"] == 1
     assert result["blocked"] == 1
+    assert result["coordinate_pending"] == 1
+    assert result["manual_hold"] == 1
+    assert result["evidence_blocked"] == 0
 
     nakhon = next(
         item
@@ -63,6 +69,9 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
         "pending": 2,
         "ready_to_approve": 1,
         "blocked": 1,
+        "coordinate_pending": 1,
+        "manual_hold": 1,
+        "evidence_blocked": 0,
     }
 
 
@@ -75,12 +84,18 @@ async def test_review_progress_endpoint_returns_typed_summary(monkeypatch) -> No
             "pending": 3,
             "ready_to_approve": 1,
             "blocked": 2,
+            "coordinate_pending": 2,
+            "manual_hold": 1,
+            "evidence_blocked": 0,
             "provinces": [
                 {
                     "province": "นครศรีธรรมราช",
                     "pending": 3,
                     "ready_to_approve": 1,
                     "blocked": 2,
+                    "coordinate_pending": 2,
+                    "manual_hold": 1,
+                    "evidence_blocked": 0,
                 }
             ],
         }
@@ -99,4 +114,7 @@ async def test_review_progress_endpoint_returns_typed_summary(monkeypatch) -> No
     assert result.pending == 3
     assert result.ready_to_approve == 1
     assert result.blocked == 2
+    assert result.coordinate_pending == 2
+    assert result.manual_hold == 1
+    assert result.evidence_blocked == 0
     assert result.provinces[0].province == "นครศรีธรรมราช"
