@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -116,8 +117,21 @@ class AdminPlaceUpdate(BaseModel):
 
 
 class AdminVerificationCreate(BaseModel):
-    trust_status: str
-    source_type: str
+    trust_status: Literal[
+        "HALAL_CERTIFIED",
+        "HALAL_CERTIFIED_SERVICE",
+        "MUSLIM_OWNED",
+        "MUSLIM_FRIENDLY",
+        "UNVERIFIED",
+    ]
+    source_type: Literal[
+        "OFFICIAL_CERTIFICATION",
+        "BUSINESS_OWNER",
+        "FIELD_CHECK",
+        "COMMUNITY_REPORT",
+        "PUBLIC_WEB_SOURCE",
+        "UNKNOWN",
+    ]
     source_reference: str | None = None
     verified_at: datetime
     expires_at: datetime | None = None

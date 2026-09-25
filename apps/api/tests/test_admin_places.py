@@ -97,3 +97,49 @@ async def test_admin_place_coordinate_update_requires_pair() -> None:
                 place_id,
                 {"latitude": 12.7},
             )
+
+
+@pytest.mark.asyncio
+async def test_admin_place_rejects_null_coordinates() -> None:
+    async with SessionLocal() as session:
+        place_id = (
+            await session.execute(
+                text(
+                    """
+                    SELECT id::text
+                    FROM places
+                    WHERE slug = 'test-route-mosque-middle'
+                    """
+                )
+            )
+        ).scalar_one()
+
+        with pytest.raises(ValueError, match="must be non-null"):
+            await update_admin_place(
+                session,
+                place_id,
+                {"latitude": None, "longitude": None},
+            )
+
+
+@pytest.mark.asyncio
+async def test_admin_place_rejects_null_required_identity() -> None:
+    async with SessionLocal() as session:
+        place_id = (
+            await session.execute(
+                text(
+                    """
+                    SELECT id::text
+                    FROM places
+                    WHERE slug = 'test-route-mosque-middle'
+                    """
+                )
+            )
+        ).scalar_one()
+
+        with pytest.raises(ValueError, match="cannot be null"):
+            await update_admin_place(
+                session,
+                place_id,
+                {"name_th": None},
+            )

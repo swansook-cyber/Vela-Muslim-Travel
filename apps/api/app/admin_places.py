@@ -71,6 +71,16 @@ async def update_admin_place(
     place_id: str,
     changes: dict,
 ) -> dict | None:
+    if ("slug" in changes and changes["slug"] is None) or (
+        "name_th" in changes and changes["name_th"] is None
+    ):
+        raise ValueError("Production slug and name_th cannot be null")
+
+    if ("latitude" in changes or "longitude" in changes) and (
+        changes.get("latitude") is None or changes.get("longitude") is None
+    ):
+        raise ValueError("Latitude and longitude must be non-null")
+
     allowed = {
         "slug",
         "name_th",
