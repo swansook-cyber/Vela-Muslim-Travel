@@ -21,6 +21,7 @@ def base_candidate() -> dict:
         "certification_expires_at": None,
         "review_hold_reason": None,
         "source_checked_at": datetime.now(UTC),
+        "coordinate_checked_at": datetime.now(UTC),
     }
 
 
@@ -97,3 +98,12 @@ def test_candidate_approval_requires_source_cross_check_date() -> None:
     blockers = candidate_approval_blockers(candidate)
 
     assert "source cross-check date is required" in blockers
+
+
+def test_candidate_approval_requires_coordinate_verification_date() -> None:
+    candidate = base_candidate()
+    candidate["coordinate_checked_at"] = None
+
+    blockers = candidate_approval_blockers(candidate)
+
+    assert "coordinate verification date is required" in blockers
