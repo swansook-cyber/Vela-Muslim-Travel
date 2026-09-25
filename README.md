@@ -37,7 +37,7 @@ Phase 0 proves the data model and route-search concept before investing in produ
 
 ## Proposed architecture
 
-- Web/PWA: React / Next.js
+- Web/PWA: React + Vite + MapLibre
 - API: FastAPI
 - Database: PostgreSQL + PostGIS
 - Map: MapLibre
@@ -82,8 +82,13 @@ Phase 0 now includes:
 - verification-evidence guardrails and certificate-expiry handling,
 - PostGIS integration tests in GitHub Actions,
 - React + Vite + MapLibre route-search web client,
-- browser geolocation for route origin,
+- browser geolocation plus searchable trip origin/destination,
+- on-demand road detour time and distance for route stops,
+- candidate and production-place admin maintenance with audit history,
+- pilot readiness reporting for the northbound Thailand corridor,
+- PWA shell caching that excludes all API/admin responses,
+- browser security headers and edge rate limits,
 - web and API CI pipelines,
 - production Docker Compose full-stack smoke tests.
 
-The next major gate is a manually reviewed real-world pilot dataset and an end-to-end route test using that data.
+The next major gate is completing manual coordinate review for the curated pilot candidates, promoting only approved records, and running an end-to-end route test from southern Thailand toward Khao Yai using production data.
