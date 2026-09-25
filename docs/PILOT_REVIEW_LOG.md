@@ -372,6 +372,22 @@ Primary discovery evidence:
 - Exact coordinates and Muslim-friendly facility claims still require manual
   verification before approval.
 
+
+### Coordinate verification update — 2026-09-25
+
+- **มัสยิดมูฮัมมาดียะห์ บ้านดอนมะม่วง** — GEOCODED at
+  `9.515438, 99.164563` from the current same-name Google business Plus Code
+  `G587+5RM`. The CICOT-vs-Google locality discrepancy remains an explicit
+  manual hold, so this candidate is not approval-ready.
+- **มัสยิดอิกอมุสซอลาฮ์ บ้านหนองจอก** — GEOCODED at
+  `9.035931, 99.235434` from Tha Sathon Subdistrict Administrative
+  Organization UTM coordinates `X 525875 / Y 998833`, converted from
+  EPSG:32647 to WGS84. CICOT, MasjidThai and PSU sources support the same
+  mosque identity.
+- **สุราษฎร์ฮาลาลฟู๊ด** — GEOCODED at `9.148563, 99.392688` from Cybo Plus
+  Code `49XV+C37`, with name/phone/address cross-checked against Wongnai and
+  Makan Halal Guide. Trust remains `UNVERIFIED`.
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
