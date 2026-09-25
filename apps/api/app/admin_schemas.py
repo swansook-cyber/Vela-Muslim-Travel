@@ -34,6 +34,7 @@ class CandidateResult(BaseModel):
     certification_expires_at: datetime | None = None
     review_state: CandidateReviewState
     review_note: str | None = None
+    review_hold_reason: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -43,6 +44,7 @@ class CandidateReviewUpdate(BaseModel):
     longitude: float | None = Field(default=None, ge=-180, le=180)
     review_state: CandidateReviewState | None = None
     review_note: str | None = None
+    review_hold_reason: str | None = Field(default=None, max_length=500)
 
 
 class CandidatePromoteRequest(BaseModel):
