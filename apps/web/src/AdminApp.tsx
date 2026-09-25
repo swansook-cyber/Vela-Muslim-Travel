@@ -18,6 +18,7 @@ import type {
   CandidateReadinessResponse,
   CandidateResult,
   CandidateReviewState,
+  CandidateReviewTask,
   GeocodeResult,
   PilotReadinessResponse,
 } from "./types";
@@ -426,6 +427,8 @@ export default function AdminApp() {
             slug: suggestedSlug(candidate),
           };
           const evidenceUrl = safeHttpUrl(candidate.source_reference);
+          const reviewTask: CandidateReviewTask | null =
+            "approval_blockers" in candidate ? candidate : null;
 
           return (
             <article className="candidate-card" key={candidate.id}>
@@ -475,9 +478,9 @@ export default function AdminApp() {
                     เปิดหลักฐานต้นทาง
                   </a>
                 )}
-                {candidate.maps_search_url && (
+                {reviewTask?.maps_search_url && (
                   <a
-                    href={candidate.maps_search_url}
+                    href={reviewTask.maps_search_url}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -486,12 +489,11 @@ export default function AdminApp() {
                 )}
               </div>
 
-              {candidate.approval_blockers &&
-                candidate.approval_blockers.length > 0 && (
+              {reviewTask && reviewTask.approval_blockers.length > 0 && (
                   <div className="approval-blockers">
                     <strong>ยังอนุมัติไม่ได้</strong>
                     <ul>
-                      {candidate.approval_blockers.map((item) => (
+                      {reviewTask.approval_blockers.map((item) => (
                         <li key={item}>{item}</li>
                       ))}
                     </ul>
