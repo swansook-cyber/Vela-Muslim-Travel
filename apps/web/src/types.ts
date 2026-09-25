@@ -108,6 +108,20 @@ export interface CandidateReviewTask extends CandidateResult {
   ready_to_approve: boolean;
 }
 
+export interface CandidateReviewProvinceProgress {
+  province: string;
+  pending: number;
+  ready_to_approve: number;
+  blocked: number;
+}
+
+export interface CandidateReviewProgressResponse {
+  pending: number;
+  ready_to_approve: number;
+  blocked: number;
+  provinces: CandidateReviewProvinceProgress[];
+}
+
 
 export interface AdminDashboard {
   candidates_total: number;
