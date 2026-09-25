@@ -27,6 +27,7 @@ CANDIDATE_COLUMNS = """
     review_note,
     review_hold_reason,
     source_checked_at,
+    coordinate_checked_at,
     created_at,
     updated_at
 """
@@ -110,6 +111,7 @@ async def update_candidate_review(
     review_note: str | None,
     review_hold_reason: str | None = None,
     source_checked_at: datetime | None = None,
+    coordinate_checked_at: datetime | None = None,
 ) -> dict:
     sql = text(
         f"""
@@ -124,6 +126,7 @@ async def update_candidate_review(
                 CAST(:source_checked_at AS timestamptz),
                 source_checked_at
             ),
+            coordinate_checked_at = CAST(:coordinate_checked_at AS timestamptz),
             updated_at = now()
         WHERE id = CAST(:candidate_id AS uuid)
         RETURNING {CANDIDATE_COLUMNS}
@@ -140,6 +143,7 @@ async def update_candidate_review(
                 "review_note": review_note,
                 "review_hold_reason": review_hold_reason,
                 "source_checked_at": source_checked_at,
+                "coordinate_checked_at": coordinate_checked_at,
             },
         )
     ).mappings().one()
