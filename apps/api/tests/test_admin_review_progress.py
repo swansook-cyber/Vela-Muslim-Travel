@@ -16,6 +16,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "proposed_trust_status": "UNVERIFIED",
             "certification_expires_at": None,
             "review_hold_reason": "Confirm phone",
+            "source_checked_at": "2026-09-25T11:23:00+07:00",
         },
         {
             "province": "นครศรีธรรมราช",
@@ -27,6 +28,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "proposed_trust_status": "UNVERIFIED",
             "certification_expires_at": None,
             "review_hold_reason": None,
+            "source_checked_at": "2026-09-25T11:23:00+07:00",
         },
         {
             "province": "นครราชสีมา",
@@ -38,6 +40,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "proposed_trust_status": "UNVERIFIED",
             "certification_expires_at": None,
             "review_hold_reason": None,
+            "source_checked_at": "2026-09-25T11:23:00+07:00",
         },
     ]
 
