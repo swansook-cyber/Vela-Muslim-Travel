@@ -39,7 +39,7 @@ class Candidate:
     certification_expires_at: datetime | None
     review_state: str
     review_note: str | None
-    review_hold_reason: str | None
+    review_hold_reason: str | None = None
 
 
 ALLOWED_REVIEW_STATES = {
