@@ -446,6 +446,23 @@ Primary discovery evidence:
   the address alone.
 
 
+
+### Coordinate verification update — 2026-09-25 (สระบุรี)
+
+- **มัสยิดยะบัลเราะห์มะฮ์** — GEOCODED at
+  `14.6172625, 101.171890625` from the current Google/Cybo Plus Code
+  `J58C+WQ2`, recovered and decoded with Google's official Open Location Code
+  algorithm. CICOT and Saraburi provincial planning material support the same
+  Mittraphap, Muak Lek identity.
+- **มัสยิดมะบาดุลบารี** — GEOCODED at `14.52542, 100.91261` from the
+  Mapcarta/OpenStreetMap feature for the mosque in Pak Phriao. CICOT and the
+  provincial social report independently confirm the same mosque/address area.
+- **ครัวมุสลิม สระบุรี** — GEOCODED at
+  `14.6436375, 101.193546875` from the current Google Plus Code
+  `J5VV+FC3`, recovered and decoded with the official algorithm. The Google
+  phone matches Wongnai. Trust remains `UNVERIFIED`.
+
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
