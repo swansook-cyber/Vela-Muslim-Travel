@@ -41,12 +41,19 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
 
         blockers = candidate_approval_blockers(row)
         province = row["province"]
-        has_coordinate_gap = row.get("latitude") is None or row.get("longitude") is None
+        has_coordinate_gap = (
+            row.get("latitude") is None
+            or row.get("longitude") is None
+            or row.get("coordinate_checked_at") is None
+        )
         has_manual_hold = bool(row.get("review_hold_reason"))
         non_coordinate_or_hold_blockers = [
             blocker
             for blocker in blockers
-            if blocker != "reviewed coordinates are required"
+            if blocker not in {
+                "reviewed coordinates are required",
+                "coordinate verification date is required",
+            }
             and not blocker.startswith("manual review hold:")
         ]
 
