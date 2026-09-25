@@ -8,6 +8,7 @@ import type {
   CandidateReadinessResponse,
   CandidateResult,
   CandidateReviewState,
+  CandidateReviewTask,
   Coordinate,
   DetourResponse,
   GeocodeResult,
@@ -129,7 +130,7 @@ export async function fetchCandidates(
     throw new Error(await response.text());
   }
 
-  return response.json() as Promise<CandidateResult[]>;
+  return response.json() as Promise<CandidateReviewTask[]>;
 }
 
 export interface CandidateReviewInput {
@@ -376,7 +377,7 @@ export async function fetchCandidateReviewQueue(
   reviewState: CandidateReviewState = "DISCOVERED",
   province?: string,
   placeType?: PlaceType,
-): Promise<CandidateResult[]> {
+): Promise<CandidateReviewTask[]> {
   const url = new URL(`${API_BASE_URL}/admin/candidates/review-queue`);
   url.searchParams.set("review_state", reviewState);
   if (province) {
