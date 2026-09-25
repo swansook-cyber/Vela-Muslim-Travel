@@ -380,7 +380,7 @@ textarea {
   display: grid;
   grid-template-columns:
     minmax(240px, 1fr)
-    repeat(3, minmax(150px, 180px))
+    repeat(4, minmax(140px, 180px))
     auto;
   gap: 12px;
   align-items: end;
@@ -770,7 +770,8 @@ button.danger {
   margin-top: 0.85rem;
 }
 
-.pilot-readiness-grid > div {
+.pilot-readiness-grid > div,
+.pilot-readiness-grid > .progress-province {
   display: grid;
   gap: 0.2rem;
   padding: 0.8rem;
@@ -781,6 +782,23 @@ button.danger {
 
 .pilot-readiness-grid small {
   color: #6a756d;
+}
+
+.progress-province {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.progress-province:hover:not(:disabled) {
+  border-color: #9fbdab;
+  box-shadow: 0 2px 8px rgb(23 98 53 / 10%);
+}
+
+.progress-province:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .candidate-readiness {
