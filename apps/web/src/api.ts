@@ -369,3 +369,28 @@ export async function fetchCandidateReadiness(
 
   return response.json() as Promise<CandidateReadinessResponse>;
 }
+
+
+export async function fetchCandidateReviewQueue(
+  adminKey: string,
+  province?: string,
+  placeType?: PlaceType,
+): Promise<CandidateResult[]> {
+  const url = new URL(`${API_BASE_URL}/admin/candidates/review-queue`);
+  if (province) {
+    url.searchParams.set("province", province);
+  }
+  if (placeType) {
+    url.searchParams.set("place_type", placeType);
+  }
+
+  const response = await fetch(url, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<CandidateResult[]>;
+}

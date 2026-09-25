@@ -5,6 +5,7 @@ import {
   fetchAdminAudit,
   fetchAdminDashboard,
   fetchCandidateReadiness,
+  fetchCandidateReviewQueue,
   fetchCandidates,
   fetchPilotReadiness,
   promoteCandidate,
@@ -126,14 +127,23 @@ export default function AdminApp() {
     sessionStorage.setItem("vela-admin-key", adminKey);
 
     try {
+      const candidateRequest =
+        filter === "DISCOVERED"
+          ? fetchCandidateReviewQueue(
+              adminKey,
+              provinceFilter || undefined,
+              typeFilter || undefined,
+            )
+          : fetchCandidates(
+              adminKey,
+              filter || undefined,
+              provinceFilter || undefined,
+              typeFilter || undefined,
+            );
+
       const [items, stats, recentAudit, readiness, candidateCoverage] =
         await Promise.all([
-        fetchCandidates(
-          adminKey,
-          filter || undefined,
-          provinceFilter || undefined,
-          typeFilter || undefined,
-        ),
+        candidateRequest,
         fetchAdminDashboard(adminKey),
         fetchAdminAudit(adminKey, 12),
         fetchPilotReadiness(adminKey),
@@ -458,13 +468,34 @@ export default function AdminApp() {
 
               <p>{candidate.address || "ไม่มีที่อยู่ใน staging"}</p>
 
-              {evidenceUrl && (
-                <p>
+              <div className="candidate-review-links">
+                {evidenceUrl && (
                   <a href={evidenceUrl} target="_blank" rel="noreferrer">
                     เปิดหลักฐานต้นทาง
                   </a>
-                </p>
-              )}
+                )}
+                {candidate.maps_search_url && (
+                  <a
+                    href={candidate.maps_search_url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    ค้นหาสถานที่บน Google Maps
+                  </a>
+                )}
+              </div>
+
+              {candidate.approval_blockers &&
+                candidate.approval_blockers.length > 0 && (
+                  <div className="approval-blockers">
+                    <strong>ยังอนุมัติไม่ได้</strong>
+                    <ul>
+                      {candidate.approval_blockers.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
               <div className="coordinate-grid">
                 <label>
