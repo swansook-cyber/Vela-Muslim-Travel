@@ -77,6 +77,7 @@ interface Draft {
   note: string;
   holdReason: string;
   sourceCheckedAt: string;
+  coordinateCheckedAt: string;
   slug: string;
 }
 
@@ -185,6 +186,7 @@ export default function AdminApp() {
           note: item.review_note || "",
           holdReason: item.review_hold_reason || "",
           sourceCheckedAt: item.source_checked_at || "",
+          coordinateCheckedAt: item.coordinate_checked_at || "",
           slug: suggestedSlug(item),
         };
       }
@@ -308,6 +310,7 @@ export default function AdminApp() {
       latitude: item.latitude.toFixed(6),
       longitude: item.longitude.toFixed(6),
       note: [currentNote, geocodeNote].filter(Boolean).join("\n"),
+      coordinateCheckedAt: "",
     });
     setGeocodeSuggestions((current) => ({
       ...current,
@@ -338,6 +341,7 @@ export default function AdminApp() {
         review_note: draft?.note || undefined,
         review_hold_reason: draft?.holdReason ?? "",
         source_checked_at: draft?.sourceCheckedAt || undefined,
+        coordinate_checked_at: draft?.coordinateCheckedAt || undefined,
       });
       setMessage(`อัปเดต ${candidate.name} เป็น ${state} แล้ว`);
       await load();
@@ -661,6 +665,7 @@ export default function AdminApp() {
             note: "",
             holdReason: "",
             sourceCheckedAt: candidate.source_checked_at || "",
+            coordinateCheckedAt: candidate.coordinate_checked_at || "",
             slug: suggestedSlug(candidate),
           };
           const evidenceUrl = safeHttpUrl(candidate.source_reference);
@@ -752,7 +757,10 @@ export default function AdminApp() {
                   <input
                     value={draft.latitude}
                     onChange={(event) =>
-                      updateDraft(candidate.id, { latitude: event.target.value })
+                      updateDraft(candidate.id, {
+                        latitude: event.target.value,
+                        coordinateCheckedAt: "",
+                      })
                     }
                   />
                 </label>
@@ -761,7 +769,10 @@ export default function AdminApp() {
                   <input
                     value={draft.longitude}
                     onChange={(event) =>
-                      updateDraft(candidate.id, { longitude: event.target.value })
+                      updateDraft(candidate.id, {
+                        longitude: event.target.value,
+                        coordinateCheckedAt: "",
+                      })
                     }
                   />
                 </label>
@@ -806,6 +817,33 @@ export default function AdminApp() {
                     เปิดพิกัดนี้บน Google Maps เพื่อตรวจสอบ
                   </a>
                 </p>
+              )}
+
+              {draft.latitude && draft.longitude && (
+                <div className="source-check-control">
+                  <div>
+                    <strong>Coordinate verification</strong>
+                    <small>
+                      {draft.coordinateCheckedAt
+                        ? `ตรวจพิกัดล่าสุด ${new Date(
+                            draft.coordinateCheckedAt,
+                          ).toLocaleString("th-TH")}`
+                        : "ยังไม่ได้ยืนยันพิกัดนี้"}
+                    </small>
+                  </div>
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() =>
+                      updateDraft(candidate.id, {
+                        coordinateCheckedAt: new Date().toISOString(),
+                      })
+                    }
+                    disabled={loading}
+                  >
+                    ยืนยันพิกัดนี้แล้ว
+                  </button>
+                </div>
               )}
 
               <label>
