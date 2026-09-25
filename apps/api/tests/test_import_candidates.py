@@ -24,6 +24,7 @@ def candidate_row() -> dict[str, str]:
         "certification_expires_at": "",
         "review_state": "DISCOVERED",
         "review_note": "",
+        "review_hold_reason": "",
     }
 
 
@@ -125,3 +126,22 @@ def test_unknown_source_may_omit_reference() -> None:
 
     candidate = parse_candidate(row, 2)
     assert candidate.source_reference is None
+
+
+def test_candidate_parses_manual_review_hold() -> None:
+    row = candidate_row()
+    row["review_hold_reason"] = "Confirm current operating status"
+
+    candidate = parse_candidate(row, 2)
+
+    assert candidate.review_hold_reason == "Confirm current operating status"
+
+
+def test_pilot_queue_contains_explicit_review_holds() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    held = [candidate for candidate in candidates if candidate.review_hold_reason]
+
+    assert len(held) >= 7
+    assert any("Temporarily Closed" in candidate.review_hold_reason for candidate in held)
