@@ -28,6 +28,8 @@ def candidate_row(state: str) -> dict:
         "certification_expires_at": None,
         "review_state": state,
         "review_note": None,
+        "review_hold_reason": None,
+        "source_checked_at": now,
         "created_at": now,
         "updated_at": now,
     }
