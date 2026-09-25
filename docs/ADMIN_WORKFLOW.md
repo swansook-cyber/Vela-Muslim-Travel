@@ -85,9 +85,17 @@ The admin dashboard also exposes a manual-review progress summary. It counts onl
 records that are ready for approval from records still blocked by coordinate or
 evidence requirements.
 
-Reviewers can filter the active queue to show only ready or blocked records, and
-can select a province directly from the progress summary to load that province's
-queue. This changes only the review view; it never changes candidate state.
+Reviewers can filter the active queue by readiness and blocker type:
+
+- ready to approve,
+- any blocked candidate,
+- coordinate pending,
+- manual review hold,
+- other evidence blockers.
+
+A province can also be selected directly from the progress summary to load that
+province's queue. These controls change only the review view; they never change
+candidate state.
 
 ### Manual review hold
 
