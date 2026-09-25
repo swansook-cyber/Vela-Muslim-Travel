@@ -37,6 +37,8 @@ def candidate_approval_blockers(
 
     if lat is None or lng is None:
         blockers.append("reviewed coordinates are required")
+    elif candidate.get("coordinate_checked_at") is None:
+        blockers.append("coordinate verification date is required")
 
     source_checked_at = candidate.get("source_checked_at")
     if source_checked_at is None:
