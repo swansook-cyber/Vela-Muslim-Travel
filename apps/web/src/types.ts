@@ -98,11 +98,14 @@ export interface CandidateResult {
   certification_expires_at?: string | null;
   review_state: CandidateReviewState;
   review_note?: string | null;
-  maps_search_url?: string;
-  approval_blockers?: string[];
-  ready_to_approve?: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface CandidateReviewTask extends CandidateResult {
+  maps_search_url: string;
+  approval_blockers: string[];
+  ready_to_approve: boolean;
 }
 
 
