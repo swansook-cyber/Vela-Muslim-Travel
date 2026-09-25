@@ -141,6 +141,7 @@ export interface CandidateReviewInput {
   review_note?: string;
   review_hold_reason?: string;
   source_checked_at?: string;
+  coordinate_checked_at?: string;
 }
 
 export async function updateCandidate(
