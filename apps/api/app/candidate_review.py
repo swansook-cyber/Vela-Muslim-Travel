@@ -31,6 +31,10 @@ def candidate_approval_blockers(
     lng = candidate.get("longitude") if longitude is None else longitude
 
     blockers: list[str] = []
+    review_hold_reason = candidate.get("review_hold_reason")
+    if review_hold_reason:
+        blockers.append(f"manual review hold: {review_hold_reason}")
+
     if lat is None or lng is None:
         blockers.append("reviewed coordinates are required")
 
