@@ -160,9 +160,13 @@ export default function AdminApp() {
   }, [candidates, filter, readinessFilter]);
 
   const filteredCount = displayedCandidates.length;
+  const safeReviewIndex = Math.min(
+    reviewIndex,
+    Math.max(displayedCandidates.length - 1, 0),
+  );
   const visibleCandidates =
     singleReviewMode && displayedCandidates.length > 0
-      ? [displayedCandidates[reviewIndex]]
+      ? [displayedCandidates[safeReviewIndex]]
       : displayedCandidates;
 
   useEffect(() => {
@@ -595,7 +599,7 @@ export default function AdminApp() {
           {filteredCount} candidates ในรายการปัจจุบัน
           {singleReviewMode && filteredCount > 0 && (
             <span>
-              {" "}· กำลังตรวจ {reviewIndex + 1}/{filteredCount}
+              {" "}· กำลังตรวจ {safeReviewIndex + 1}/{filteredCount}
             </span>
           )}
         </div>
@@ -616,16 +620,16 @@ export default function AdminApp() {
               <button
                 type="button"
                 className="secondary"
-                disabled={reviewIndex <= 0}
-                onClick={() => setReviewIndex((current) => current - 1)}
+                disabled={safeReviewIndex <= 0}
+                onClick={() => setReviewIndex(safeReviewIndex - 1)}
               >
                 ก่อนหน้า
               </button>
               <button
                 type="button"
                 className="secondary"
-                disabled={reviewIndex >= filteredCount - 1}
-                onClick={() => setReviewIndex((current) => current + 1)}
+                disabled={safeReviewIndex >= filteredCount - 1}
+                onClick={() => setReviewIndex(safeReviewIndex + 1)}
               >
                 ถัดไป
               </button>
