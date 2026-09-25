@@ -741,7 +741,7 @@ export default function AdminApp() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    ค้นหาสถานที่บน Google Maps
+                    เปิดสถานที่บน Google Maps
                   </a>
                 )}
               </div>
