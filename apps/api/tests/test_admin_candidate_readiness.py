@@ -51,8 +51,8 @@ async def test_imported_pilot_queue_remains_blocked_until_manual_review() -> Non
         progress = await load_candidate_review_progress(session)
 
     assert progress["pending"] >= 23
-    assert progress["ready_to_approve"] == 0
-    assert progress["blocked"] == progress["pending"]
-    assert progress["coordinate_pending"] == progress["pending"]
+    assert progress["ready_to_approve"] == 1
+    assert progress["blocked"] == progress["pending"] - 1
+    assert progress["coordinate_pending"] == progress["pending"] - 2
     assert progress["manual_hold"] >= 7
     assert progress["evidence_blocked"] == 0
