@@ -32,7 +32,9 @@ Primary evidence:
 - The public listing categorizes the venue as a halal restaurant, but this does
   not establish official halal certification.
 - Keep `UNVERIFIED` until stronger evidence is reviewed.
-- Exact coordinates still require explicit map review.
+- Coordinate verification completed from the current Google Directions
+  destination for the listing: **8.17611110, 99.63243720**.
+- Staging state is now `GEOCODED`; trust remains `UNVERIFIED`.
 
 Primary discovery reference:
 - https://www.google.com/maps/search/?api=1&query_place_id=ChIJb3CdTvpHUjAR3tOKF9C10SI
@@ -48,7 +50,10 @@ Primary discovery reference:
   - MasjidThai currently shows **095-671-7510**, which matches the staging CSV.
 - Do not overwrite the candidate phone from automated research. Resolve the
   phone discrepancy during manual review or leave the phone unverified.
-- Exact coordinates still require explicit map review.
+- Coordinate verification completed from MasjidThai's embedded Google Map:
+  **8.2407216433, 99.4464044519**.
+- Staging state is now `GEOCODED`, but the phone discrepancy remains an
+  explicit manual hold and still blocks approval.
 
 Primary evidence:
 - https://www.cicot.or.th/th/mosque/lists/178/6
