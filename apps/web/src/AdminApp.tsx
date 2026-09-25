@@ -437,6 +437,11 @@ export default function AdminApp() {
                 เหลือ {reviewProgress.pending} รายการในขั้นตรวจพิกัด/หลักฐาน
                 ก่อนอนุมัติ
               </p>
+              <small>
+                พิกัดค้าง {reviewProgress.coordinate_pending} · Manual hold{" "}
+                {reviewProgress.manual_hold} · หลักฐาน{" "}
+                {reviewProgress.evidence_blocked}
+              </small>
             </div>
             <strong
               className={
@@ -460,6 +465,10 @@ export default function AdminApp() {
                 <small>
                   พร้อมอนุมัติ {item.ready_to_approve} · ติด blocker{" "}
                   {item.blocked}
+                </small>
+                <small>
+                  พิกัด {item.coordinate_pending} · Hold {item.manual_hold} ·
+                  หลักฐาน {item.evidence_blocked}
                 </small>
               </button>
             ))}
