@@ -7,6 +7,8 @@
 - a long random PostgreSQL password
 - a separate long random Admin API key
 - HTTPS termination in front of the web container
+- optional Google Places API key if Admin should resolve stored Google Place IDs
+  into coordinate suggestions
 
 ## Start
 
@@ -54,3 +56,11 @@ target database, and downtime window.
 6. verify the web UI and admin dashboard.
 
 The API container applies ordered SQL migrations before serving traffic.
+
+## Optional Google Places resolver
+
+Set `GOOGLE_PLACES_API_KEY` in the private deploy environment only when the
+Admin Place ID resolver is needed. Keep it blank to disable that feature.
+The key is passed only to the API container and is never compiled into the web
+client. Coordinate lookup is a reviewer aid only; it does not automatically
+verify, approve, or promote a candidate.
