@@ -21,6 +21,17 @@ async def test_real_world_pilot_candidates_are_staged_not_promoted() -> None:
                     """
                     SELECT count(*)
                     FROM place_candidates
+                    """
+                )
+            )
+        ).scalar_one()
+
+        google_discovery_count = (
+            await session.execute(
+                text(
+                    """
+                    SELECT count(*)
+                    FROM place_candidates
                     WHERE external_provider IN ('google_business', 'google_places')
                     """
                 )
@@ -40,6 +51,7 @@ async def test_real_world_pilot_candidates_are_staged_not_promoted() -> None:
         ).scalar_one()
 
     assert candidate_count >= 21
+    assert google_discovery_count >= 12
     assert promoted_count == 0
 
 
