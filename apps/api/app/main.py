@@ -477,11 +477,32 @@ async def admin_update_candidate(
         if update.source_checked_at is not None
         else existing["source_checked_at"]
     )
+    coordinates_changed = (
+        latitude != existing["latitude"] or longitude != existing["longitude"]
+    )
+    coordinate_checked_at = (
+        update.coordinate_checked_at
+        if update.coordinate_checked_at is not None
+        else (
+            None
+            if coordinates_changed
+            else existing["coordinate_checked_at"]
+        )
+    )
 
     if (latitude is None) != (longitude is None):
         raise HTTPException(
             status_code=422,
             detail="Latitude and longitude must be set together",
+        )
+
+    if review_state in {
+        CandidateReviewState.GEOCODED,
+        CandidateReviewState.APPROVED,
+    } and coordinate_checked_at is None:
+        raise HTTPException(
+            status_code=422,
+            detail="Coordinate verification is required before GEOCODED/APPROVED",
         )
 
     if review_state == CandidateReviewState.APPROVED:
@@ -491,6 +512,7 @@ async def admin_update_candidate(
             "longitude": longitude,
             "review_hold_reason": review_hold_reason,
             "source_checked_at": source_checked_at,
+            "coordinate_checked_at": coordinate_checked_at,
         }
         blockers = candidate_approval_blockers(
             approval_candidate,
@@ -512,6 +534,7 @@ async def admin_update_candidate(
         review_note=review_note,
         review_hold_reason=review_hold_reason,
         source_checked_at=source_checked_at,
+        coordinate_checked_at=coordinate_checked_at,
     )
     await log_admin_action(
         session,
@@ -525,6 +548,11 @@ async def admin_update_candidate(
             "review_hold_reason": review_hold_reason,
             "source_checked_at": (
                 source_checked_at.isoformat() if source_checked_at else None
+            ),
+            "coordinate_checked_at": (
+                coordinate_checked_at.isoformat()
+                if coordinate_checked_at
+                else None
             ),
         },
     )
