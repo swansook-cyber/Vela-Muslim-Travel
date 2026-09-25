@@ -388,6 +388,23 @@ Primary discovery evidence:
   Code `49XV+C37`, with name/phone/address cross-checked against Wongnai and
   Makan Halal Guide. Trust remains `UNVERIFIED`.
 
+
+### Coordinate verification update — 2026-09-25 (ชุมพร)
+
+- **มัสยิดนูรุ้ลเอี๊ยะซาน** — GEOCODED at `10.806188, 99.353063`
+  from the current Google business Plus Code `R943+F69`. CICOT confirms the
+  Moo 7, Chum Kho, Pathio identity, but the Google and CICOT phone numbers still
+  conflict, so the existing manual hold remains.
+- **มัสยิดมูฮาญิรีน** — GEOCODED at `10.737813, 99.161313` from the
+  current Google business / Trip.com Plus Code `P5Q6+4G8`. MasjidThai
+  registers the mosque at 1 Moo 1, Hong Charoen, Tha Sae; the address-identity
+  discrepancy remains an explicit manual hold.
+- **กะมา ครัวมุสลิม ฮาลาล** remains `DISCOVERED`. The current Google
+  business listing still matches the staging name, 48 Moo 2 Phet Kasem Road,
+  Sap Anan, Tha Sae and phone 096-698-7642, but no exact public coordinate or
+  Plus Code was found in this pass. Nearby-distance descriptions are not
+  sufficient evidence for coordinate promotion.
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
