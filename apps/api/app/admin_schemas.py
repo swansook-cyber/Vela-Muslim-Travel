@@ -177,3 +177,9 @@ class CandidateProvinceReadiness(BaseModel):
 class CandidateReadinessResponse(BaseModel):
     ready: bool
     provinces: list[CandidateProvinceReadiness]
+
+
+class CandidateReviewTask(CandidateResult):
+    maps_search_url: str
+    approval_blockers: list[str]
+    ready_to_approve: bool
