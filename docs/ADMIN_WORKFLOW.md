@@ -112,6 +112,26 @@ Any non-empty hold reason is returned as an approval blocker and prevents
 field in Admin. Candidate re-imports preserve an existing hold rather than
 silently clearing it.
 
+### Source cross-check freshness
+
+`source_checked_at` records when the reviewer last confirmed the candidate's
+public/official source identity. Approval requires this timestamp in addition to
+coordinates and evidence. The 23 current pilot-corridor candidates were
+cross-checked on 2026-09-25 and are stamped in the seed data.
+
+For a new or refreshed candidate, use **ยืนยันว่าตรวจ source ตอนนี้** in Admin
+after comparing the listed source, identity, address/phone and any certification
+scope. The timestamp is saved with the next candidate update; it is not inferred
+from `updated_at` or from review-note text.
+
+### Single-candidate review mode
+
+Admin supports **ตรวจทีละรายการ** for mobile review. The mode displays one
+candidate at a time with Previous/Next navigation while preserving the current
+province, type and blocker filters. Saving a DISCOVERED candidate as GEOCODED
+reloads the queue, so the reviewer can continue through the remaining filtered
+work without scrolling a long card list.
+
 
 The guarded review queue supports both `DISCOVERED` and `GEOCODED` candidates. This keeps source evidence, Google Maps review links, and approval blockers visible after coordinates are saved and before approval.
 
