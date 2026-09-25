@@ -100,6 +100,7 @@ export interface CandidateResult {
   review_note?: string | null;
   review_hold_reason?: string | null;
   source_checked_at?: string | null;
+  coordinate_checked_at?: string | null;
   created_at: string;
   updated_at: string;
 }
