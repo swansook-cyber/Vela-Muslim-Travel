@@ -5,6 +5,7 @@ import {
   fetchAdminAudit,
   fetchAdminDashboard,
   fetchCandidateReadiness,
+  fetchCandidateReviewProgress,
   fetchCandidateReviewQueue,
   fetchCandidates,
   fetchPilotReadiness,
@@ -17,6 +18,7 @@ import type {
   AdminDashboard,
   CandidateReadinessResponse,
   CandidateResult,
+  CandidateReviewProgressResponse,
   CandidateReviewState,
   CandidateReviewTask,
   GeocodeResult,
@@ -101,6 +103,8 @@ export default function AdminApp() {
     useState<PilotReadinessResponse | null>(null);
   const [candidateReadiness, setCandidateReadiness] =
     useState<CandidateReadinessResponse | null>(null);
+  const [reviewProgress, setReviewProgress] =
+    useState<CandidateReviewProgressResponse | null>(null);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
@@ -153,19 +157,27 @@ export default function AdminApp() {
               typeFilter || undefined,
             );
 
-      const [items, stats, recentAudit, readiness, candidateCoverage] =
-        await Promise.all([
+      const [
+        items,
+        stats,
+        recentAudit,
+        readiness,
+        candidateCoverage,
+        progress,
+      ] = await Promise.all([
         candidateRequest,
         fetchAdminDashboard(adminKey),
         fetchAdminAudit(adminKey, 12),
         fetchPilotReadiness(adminKey),
         fetchCandidateReadiness(adminKey),
+        fetchCandidateReviewProgress(adminKey),
       ]);
       setCandidates(items);
       setDashboard(stats);
       setAudit(recentAudit);
       setPilotReadiness(readiness);
       setCandidateReadiness(candidateCoverage);
+      setReviewProgress(progress);
       initializeDrafts(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "โหลด candidate ไม่สำเร็จ");
@@ -372,6 +384,39 @@ export default function AdminApp() {
           <div><strong>{dashboard.production_places}</strong><span>Production places</span></div>
           <div><strong>{dashboard.certifications_expiring_30d}</strong><span>หลักฐานใกล้หมดอายุ 30 วัน</span></div>
           <div><strong>{dashboard.expired_verifications}</strong><span>หลักฐานหมดอายุ</span></div>
+        </section>
+      )}
+
+      {reviewProgress && (
+        <section className="pilot-readiness review-progress">
+          <div className="pilot-readiness-head">
+            <div>
+              <h2>Manual Review Progress</h2>
+              <p>
+                เหลือ {reviewProgress.pending} รายการในขั้นตรวจพิกัด/หลักฐาน
+                ก่อนอนุมัติ
+              </p>
+            </div>
+            <strong
+              className={
+                reviewProgress.blocked === 0 ? "ready" : "not-ready"
+              }
+            >
+              {reviewProgress.ready_to_approve} READY · {reviewProgress.blocked} BLOCKED
+            </strong>
+          </div>
+          <div className="pilot-readiness-grid">
+            {reviewProgress.provinces.map((item) => (
+              <div key={item.province}>
+                <strong>{item.province}</strong>
+                <span>{item.pending} ค้าง</span>
+                <small>
+                  พร้อมอนุมัติ {item.ready_to_approve} · ติด blocker{" "}
+                  {item.blocked}
+                </small>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 
