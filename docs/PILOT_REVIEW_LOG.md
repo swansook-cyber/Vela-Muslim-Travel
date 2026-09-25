@@ -110,6 +110,107 @@ Primary discovery evidence:
 Secondary cross-check:
 - https://www.wongnai.com/restaurants/657355hU-%E0%B8%AA%E0%B8%B8%E0%B8%A3%E0%B8%B2%E0%B8%A9%E0%B8%8E%E0%B8%A3%E0%B9%8C%E0%B8%AE%E0%B8%B2%E0%B8%A5%E0%B8%B2%E0%B8%A5%E0%B8%9F%E0%B8%B9%E0%B9%8A%E0%B8%94
 
+
+## 2026-09-25 — ชุมพร
+
+### มัสยิดนูรุ้ลเอี๊ยะซาน
+
+- CICOT currently confirms **มัสยิดนูรุ้ลเอี๊ยะซาน** at
+  **88 หมู่ 7 ตำบลชุมโค อำเภอปะทิว จังหวัดชุมพร 86160** with phone
+  **086-282-3212**.
+- The existing Google business ID `ChIJQ5PVCG9I_zARGdUJDBT9v_g` still resolves
+  to a mosque in ตำบลชุมโค, ปะทิว.
+- The Google listing currently shows phone **081-264-1355**, which conflicts
+  with the CICOT directory.
+- Keep the CICOT address as the authoritative administrative reference and do
+  not auto-overwrite the phone. Resolve the phone discrepancy during manual
+  review.
+- Exact coordinates still require explicit visual review.
+
+Primary evidence:
+- https://www.cicot.or.th/th/mosque/lists/207
+
+### มัสยิดมูฮาญิรีน
+
+- The existing Google business ID `ChIJJeREHGyz-DARhCUH0WYc12Y` still resolves
+  to **มัสยิดมูฮาญิรีน** in the Tha Sae area.
+- MasjidThai currently identifies the registered mosque as **เลขที่ 1 หมู่ 1
+  ตำบลหงษ์เจริญ อำเภอท่าแซะ จังหวัดชุมพร 86140**, phone **087-894-9117**.
+- This does not match the staging address text `P5Q6+4G8 ตำบลท่าแซะ` exactly.
+  Treat the staging map address as a discovery locator, not a verified
+  administrative address.
+- Use the registered mosque record to confirm identity before selecting a map
+  coordinate.
+
+Primary evidence:
+- https://masjidthai.com/masjid/view.php?id=rVGXJWqb3BtgUm0gYil1274M06iMc8DuZtJi9qdZ400
+
+### กะมา ครัวมุสลิม ฮาลาล
+
+- Existing Google business ID `ChIJBzAp2VpN_zARrGXZ_BL7X98` still resolves to
+  **กะมา ครัวมุสลิม ฮาลาล** at **48 หมู่ 2 ถนนเพชรเกษม ตำบลทรัพย์อนันต์
+  อำเภอท่าแซะ จังหวัดชุมพร 86140**.
+- Current listing phone **096-698-7642** matches staging.
+- The listing categorizes the venue as a halal restaurant and shows current
+  opening hours, but this is not official halal-certification evidence.
+- Keep `UNVERIFIED` until stronger evidence is established.
+- Exact coordinates still require explicit visual review.
+
+## 2026-09-25 — ประจวบคีรีขันธ์
+
+### มัสยิดนุรุ้ลอีมาน
+
+- CICOT currently confirms **มัสยิดนุรุ้ลอีมาน** at **หมู่ 2
+  ตำบลพงศ์ประศาสน์ อำเภอบางสะพาน จังหวัดประจวบคีรีขันธ์ 77140**.
+- The current Google business result resolves to a mosque in the same
+  ตำบลพงศ์ประศาสน์ / บางสะพาน area.
+- A September 2026 local event source identifies the same mosque as
+  **เลขที่ 2 หมู่ 9 ตำบลพงศ์ประศาสน์**, creating a Moo-number discrepancy with
+  CICOT.
+- Do not normalize the Moo number automatically. Confirm the exact parcel/map
+  identity during coordinate review.
+
+Primary evidence:
+- https://www.cicot.or.th/th/mosque/lists/2/4
+
+Recent supporting cross-check:
+- https://thaifaithday.com/events/ruam-namjai-nurul-iman-bangsaphan-2569-tfd-0361/
+
+### มัสยิดดารุ้ลอิบาดะห์
+
+- CICOT currently confirms the mosque at **หมู่ 4 ตำบลไร่เก่า
+  อำเภอสามร้อยยอด จังหวัดประจวบคีรีขันธ์ 77180** with phone
+  **086-712-5973**.
+- MasjidThai independently confirms the same registered mosque, same Moo,
+  subdistrict and district.
+- The current Google business result resolves to the same Rai Kao /
+  Sam Roi Yot area.
+- Rai Kao Subdistrict Administrative Organization also lists
+  **มัสยิดดารู้ลอิบาดะห์** on its local map.
+- Identity confidence is strong; exact coordinates still require explicit map
+  review before `GEOCODED`.
+
+Primary evidence:
+- https://www.cicot.or.th/th/mosque/lists/2/4
+- https://masjidthai.com/masjid/mosqhistory.php?id=UEtOMDAwNA%3D%3D
+- https://raikao.go.th/public/
+
+### เน้นเนื้อ@ประจวบฮาลาล
+
+- Makan Halal Guide and Wongnai currently agree on the venue at **143/2
+  ตำบลคลองวาฬ อำเภอเมืองประจวบคีรีขันธ์ 77000**, phone **084-455-6783**.
+- Wongnai describes it as a halal restaurant, and Makan Halal Guide lists
+  Muslim-travel amenities including a prayer room.
+- The current Google business listing is marked **Temporarily Closed**.
+- Do not approve or promote this candidate while closure status is unresolved.
+  Recheck that the restaurant is operating before any state advancement.
+- These public listings still do not establish official halal certification;
+  retain `UNVERIFIED`.
+
+Primary evidence:
+- https://makanhalalguide.com/shop/detail/3761
+- https://www.wongnai.com/restaurants/2642013wt-%E0%B9%80%E0%B8%99%E0%B9%89%E0%B8%99%E0%B9%80%E0%B8%99%E0%B8%B7%E0%B9%89%E0%B8%AD-%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%A7%E0%B8%9A%E0%B8%AE%E0%B8%B2%E0%B8%A5%E0%B8%B2%E0%B8%A5-%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%A7%E0%B8%9A%E0%B8%AE%E0%B8%B2%E0%B8%A5%E0%B8%B2%E0%B8%A5
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
