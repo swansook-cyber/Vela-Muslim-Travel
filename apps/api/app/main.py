@@ -49,6 +49,7 @@ from .schemas import (
     GeoJsonLineString,
     NearbyRequest,
     PlaceResult,
+    PlaceType,
     RouteSummary,
 )
 from .security import require_admin
@@ -356,14 +357,14 @@ async def admin_candidates(
     _admin: AdminGuard,
     review_state: CandidateReviewState | None = None,
     province: str | None = None,
-    place_type: str | None = None,
+    place_type: PlaceType | None = None,
     limit: int = 100,
 ) -> list[CandidateResult]:
     rows = await list_candidates(
         session,
         review_state=review_state,
         province=province,
-        place_type=place_type,
+        place_type=place_type.value if place_type else None,
         limit=min(limit, 500),
     )
     return [CandidateResult(**row) for row in rows]
