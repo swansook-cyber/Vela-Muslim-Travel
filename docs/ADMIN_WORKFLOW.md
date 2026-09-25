@@ -124,6 +124,17 @@ after comparing the listed source, identity, address/phone and any certification
 scope. The timestamp is saved with the next candidate update; it is not inferred
 from `updated_at` or from review-note text.
 
+### Coordinate verification
+
+Coordinates are not considered reviewed merely because latitude/longitude are
+present. Admin requires an explicit `coordinate_checked_at` timestamp before a
+candidate can move to `GEOCODED` or `APPROVED`.
+
+When a reviewer edits latitude/longitude or selects a new geocoder suggestion,
+the current coordinate confirmation is cleared. Open the coordinate on Google
+Maps, visually confirm the correct venue, then press **ยืนยันพิกัดนี้แล้ว**.
+Only after that confirmation should the candidate be saved as `GEOCODED`.
+
 ### Single-candidate review mode
 
 Admin supports **ตรวจทีละรายการ** for mobile review. The mode displays one
