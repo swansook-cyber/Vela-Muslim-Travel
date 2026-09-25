@@ -5,6 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .admin_candidate_readiness import (
+    candidate_readiness_passes,
+    load_candidate_readiness,
+)
 from .admin_places import get_admin_place, list_admin_places, update_admin_place
 from .admin_queries import (
     get_admin_dashboard,
@@ -23,6 +27,8 @@ from .admin_schemas import (
     AdminVerificationCreate,
     AdminVerificationResult,
     CandidatePromoteRequest,
+    CandidateProvinceReadiness,
+    CandidateReadinessResponse,
     CandidatePromoteResponse,
     CandidateResult,
     CandidateReviewState,
@@ -180,6 +186,19 @@ async def route_detour(request: DetourRequest) -> DetourResponse:
         route_duration_s=route.duration_s,
         added_distance_m=max(0.0, route.distance_m - request.base_distance_m),
         added_duration_s=max(0.0, route.duration_s - request.base_duration_s),
+    )
+
+
+@app.get("/admin/candidate-readiness", response_model=CandidateReadinessResponse)
+async def admin_candidate_readiness(
+    session: DbSession,
+    _admin: AdminGuard,
+) -> CandidateReadinessResponse:
+    rows = await load_candidate_readiness(session)
+    provinces = [CandidateProvinceReadiness(**row) for row in rows]
+    return CandidateReadinessResponse(
+        ready=candidate_readiness_passes(rows),
+        provinces=provinces,
     )
 
 

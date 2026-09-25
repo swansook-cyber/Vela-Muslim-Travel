@@ -162,3 +162,18 @@ class PilotProvinceReadiness(BaseModel):
 class PilotReadinessResponse(BaseModel):
     ready: bool
     provinces: list[PilotProvinceReadiness]
+
+
+class CandidateProvinceReadiness(BaseModel):
+    province: str
+    restaurants: int
+    mosques: int
+    accommodation: int
+    geocoded: int
+    approved: int
+    promoted: int
+
+
+class CandidateReadinessResponse(BaseModel):
+    ready: bool
+    provinces: list[CandidateProvinceReadiness]
