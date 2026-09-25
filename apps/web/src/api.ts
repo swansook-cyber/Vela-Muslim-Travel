@@ -373,10 +373,12 @@ export async function fetchCandidateReadiness(
 
 export async function fetchCandidateReviewQueue(
   adminKey: string,
+  reviewState: CandidateReviewState = "DISCOVERED",
   province?: string,
   placeType?: PlaceType,
 ): Promise<CandidateResult[]> {
   const url = new URL(`${API_BASE_URL}/admin/candidates/review-queue`);
+  url.searchParams.set("review_state", reviewState);
   if (province) {
     url.searchParams.set("province", province);
   }
