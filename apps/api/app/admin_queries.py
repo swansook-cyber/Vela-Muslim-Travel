@@ -55,9 +55,12 @@ async def list_candidates(
         ORDER BY
             CASE province
                 WHEN 'นครศรีธรรมราช' THEN 1
-                WHEN 'ชุมพร' THEN 2
-                WHEN 'เพชรบุรี' THEN 3
-                WHEN 'นครราชสีมา' THEN 4
+                WHEN 'สุราษฎร์ธานี' THEN 2
+                WHEN 'ชุมพร' THEN 3
+                WHEN 'ประจวบคีรีขันธ์' THEN 4
+                WHEN 'เพชรบุรี' THEN 5
+                WHEN 'สระบุรี' THEN 6
+                WHEN 'นครราชสีมา' THEN 7
                 ELSE 99
             END,
             updated_at DESC

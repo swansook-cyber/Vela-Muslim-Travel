@@ -3,8 +3,11 @@
 The pilot corridor is intentionally narrow before nationwide expansion:
 
 - นครศรีธรรมราช
+- สุราษฎร์ธานี
 - ชุมพร
+- ประจวบคีรีขันธ์
 - เพชรบุรี
+- สระบุรี
 - นครราชสีมา
 
 Run:
