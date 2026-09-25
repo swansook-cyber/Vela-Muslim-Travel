@@ -39,6 +39,7 @@ class Candidate:
     certification_expires_at: datetime | None
     review_state: str
     review_note: str | None
+    review_hold_reason: str | None
 
 
 ALLOWED_REVIEW_STATES = {
@@ -149,6 +150,7 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
         certification_expires_at=certification_expires_at,
         review_state=review_state,
         review_note=empty_to_none(row.get("review_note")),
+        review_hold_reason=empty_to_none(row.get("review_hold_reason")),
     )
 
 
@@ -180,6 +182,7 @@ UPSERT_CANDIDATE_SQL = text(
         certification_expires_at,
         review_state,
         review_note,
+        review_hold_reason,
         updated_at
     )
     VALUES (
@@ -200,6 +203,7 @@ UPSERT_CANDIDATE_SQL = text(
         :certification_expires_at,
         CAST(:review_state AS candidate_review_state),
         :review_note,
+        :review_hold_reason,
         now()
     )
     ON CONFLICT (external_provider, external_id)
@@ -231,6 +235,14 @@ UPSERT_CANDIDATE_SQL = text(
                 THEN COALESCE(EXCLUDED.review_note, place_candidates.review_note)
             ELSE place_candidates.review_note
         END,
+        review_hold_reason = CASE
+            WHEN place_candidates.review_state = 'DISCOVERED'
+                THEN COALESCE(
+                    EXCLUDED.review_hold_reason,
+                    place_candidates.review_hold_reason
+                )
+            ELSE place_candidates.review_hold_reason
+        END,
         updated_at = now()
     """
 )
@@ -259,6 +271,7 @@ async def apply_candidates(candidates: list[Candidate]) -> None:
                     "certification_expires_at": candidate.certification_expires_at,
                     "review_state": candidate.review_state,
                     "review_note": candidate.review_note,
+                    "review_hold_reason": candidate.review_hold_reason,
                 },
             )
 
