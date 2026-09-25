@@ -27,6 +27,8 @@ from .admin_schemas import (
     CandidateResult,
     CandidateReviewState,
     CandidateReviewUpdate,
+    PilotProvinceReadiness,
+    PilotReadinessResponse,
 )
 from .admin_verifications import (
     add_place_verification,
@@ -50,6 +52,7 @@ from .schemas import (
     RouteSummary,
 )
 from .security import require_admin
+from .tools.pilot_readiness import load_readiness, readiness_passes
 from .verification import certification_is_current
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
@@ -167,6 +170,28 @@ async def route_detour(request: DetourRequest) -> DetourResponse:
         route_duration_s=route.duration_s,
         added_distance_m=max(0.0, route.distance_m - request.base_distance_m),
         added_duration_s=max(0.0, route.duration_s - request.base_duration_s),
+    )
+
+
+@app.get("/admin/pilot-readiness", response_model=PilotReadinessResponse)
+async def admin_pilot_readiness(
+    _admin: AdminGuard,
+) -> PilotReadinessResponse:
+    items = await load_readiness()
+    provinces = [
+        PilotProvinceReadiness(
+            province=item.province,
+            restaurants=item.restaurants,
+            mosques=item.mosques,
+            accommodation=item.accommodation,
+            total=item.total,
+            missing_types=item.missing_types,
+        )
+        for item in items
+    ]
+    return PilotReadinessResponse(
+        ready=readiness_passes(items),
+        provinces=provinces,
     )
 
 

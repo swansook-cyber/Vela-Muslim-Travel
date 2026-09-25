@@ -5,6 +5,7 @@ import {
   fetchAdminAudit,
   fetchAdminDashboard,
   fetchCandidates,
+  fetchPilotReadiness,
   promoteCandidate,
   searchDestination,
   updateCandidate,
@@ -15,6 +16,7 @@ import type {
   CandidateResult,
   CandidateReviewState,
   GeocodeResult,
+  PilotReadinessResponse,
 } from "./types";
 
 const reviewStates: Array<{ value: CandidateReviewState | ""; label: string }> = [
@@ -59,6 +61,8 @@ export default function AdminApp() {
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
+  const [pilotReadiness, setPilotReadiness] =
+    useState<PilotReadinessResponse | null>(null);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
@@ -96,14 +100,16 @@ export default function AdminApp() {
     sessionStorage.setItem("vela-admin-key", adminKey);
 
     try {
-      const [items, stats, recentAudit] = await Promise.all([
+      const [items, stats, recentAudit, readiness] = await Promise.all([
         fetchCandidates(adminKey, filter || undefined),
         fetchAdminDashboard(adminKey),
         fetchAdminAudit(adminKey, 12),
+        fetchPilotReadiness(adminKey),
       ]);
       setCandidates(items);
       setDashboard(stats);
       setAudit(recentAudit);
+      setPilotReadiness(readiness);
       initializeDrafts(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "โหลด candidate ไม่สำเร็จ");
@@ -280,6 +286,39 @@ export default function AdminApp() {
           <div><strong>{dashboard.production_places}</strong><span>Production places</span></div>
           <div><strong>{dashboard.certifications_expiring_30d}</strong><span>หลักฐานใกล้หมดอายุ 30 วัน</span></div>
           <div><strong>{dashboard.expired_verifications}</strong><span>หลักฐานหมดอายุ</span></div>
+        </section>
+      )}
+
+      {pilotReadiness && (
+        <section className="pilot-readiness">
+          <div className="pilot-readiness-head">
+            <div>
+              <h2>Pilot Readiness</h2>
+              <p>
+                {pilotReadiness.ready
+                  ? "ทุกจังหวัดเป้าหมายมี production place อย่างน้อย 1 จุด"
+                  : "ยังมีจังหวัดเป้าหมายที่ไม่มี production place"}
+              </p>
+            </div>
+            <strong className={pilotReadiness.ready ? "ready" : "not-ready"}>
+              {pilotReadiness.ready ? "READY" : "NOT READY"}
+            </strong>
+          </div>
+          <div className="pilot-readiness-grid">
+            {pilotReadiness.provinces.map((item) => (
+              <div key={item.province}>
+                <strong>{item.province}</strong>
+                <span>{item.total} จุด</span>
+                <small>
+                  ร้าน {item.restaurants} · มัสยิด {item.mosques} · ที่พัก{" "}
+                  {item.accommodation}
+                </small>
+                {item.missing_types.length > 0 && (
+                  <small>ขาด: {item.missing_types.join(", ")}</small>
+                )}
+              </div>
+            ))}
+          </div>
         </section>
       )}
 

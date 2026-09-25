@@ -148,3 +148,17 @@ class AdminVerificationResult(BaseModel):
     note: str | None = None
     verified_by: str | None = None
     created_at: datetime
+
+
+class PilotProvinceReadiness(BaseModel):
+    province: str
+    restaurants: int
+    mosques: int
+    accommodation: int
+    total: int
+    missing_types: list[str]
+
+
+class PilotReadinessResponse(BaseModel):
+    ready: bool
+    provinces: list[PilotProvinceReadiness]

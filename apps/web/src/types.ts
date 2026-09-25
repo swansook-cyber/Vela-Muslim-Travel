@@ -180,3 +180,18 @@ export interface DetourResponse {
   added_distance_m: number;
   added_duration_s: number;
 }
+
+
+export interface PilotProvinceReadiness {
+  province: string;
+  restaurants: number;
+  mosques: number;
+  accommodation: number;
+  total: number;
+  missing_types: string[];
+}
+
+export interface PilotReadinessResponse {
+  ready: boolean;
+  provinces: PilotProvinceReadiness[];
+}

@@ -10,6 +10,7 @@ import type {
   Coordinate,
   DetourResponse,
   GeocodeResult,
+  PilotReadinessResponse,
   PlaceResult,
   PlaceType,
 } from "./types";
@@ -328,4 +329,19 @@ export async function fetchDetour(
   }
 
   return response.json() as Promise<DetourResponse>;
+}
+
+
+export async function fetchPilotReadiness(
+  adminKey: string,
+): Promise<PilotReadinessResponse> {
+  const response = await fetch(`${API_BASE_URL}/admin/pilot-readiness`, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<PilotReadinessResponse>;
 }

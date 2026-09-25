@@ -718,3 +718,64 @@ button.danger {
   font-weight: 800;
   color: #173f2c;
 }
+
+.pilot-readiness {
+  margin: 1rem 0 1.25rem;
+  padding: 1rem;
+  border: 1px solid #dce3de;
+  border-radius: 16px;
+  background: #fbfcfb;
+}
+
+.pilot-readiness-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.pilot-readiness-head h2,
+.pilot-readiness-head p {
+  margin: 0;
+}
+
+.pilot-readiness-head p {
+  margin-top: 0.3rem;
+  color: #6a756d;
+}
+
+.pilot-readiness-head > strong {
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.pilot-readiness-head .ready {
+  background: #e6f5eb;
+  color: #176235;
+}
+
+.pilot-readiness-head .not-ready {
+  background: #fff1e5;
+  color: #8a4700;
+}
+
+.pilot-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.pilot-readiness-grid > div {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.8rem;
+  border: 1px solid #e2e7e3;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.pilot-readiness-grid small {
+  color: #6a756d;
+}
