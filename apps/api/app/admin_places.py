@@ -76,8 +76,14 @@ async def update_admin_place(
     ):
         raise ValueError("Production slug and name_th cannot be null")
 
-    if ("latitude" in changes or "longitude" in changes) and (
-        changes.get("latitude") is None or changes.get("longitude") is None
+    latitude_present = "latitude" in changes
+    longitude_present = "longitude" in changes
+
+    if latitude_present != longitude_present:
+        raise ValueError("Latitude and longitude must be updated together")
+
+    if latitude_present and (
+        changes["latitude"] is None or changes["longitude"] is None
     ):
         raise ValueError("Latitude and longitude must be non-null")
 
