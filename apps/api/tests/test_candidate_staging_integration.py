@@ -93,7 +93,8 @@ async def test_admin_dashboard_counts_staged_candidates() -> None:
         dashboard = await get_admin_dashboard(session)
 
     assert dashboard["candidates_total"] >= 24
-    assert dashboard["discovered"] >= 24
+    assert dashboard["discovered"] >= 22
+    assert dashboard["geocoded"] >= 2
     assert dashboard["production_places"] >= 4
 
 
@@ -116,7 +117,8 @@ async def test_candidate_reimport_preserves_review_progress() -> None:
                     latitude = 13.750000,
                     longitude = 100.500000,
                     review_state = 'GEOCODED',
-                    review_note = 'manual reviewed coordinates'
+                    review_note = 'manual reviewed coordinates',
+                    coordinate_checked_at = now()
                 WHERE external_provider = :provider
                   AND external_id = :external_id
                 """
@@ -135,7 +137,12 @@ async def test_candidate_reimport_preserves_review_progress() -> None:
             await session.execute(
                 text(
                     """
-                    SELECT latitude, longitude, review_state::text, review_note
+                    SELECT
+                        latitude,
+                        longitude,
+                        review_state::text,
+                        review_note,
+                        coordinate_checked_at
                     FROM place_candidates
                     WHERE external_provider = :provider
                       AND external_id = :external_id
@@ -152,6 +159,7 @@ async def test_candidate_reimport_preserves_review_progress() -> None:
     assert row["longitude"] == pytest.approx(100.5)
     assert row["review_state"] == "GEOCODED"
     assert row["review_note"] == "manual reviewed coordinates"
+    assert row["coordinate_checked_at"] is not None
 
 
 @pytest.mark.asyncio
