@@ -195,3 +195,18 @@ def test_geocoded_candidate_accepts_coordinate_checked_at() -> None:
     candidate = parse_candidate(row, 2)
 
     assert candidate.coordinate_checked_at is not None
+
+
+def test_pak_chong_mosque_has_address_reconciliation_hold() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    mosque = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "มัสยิดยันน่าตุ้ลฟิรเดาซ์"
+    )
+
+    assert mosque.review_hold_reason is not None
+    assert "Moo 2" in mosque.review_hold_reason
+    assert "Mu 11" in mosque.review_hold_reason
