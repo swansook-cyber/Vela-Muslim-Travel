@@ -150,6 +150,7 @@ export interface AdminDashboard {
   production_places: number;
   expired_verifications: number;
   certifications_expiring_30d: number;
+  google_places_resolver_enabled: boolean;
 }
 
 
