@@ -26,6 +26,7 @@ def candidate_row() -> dict[str, str]:
         "review_note": "",
         "review_hold_reason": "",
         "source_checked_at": "",
+        "coordinate_checked_at": "",
     }
 
 
@@ -170,3 +171,25 @@ def test_all_corridor_candidates_have_source_cross_check_time() -> None:
 
     assert len(corridor) == 23
     assert all(candidate.source_checked_at is not None for candidate in corridor)
+
+
+def test_geocoded_candidate_requires_coordinate_checked_at() -> None:
+    row = candidate_row()
+    row["review_state"] = "GEOCODED"
+    row["latitude"] = "14.529001"
+    row["longitude"] = "101.372001"
+
+    with pytest.raises(ValueError, match="requires coordinate_checked_at"):
+        parse_candidate(row, 2)
+
+
+def test_geocoded_candidate_accepts_coordinate_checked_at() -> None:
+    row = candidate_row()
+    row["review_state"] = "GEOCODED"
+    row["latitude"] = "14.529001"
+    row["longitude"] = "101.372001"
+    row["coordinate_checked_at"] = "2026-09-25T11:30:00+07:00"
+
+    candidate = parse_candidate(row, 2)
+
+    assert candidate.coordinate_checked_at is not None
