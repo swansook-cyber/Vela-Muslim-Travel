@@ -34,3 +34,16 @@ not proof of certification.
 Every candidate whose `source_type` is not `UNKNOWN` must include a
 `source_reference`. This prevents provenance from being silently lost before
 admin review and promotion.
+
+
+## Corridor expansion: สุราษฎร์ธานี / ประจวบคีรีขันธ์ / สระบุรี
+
+The queue now includes official-directory mosque candidates in the three
+previously uncovered northbound provinces:
+
+- Surat Thani: Tha Chana and Phunphin
+- Prachuap Khiri Khan: Bang Saphan and Sam Roi Yot
+- Saraburi: Muak Lek and Mueang Saraburi
+
+These records come from the CICOT mosque directory and remain
+`DISCOVERED` with empty coordinates until controlled geocode review.
