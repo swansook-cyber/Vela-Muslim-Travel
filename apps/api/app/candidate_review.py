@@ -28,16 +28,6 @@ def candidate_maps_search_url(candidate: dict) -> str:
             f"&query_place_id={quote_plus(str(external_id))}"
         )
 
-    query = " ".join(
-        str(value).strip()
-        for value in (
-            candidate.get("name"),
-            candidate.get("address"),
-            candidate.get("district"),
-            candidate.get("province"),
-        )
-        if value
-    )
     return "https://www.google.com/maps/search/?api=1&query=" + quote_plus(query)
 
 
