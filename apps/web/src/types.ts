@@ -114,12 +114,18 @@ export interface CandidateReviewProvinceProgress {
   pending: number;
   ready_to_approve: number;
   blocked: number;
+  coordinate_pending: number;
+  manual_hold: number;
+  evidence_blocked: number;
 }
 
 export interface CandidateReviewProgressResponse {
   pending: number;
   ready_to_approve: number;
   blocked: number;
+  coordinate_pending: number;
+  manual_hold: number;
+  evidence_blocked: number;
   provinces: CandidateReviewProvinceProgress[];
 }
 
