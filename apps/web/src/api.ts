@@ -139,6 +139,7 @@ export interface CandidateReviewInput {
   longitude?: number;
   review_state?: CandidateReviewState;
   review_note?: string;
+  review_hold_reason?: string;
 }
 
 export async function updateCandidate(
