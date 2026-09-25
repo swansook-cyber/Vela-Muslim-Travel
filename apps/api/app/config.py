@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     google_places_api_key: str | None = None
     google_places_base_url: str = "https://places.googleapis.com"
     google_places_timeout_seconds: float = 10.0
+    google_places_cache_ttl_seconds: int = 86400
+    google_places_cache_max_entries: int = 256
 
     @property
     def cors_origin_list(self) -> list[str]:
