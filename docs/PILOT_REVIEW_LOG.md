@@ -412,6 +412,26 @@ Primary discovery evidence:
 > decoded Plus Code area; direct coordinates from embedded maps, directions or
 > official UTM records remain preferred when available.
 
+
+### Coordinate verification update — 2026-09-25 (ประจวบคีรีขันธ์)
+
+- **มัสยิดนุรุ้ลอีมาน** — GEOCODED at
+  `11.1484625, 99.488484375` from the current Google business / Trip.com
+  Plus Code `4FXQ+99Q`, recovered and decoded with Google's official Open
+  Location Code algorithm. The Moo 2 versus Moo 9 administrative-address
+  discrepancy remains an explicit manual hold.
+- **มัสยิดดารุ้ลอิบาดะห์** — GEOCODED at
+  `12.2399125, 99.833515625` from the current Google business / Trip.com
+  Plus Code `6RQM+XC6`, recovered and decoded with the same official
+  algorithm. CICOT and MasjidThai independently support the Moo 4, Rai Kao,
+  Sam Roi Yot identity.
+- **เน้นเนื้อ@ประจวบฮาลาล** remains `DISCOVERED`. Google currently marks the
+  business **Temporarily Closed**, while Wongnai and Makan Halal Guide still
+  publish opening schedules. The closure hold remains until operation is
+  confirmed directly; no coordinate promotion is performed while this status
+  conflict is unresolved.
+
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
