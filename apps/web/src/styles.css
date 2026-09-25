@@ -830,3 +830,31 @@ button.danger {
   margin: 0;
   padding-left: 1.2rem;
 }
+
+.source-check-control {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.75rem 0;
+  padding: 0.8rem;
+  border: 1px solid #dce3de;
+  border-radius: 12px;
+  background: #f8fbf9;
+}
+
+.source-check-control > div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.source-check-control small {
+  color: #6a756d;
+}
+
+@media (max-width: 760px) {
+  .source-check-control {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
