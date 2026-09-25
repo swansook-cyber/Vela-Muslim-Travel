@@ -35,6 +35,7 @@ class CandidateResult(BaseModel):
     review_state: CandidateReviewState
     review_note: str | None = None
     review_hold_reason: str | None = None
+    source_checked_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -45,6 +46,7 @@ class CandidateReviewUpdate(BaseModel):
     review_state: CandidateReviewState | None = None
     review_note: str | None = None
     review_hold_reason: str | None = Field(default=None, max_length=500)
+    source_checked_at: datetime | None = None
 
 
 class CandidatePromoteRequest(BaseModel):
