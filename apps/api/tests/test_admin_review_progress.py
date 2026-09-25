@@ -17,6 +17,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "certification_expires_at": None,
             "review_hold_reason": "Confirm phone",
             "source_checked_at": "2026-09-25T11:23:00+07:00",
+            "coordinate_checked_at": None,
         },
         {
             "province": "นครศรีธรรมราช",
@@ -29,6 +30,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "certification_expires_at": None,
             "review_hold_reason": None,
             "source_checked_at": "2026-09-25T11:23:00+07:00",
+            "coordinate_checked_at": "2026-09-25T11:30:00+07:00",
         },
         {
             "province": "นครราชสีมา",
