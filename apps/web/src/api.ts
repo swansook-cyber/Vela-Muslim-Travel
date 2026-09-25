@@ -7,6 +7,7 @@ import type {
   AlongRouteResponse,
   CandidateReadinessResponse,
   CandidateResult,
+  CandidateReviewProgressResponse,
   CandidateReviewState,
   CandidateReviewTask,
   Coordinate,
@@ -354,6 +355,22 @@ export async function fetchPilotReadiness(
   }
 
   return response.json() as Promise<PilotReadinessResponse>;
+}
+
+
+export async function fetchCandidateReviewProgress(
+  adminKey: string,
+): Promise<CandidateReviewProgressResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/candidate-review-progress`,
+    { headers: adminHeaders(adminKey) },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<CandidateReviewProgressResponse>;
 }
 
 
