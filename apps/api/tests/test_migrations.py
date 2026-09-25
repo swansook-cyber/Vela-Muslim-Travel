@@ -54,3 +54,37 @@ async def test_admin_audit_migration_is_recorded() -> None:
         ).scalar_one()
 
     assert count == 1
+
+
+@pytest.mark.asyncio
+async def test_candidate_review_hold_migration_is_recorded() -> None:
+    await run_migrations()
+
+    async with SessionLocal() as session:
+        count = (
+            await session.execute(
+                text(
+                    """
+                    SELECT count(*)
+                    FROM schema_migrations
+                    WHERE version = '0003_candidate_review_hold'
+                    """
+                )
+            )
+        ).scalar_one()
+
+        column_count = (
+            await session.execute(
+                text(
+                    """
+                    SELECT count(*)
+                    FROM information_schema.columns
+                    WHERE table_name = 'place_candidates'
+                      AND column_name = 'review_hold_reason'
+                    """
+                )
+            )
+        ).scalar_one()
+
+    assert count == 1
+    assert column_count == 1
