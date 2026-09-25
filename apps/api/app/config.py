@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     geocoding_cache_ttl_seconds: int = 86400
     geocoding_cache_max_entries: int = 256
     geocoding_min_interval_seconds: float = 1.1
+    google_places_api_key: str | None = None
+    google_places_base_url: str = "https://places.googleapis.com"
+    google_places_timeout_seconds: float = 10.0
 
     @property
     def cors_origin_list(self) -> list[str]:
