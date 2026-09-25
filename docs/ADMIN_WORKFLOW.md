@@ -165,6 +165,9 @@ If the key is absent, the resolver returns a configuration error and the normal
 Nominatim/manual review workflow remains available. The Google key stays on the
 server and must never be embedded in the public web bundle. Google Places usage
 may incur charges according to the account's Maps Platform billing setup.
+Successful Place ID resolutions are cached server-side (24 hours by default)
+to avoid repeated provider requests and unnecessary cost when a reviewer opens
+the same candidate more than once.
 
 ### Single-candidate review mode
 
