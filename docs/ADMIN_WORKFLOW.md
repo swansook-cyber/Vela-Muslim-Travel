@@ -80,6 +80,12 @@ A halal-certified kitchen inside a hotel is represented as `HALAL_CERTIFIED_SERV
 
 Candidate geocoding is deliberately not automatic promotion.
 
+The admin dashboard also exposes a manual-review progress summary. It counts only
+`DISCOVERED` and `GEOCODED` candidates in the pilot corridor and separates
+records that are ready for approval from records still blocked by coordinate or
+evidence requirements.
+
+
 The guarded review queue supports both `DISCOVERED` and `GEOCODED` candidates. This keeps source evidence, Google Maps review links, and approval blockers visible after coordinates are saved and before approval.
 
 The admin UI:
