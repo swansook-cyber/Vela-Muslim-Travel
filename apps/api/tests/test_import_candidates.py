@@ -96,11 +96,13 @@ def test_candidate_accepts_reviewed_coordinates() -> None:
     row["review_state"] = "GEOCODED"
     row["latitude"] = "14.529001"
     row["longitude"] = "101.372001"
+    row["coordinate_checked_at"] = "2026-09-25T11:30:00+07:00"
 
     candidate = parse_candidate(row, 2)
 
     assert candidate.latitude == pytest.approx(14.529001)
     assert candidate.longitude == pytest.approx(101.372001)
+    assert candidate.coordinate_checked_at is not None
 
 
 def test_certified_candidate_requires_expiry() -> None:
