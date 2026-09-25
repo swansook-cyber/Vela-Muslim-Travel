@@ -95,7 +95,7 @@ async def find_place_by_slug(
         {LATEST_VERIFICATION_SQL}
         {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
-          AND (:allow_test_fixtures OR p.source_status <> 'TEST_FIXTURE')
+          AND (:allow_test_fixtures OR COALESCE(p.source_status, '') <> 'TEST_FIXTURE')
           AND p.slug = :slug
         LIMIT 1
         """
@@ -129,7 +129,7 @@ async def find_nearby_places(
         {LATEST_VERIFICATION_SQL}
         {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
-          AND (:allow_test_fixtures OR p.source_status <> 'TEST_FIXTURE')
+          AND (:allow_test_fixtures OR COALESCE(p.source_status, '') <> 'TEST_FIXTURE')
           AND ST_DWithin(
                 p.location,
                 ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
@@ -190,7 +190,7 @@ async def find_places_along_route(
         {LATEST_VERIFICATION_SQL}
         {PLACE_DETAIL_JOINS_SQL}
         WHERE p.active = true
-          AND (:allow_test_fixtures OR p.source_status <> 'TEST_FIXTURE')
+          AND (:allow_test_fixtures OR COALESCE(p.source_status, '') <> 'TEST_FIXTURE')
           AND ST_DWithin(
                 p.location,
                 route.geom::geography,
