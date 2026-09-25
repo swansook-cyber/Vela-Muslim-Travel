@@ -211,6 +211,83 @@ Primary evidence:
 - https://makanhalalguide.com/shop/detail/3761
 - https://www.wongnai.com/restaurants/2642013wt-%E0%B9%80%E0%B8%99%E0%B9%89%E0%B8%99%E0%B9%80%E0%B8%99%E0%B8%B7%E0%B9%89%E0%B8%AD-%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%A7%E0%B8%9A%E0%B8%AE%E0%B8%B2%E0%B8%A5%E0%B8%B2%E0%B8%A5-%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%A7%E0%B8%9A%E0%B8%AE%E0%B8%B2%E0%B8%A5%E0%B8%B2%E0%B8%A5
 
+
+## 2026-09-25 — เพชรบุรี
+
+### มัสยิดกลางจังหวัดเพชรบุรี
+
+- The existing Google business ID `ChIJP0BtFTom_TARfXE8GeUMrYM` still resolves
+  to **มัสยิดกลางจังหวัดเพชรบุรี** at the staging address in the Ban Laem /
+  Tha Raeng area.
+- Community cultural records identify the central mosque in Tha Raeng as
+  **มัสยิดยามิอุ้ลอิสลาม (มัสยิดกลาง)**, หมู่ 4 ตำบลท่าแร้ง อำเภอบ้านแหลม.
+- The current map address and the community description support the same
+  central-mosque identity, but exact coordinates still require explicit map
+  review.
+
+Supporting evidence:
+- https://wikicommunity.sac.or.th/community/1182
+
+### อาหารอิสลามบังเพชรบุรี ลุงบัง
+
+- A current Google business listing resolves to **ลุงบัง อาหารอิสลาม HALAL** in
+  ตำบลหัวสะพาน, อำเภอเมืองเพชรบุรี with phone **089-836-0894**, matching the
+  staging phone.
+- The candidate source and current business listing support the venue as a
+  Muslim/halal restaurant discovery candidate.
+- These public listings are not official certification evidence. Keep
+  `UNVERIFIED`.
+- Exact coordinates still require controlled map review.
+
+## 2026-09-25 — สระบุรี
+
+### มัสยิดยะบัลเราะห์มะฮ์
+
+- CICOT currently confirms **มัสยิดยะบัลเราะห์มะฮ์** at หมู่ 2 ตำบลมิตรภาพ
+  อำเภอมวกเหล็ก จังหวัดสระบุรี 18180.
+- Saraburi provincial planning documents independently list the same mosque in
+  ตำบลมิตรภาพ, อำเภอมวกเหล็ก.
+- The current Google business result resolves to the same Muak Lek area.
+- Identity confidence is strong; exact coordinates still require explicit map
+  review before `GEOCODED`.
+
+Primary evidence:
+- https://www.cicot.or.th/th/mosque/lists/6
+
+Supporting provincial evidence:
+- https://www.saraburipao.go.th/plan66-70.pdf
+
+### มัสยิดมะบาดุลบารี
+
+- CICOT currently confirms **มัสยิดมะบาดุลบารี** in ตำบลปากเพรียว
+  อำเภอเมืองสระบุรี 18000.
+- A current provincial social report gives the more specific address
+  **369 ถนนพหลโยธิน ตำบลปากเพรียว อำเภอเมืองสระบุรี**.
+- The current Google business result resolves to a mosque in the same
+  Pak Phriao / Mueang Saraburi area.
+- Keep the staging candidate until exact map coordinates are explicitly
+  reviewed.
+
+Primary evidence:
+- https://www.cicot.or.th/th/mosque/lists/2/2
+
+Supporting address evidence:
+- https://www.m-society.go.th/ewtadmin/ewt/mso_web/download/article/article_20211109112144.pdf
+
+### ครัวมุสลิม สระบุรี
+
+- Wongnai currently lists **ครัวมุสลิมสระบุรี** at **544/1-2 หมู่ 9
+  ถนนเลี่ยงเมือง ตำบลมิตรภาพ อำเภอมวกเหล็ก จังหวัดสระบุรี 18180** with phone
+  **087-707-4480**, matching staging.
+- The current Google business result also resolves to a halal restaurant in
+  Muak Lek with the same phone.
+- These sources confirm the operating identity but do not establish current
+  official halal certification.
+- Keep `UNVERIFIED`; exact coordinates still require controlled review.
+
+Primary discovery evidence:
+- https://www.wongnai.com/restaurants/150373KW-%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%A7%E0%B8%A1%E0%B8%B8%E0%B8%AA%E0%B8%A5%E0%B8%B4%E0%B8%A1-%E0%B8%AA%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
