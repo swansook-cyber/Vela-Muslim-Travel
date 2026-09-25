@@ -379,13 +379,23 @@ async def admin_add_place_verification(
 async def admin_candidate_review_queue(
     session: DbSession,
     _admin: AdminGuard,
+    review_state: CandidateReviewState = CandidateReviewState.DISCOVERED,
     province: str | None = None,
     place_type: PlaceType | None = None,
     limit: int = 100,
 ) -> list[CandidateReviewTask]:
+    if review_state not in {
+        CandidateReviewState.DISCOVERED,
+        CandidateReviewState.GEOCODED,
+    }:
+        raise HTTPException(
+            status_code=422,
+            detail="Review queue only supports DISCOVERED or GEOCODED candidates",
+        )
+
     rows = await list_candidates(
         session,
-        review_state=CandidateReviewState.DISCOVERED,
+        review_state=review_state,
         province=province,
         place_type=place_type.value if place_type else None,
         limit=min(max(limit, 1), 500),
