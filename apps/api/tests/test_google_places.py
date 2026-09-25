@@ -3,6 +3,11 @@ import pytest
 from app import google_places
 
 
+@pytest.fixture(autouse=True)
+def clear_google_places_cache() -> None:
+    google_places._cache.clear()
+
+
 @pytest.mark.asyncio
 async def test_google_places_requires_configuration(monkeypatch) -> None:
     monkeypatch.setattr(google_places.settings, "google_places_api_key", None)
@@ -106,3 +111,49 @@ async def test_google_places_rejects_mismatched_id(monkeypatch) -> None:
         match="different place ID",
     ):
         await google_places.resolve_google_place_location("ChIJtest")
+
+
+@pytest.mark.asyncio
+async def test_google_places_reuses_cached_location(monkeypatch) -> None:
+    calls = 0
+
+    class FakeResponse:
+        status_code = 200
+
+        @staticmethod
+        def json() -> dict:
+            return {
+                "id": "ChIJcached",
+                "location": {
+                    "latitude": 14.2,
+                    "longitude": 101.2,
+                },
+            }
+
+    class FakeClient:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            return False
+
+        async def get(self, url: str):
+            nonlocal calls
+            calls += 1
+            return FakeResponse()
+
+    monkeypatch.setattr(
+        google_places.settings,
+        "google_places_api_key",
+        "test-key",
+    )
+    monkeypatch.setattr(google_places.httpx, "AsyncClient", FakeClient)
+
+    first = await google_places.resolve_google_place_location("ChIJcached")
+    second = await google_places.resolve_google_place_location("ChIJcached")
+
+    assert calls == 1
+    assert first == second
