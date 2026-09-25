@@ -39,7 +39,7 @@ async def test_real_world_pilot_candidates_are_staged_not_promoted() -> None:
             )
         ).scalar_one()
 
-    assert candidate_count >= 18
+    assert candidate_count >= 21
     assert promoted_count == 0
 
 
@@ -80,8 +80,8 @@ async def test_admin_dashboard_counts_staged_candidates() -> None:
     async with SessionLocal() as session:
         dashboard = await get_admin_dashboard(session)
 
-    assert dashboard["candidates_total"] >= 18
-    assert dashboard["discovered"] >= 18
+    assert dashboard["candidates_total"] >= 21
+    assert dashboard["discovered"] >= 21
     assert dashboard["production_places"] >= 4
 
 
