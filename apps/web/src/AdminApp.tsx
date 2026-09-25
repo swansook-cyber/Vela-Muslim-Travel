@@ -103,6 +103,8 @@ export default function AdminApp() {
       "ALL" | "READY" | "BLOCKED" | "COORDINATE_PENDING" | "MANUAL_HOLD" | "EVIDENCE"
     >("ALL");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
+  const [singleReviewMode, setSingleReviewMode] = useState(false);
+  const [reviewIndex, setReviewIndex] = useState(0);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
   const [pilotReadiness, setPilotReadiness] =
@@ -158,6 +160,16 @@ export default function AdminApp() {
   }, [candidates, filter, readinessFilter]);
 
   const filteredCount = displayedCandidates.length;
+  const visibleCandidates =
+    singleReviewMode && displayedCandidates.length > 0
+      ? [displayedCandidates[reviewIndex]]
+      : displayedCandidates;
+
+  useEffect(() => {
+    setReviewIndex((current) =>
+      Math.min(current, Math.max(displayedCandidates.length - 1, 0)),
+    );
+  }, [displayedCandidates.length]);
 
   function initializeDrafts(items: CandidateResult[]) {
     setDrafts((current) => {
@@ -578,7 +590,49 @@ export default function AdminApp() {
         </section>
       )}
 
-      <div className="admin-summary">{filteredCount} candidates ในรายการปัจจุบัน</div>
+      <div className="review-queue-bar">
+        <div className="admin-summary">
+          {filteredCount} candidates ในรายการปัจจุบัน
+          {singleReviewMode && filteredCount > 0 && (
+            <span>
+              {" "}· กำลังตรวจ {reviewIndex + 1}/{filteredCount}
+            </span>
+          )}
+        </div>
+        <div className="review-queue-actions">
+          <button
+            type="button"
+            className="secondary"
+            disabled={filteredCount === 0}
+            onClick={() => {
+              setSingleReviewMode((current) => !current);
+              setReviewIndex(0);
+            }}
+          >
+            {singleReviewMode ? "แสดงทั้งหมด" : "ตรวจทีละรายการ"}
+          </button>
+          {singleReviewMode && (
+            <>
+              <button
+                type="button"
+                className="secondary"
+                disabled={reviewIndex <= 0}
+                onClick={() => setReviewIndex((current) => current - 1)}
+              >
+                ก่อนหน้า
+              </button>
+              <button
+                type="button"
+                className="secondary"
+                disabled={reviewIndex >= filteredCount - 1}
+                onClick={() => setReviewIndex((current) => current + 1)}
+              >
+                ถัดไป
+              </button>
+            </>
+          )}
+        </div>
+      </div>
 
       {audit.length > 0 && (
         <section className="admin-audit">
@@ -596,7 +650,7 @@ export default function AdminApp() {
       <ProductionPlaces adminKey={adminKey} />
 
       <section className="candidate-list">
-        {displayedCandidates.map((candidate) => {
+        {visibleCandidates.map((candidate) => {
           const draft = drafts[candidate.id] || {
             latitude: "",
             longitude: "",
