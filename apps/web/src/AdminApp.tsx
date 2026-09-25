@@ -140,8 +140,11 @@ export default function AdminApp() {
         return !candidate.ready_to_approve;
       }
       if (readinessFilter === "COORDINATE_PENDING") {
-        return candidate.approval_blockers.includes(
-          "reviewed coordinates are required",
+        return candidate.approval_blockers.some((blocker) =>
+          [
+            "reviewed coordinates are required",
+            "coordinate verification date is required",
+          ].includes(blocker),
         );
       }
       if (readinessFilter === "MANUAL_HOLD") {
@@ -152,7 +155,10 @@ export default function AdminApp() {
       if (readinessFilter === "EVIDENCE") {
         return candidate.approval_blockers.some(
           (blocker) =>
-            blocker !== "reviewed coordinates are required" &&
+            ![
+              "reviewed coordinates are required",
+              "coordinate verification date is required",
+            ].includes(blocker) &&
             !blocker.startsWith("manual review hold:"),
         );
       }
