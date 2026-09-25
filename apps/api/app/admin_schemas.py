@@ -192,10 +192,16 @@ class CandidateReviewProvinceProgress(BaseModel):
     pending: int
     ready_to_approve: int
     blocked: int
+    coordinate_pending: int
+    manual_hold: int
+    evidence_blocked: int
 
 
 class CandidateReviewProgressResponse(BaseModel):
     pending: int
     ready_to_approve: int
     blocked: int
+    coordinate_pending: int
+    manual_hold: int
+    evidence_blocked: int
     provinces: list[CandidateReviewProvinceProgress]
