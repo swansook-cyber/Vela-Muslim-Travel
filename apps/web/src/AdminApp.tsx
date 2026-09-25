@@ -128,9 +128,10 @@ export default function AdminApp() {
 
     try {
       const candidateRequest =
-        filter === "DISCOVERED"
+        filter === "DISCOVERED" || filter === "GEOCODED"
           ? fetchCandidateReviewQueue(
               adminKey,
+              filter,
               provinceFilter || undefined,
               typeFilter || undefined,
             )
