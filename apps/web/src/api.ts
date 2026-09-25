@@ -130,7 +130,7 @@ export async function fetchCandidates(
     throw new Error(await response.text());
   }
 
-  return response.json() as Promise<CandidateReviewTask[]>;
+  return response.json() as Promise<CandidateResult[]>;
 }
 
 export interface CandidateReviewInput {
@@ -395,5 +395,5 @@ export async function fetchCandidateReviewQueue(
     throw new Error(await response.text());
   }
 
-  return response.json() as Promise<CandidateResult[]>;
+  return response.json() as Promise<CandidateReviewTask[]>;
 }
