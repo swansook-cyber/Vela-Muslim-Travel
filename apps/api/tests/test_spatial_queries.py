@@ -267,3 +267,109 @@ async def test_expired_verification_is_flagged() -> None:
 
     row = next(item for item in rows if item["slug"] == "test-route-restaurant-south")
     assert row["verification_expired"] is True
+
+
+@pytest.mark.asyncio
+async def test_candidate_promotion_rejects_nearby_duplicate() -> None:
+    candidate_input = Candidate(
+        name="TEST duplicate mosque",
+        place_type="MOSQUE",
+        address="TEST duplicate address",
+        district="TEST",
+        province="TEST",
+        phone=None,
+        latitude=None,
+        longitude=None,
+        proposed_trust_status="UNVERIFIED",
+        source_type="FIELD_CHECK",
+        source_reference="synthetic://duplicate-candidate",
+        external_provider="synthetic",
+        external_id="duplicate-candidate-1",
+        certification_number=None,
+        certification_expires_at=None,
+        review_state="DISCOVERED",
+        review_note="Integration test only",
+    )
+    await apply_candidates([candidate_input])
+
+    async with SessionLocal() as session:
+        rows = await list_candidates(
+            session,
+            review_state=CandidateReviewState.DISCOVERED,
+            limit=200,
+        )
+        candidate = next(
+            row
+            for row in rows
+            if row["external_id"] == candidate_input.external_id
+        )
+        reviewed = await update_candidate_review(
+            session=session,
+            candidate_id=candidate["id"],
+            latitude=12.6,
+            longitude=100.2,
+            review_state=CandidateReviewState.APPROVED,
+            review_note="Deliberate duplicate for integration test",
+        )
+
+        with pytest.raises(ValueError, match="Potential duplicate"):
+            await promote_candidate(
+                session=session,
+                candidate=reviewed,
+                slug="test-duplicate-mosque",
+                name_th="TEST duplicate mosque",
+            )
+        await session.rollback()
+
+
+@pytest.mark.asyncio
+async def test_candidate_promotion_does_not_overwrite_existing_slug() -> None:
+    candidate_input = Candidate(
+        name="TEST slug collision",
+        place_type="RESTAURANT",
+        address="TEST far away",
+        district="TEST",
+        province="TEST",
+        phone=None,
+        latitude=None,
+        longitude=None,
+        proposed_trust_status="UNVERIFIED",
+        source_type="FIELD_CHECK",
+        source_reference="synthetic://slug-collision",
+        external_provider="synthetic",
+        external_id="slug-collision-1",
+        certification_number=None,
+        certification_expires_at=None,
+        review_state="DISCOVERED",
+        review_note="Integration test only",
+    )
+    await apply_candidates([candidate_input])
+
+    async with SessionLocal() as session:
+        rows = await list_candidates(
+            session,
+            review_state=CandidateReviewState.DISCOVERED,
+            limit=200,
+        )
+        candidate = next(
+            row
+            for row in rows
+            if row["external_id"] == candidate_input.external_id
+        )
+        reviewed = await update_candidate_review(
+            session=session,
+            candidate_id=candidate["id"],
+            latitude=15.0,
+            longitude=102.0,
+            review_state=CandidateReviewState.APPROVED,
+            review_note="Deliberate slug collision",
+        )
+
+        with pytest.raises(ValueError, match="slug already exists"):
+            await promote_candidate(
+                session=session,
+                candidate=reviewed,
+                slug="test-route-restaurant-south",
+                name_th="TEST slug collision",
+            )
+        await session.rollback()

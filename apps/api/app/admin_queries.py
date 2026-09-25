@@ -117,6 +117,50 @@ async def promote_candidate(
     slug: str,
     name_th: str,
 ) -> str:
+    duplicate = (
+        await session.execute(
+            text(
+                """
+                SELECT
+                    id::text,
+                    slug,
+                    name_th,
+                    ST_Distance(
+                        location,
+                        ST_SetSRID(
+                            ST_MakePoint(:longitude, :latitude),
+                            4326
+                        )::geography
+                    ) AS distance_m
+                FROM places
+                WHERE active = true
+                  AND place_type::text = :place_type
+                  AND ST_DWithin(
+                        location,
+                        ST_SetSRID(
+                            ST_MakePoint(:longitude, :latitude),
+                            4326
+                        )::geography,
+                        150
+                  )
+                ORDER BY distance_m
+                LIMIT 1
+                """
+            ),
+            {
+                "longitude": candidate["longitude"],
+                "latitude": candidate["latitude"],
+                "place_type": candidate["place_type"],
+            },
+        )
+    ).mappings().first()
+
+    if duplicate is not None:
+        raise ValueError(
+            "Potential duplicate place within 150 m: "
+            f"{duplicate['name_th']} ({duplicate['slug']})"
+        )
+
     place_sql = text(
         """
         INSERT INTO places (
@@ -145,17 +189,7 @@ async def promote_candidate(
             'CANDIDATE_PROMOTION',
             now()
         )
-        ON CONFLICT (slug) DO UPDATE SET
-            place_type = EXCLUDED.place_type,
-            name_th = EXCLUDED.name_th,
-            location = EXCLUDED.location,
-            address = EXCLUDED.address,
-            district = EXCLUDED.district,
-            province = EXCLUDED.province,
-            phone = EXCLUDED.phone,
-            active = true,
-            source_status = 'CANDIDATE_PROMOTION',
-            updated_at = now()
+        ON CONFLICT (slug) DO NOTHING
         RETURNING id
         """
     )
@@ -173,7 +207,9 @@ async def promote_candidate(
             "phone": candidate["phone"],
         },
     )
-    place_id = result.scalar_one()
+    place_id = result.scalar_one_or_none()
+    if place_id is None:
+        raise ValueError(f"Production slug already exists: {slug}")
 
     verification_sql = text(
         """

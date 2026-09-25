@@ -395,12 +395,15 @@ async def admin_promote_candidate(
             detail="Certified candidate requires a current, non-expired certificate",
         )
 
-    place_id = await promote_candidate(
-        session=session,
-        candidate=candidate,
-        slug=request.slug,
-        name_th=request.name_th or candidate["name"],
-    )
+    try:
+        place_id = await promote_candidate(
+            session=session,
+            candidate=candidate,
+            slug=request.slug,
+            name_th=request.name_th or candidate["name"],
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     await log_admin_action(
         session,
         action="PROMOTE_CANDIDATE",
