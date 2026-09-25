@@ -98,7 +98,9 @@ export default function AdminApp() {
   const [typeFilter, setTypeFilter] =
     useState<"" | CandidateResult["place_type"]>("");
   const [readinessFilter, setReadinessFilter] =
-    useState<"ALL" | "READY" | "BLOCKED">("ALL");
+    useState<
+      "ALL" | "READY" | "BLOCKED" | "COORDINATE_PENDING" | "MANUAL_HOLD" | "EVIDENCE"
+    >("ALL");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
@@ -126,9 +128,31 @@ export default function AdminApp() {
 
     return candidates.filter((candidate) => {
       if (!isCandidateReviewTask(candidate)) return false;
-      return readinessFilter === "READY"
-        ? candidate.ready_to_approve
-        : !candidate.ready_to_approve;
+
+      if (readinessFilter === "READY") {
+        return candidate.ready_to_approve;
+      }
+      if (readinessFilter === "BLOCKED") {
+        return !candidate.ready_to_approve;
+      }
+      if (readinessFilter === "COORDINATE_PENDING") {
+        return candidate.approval_blockers.includes(
+          "reviewed coordinates are required",
+        );
+      }
+      if (readinessFilter === "MANUAL_HOLD") {
+        return candidate.approval_blockers.some((blocker) =>
+          blocker.startsWith("manual review hold:"),
+        );
+      }
+      if (readinessFilter === "EVIDENCE") {
+        return candidate.approval_blockers.some(
+          (blocker) =>
+            blocker !== "reviewed coordinates are required" &&
+            !blocker.startsWith("manual review hold:"),
+        );
+      }
+      return true;
     });
   }, [candidates, filter, readinessFilter]);
 
@@ -399,13 +423,22 @@ export default function AdminApp() {
             disabled={filter !== "DISCOVERED" && filter !== "GEOCODED"}
             onChange={(event) =>
               setReadinessFilter(
-                event.target.value as "ALL" | "READY" | "BLOCKED",
+                event.target.value as
+                  | "ALL"
+                  | "READY"
+                  | "BLOCKED"
+                  | "COORDINATE_PENDING"
+                  | "MANUAL_HOLD"
+                  | "EVIDENCE",
               )
             }
           >
             <option value="ALL">ทั้งหมด</option>
             <option value="READY">พร้อมอนุมัติ</option>
             <option value="BLOCKED">ยังติด blocker</option>
+            <option value="COORDINATE_PENDING">พิกัดยังไม่ครบ</option>
+            <option value="MANUAL_HOLD">มี Manual hold</option>
+            <option value="EVIDENCE">หลักฐานยังไม่ผ่าน</option>
           </select>
         </label>
         <button type="button" onClick={() => void load()} disabled={loading}>
