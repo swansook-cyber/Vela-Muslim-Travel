@@ -258,6 +258,7 @@ async def admin_add_place_verification(
 
     try:
         validate_verification_claim(
+            place_type=place["place_type"],
             trust_status=payload.trust_status,
             source_type=payload.source_type,
             source_reference=payload.source_reference,

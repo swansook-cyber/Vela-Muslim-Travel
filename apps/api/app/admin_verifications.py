@@ -8,12 +8,24 @@ from .verification import certification_is_current
 
 def validate_verification_claim(
     *,
+    place_type: str,
     trust_status: str,
     source_type: str,
     source_reference: str | None,
     expires_at: datetime | None,
 ) -> None:
     certified = {"HALAL_CERTIFIED", "HALAL_CERTIFIED_SERVICE"}
+
+    if place_type == "ACCOMMODATION" and trust_status == "HALAL_CERTIFIED":
+        raise ValueError(
+            "Accommodation certification must use HALAL_CERTIFIED_SERVICE"
+        )
+
+    if place_type == "RESTAURANT" and trust_status == "HALAL_CERTIFIED_SERVICE":
+        raise ValueError(
+            "Restaurant certification must use HALAL_CERTIFIED"
+        )
+
     if trust_status not in certified:
         return
 
