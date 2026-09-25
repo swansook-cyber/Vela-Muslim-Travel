@@ -10,6 +10,12 @@ class Settings(BaseSettings):
     routing_provider: str = "osrm"
     osrm_base_url: str = "https://router.project-osrm.org"
     route_request_timeout_seconds: float = 15.0
+    routing_cache_ttl_seconds: int = 300
+    routing_cache_max_entries: int = 256
+    routing_min_interval_seconds: float = 0.25
+    routing_user_agent: str = (
+        "VelaMuslimTravel/0.1 (+https://github.com/swansook-cyber/Vela-Muslim-Travel)"
+    )
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     admin_api_key: str | None = None
     geocoding_provider: str = "nominatim"
