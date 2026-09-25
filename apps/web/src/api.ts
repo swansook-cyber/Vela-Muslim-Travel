@@ -8,6 +8,7 @@ import type {
   CandidateResult,
   CandidateReviewState,
   Coordinate,
+  DetourResponse,
   GeocodeResult,
   PlaceResult,
   PlaceType,
@@ -293,4 +294,38 @@ export async function addPlaceVerification(
   }
 
   return response.json() as Promise<AdminVerificationResult>;
+}
+
+
+export interface DetourInput {
+  origin: Coordinate;
+  destination: Coordinate;
+  stop: Coordinate;
+  baseDistanceM: number;
+  baseDurationS: number;
+}
+
+export async function fetchDetour(
+  input: DetourInput,
+): Promise<DetourResponse> {
+  const response = await fetch(`${API_BASE_URL}/routes/detour`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      origin: input.origin,
+      destination: input.destination,
+      stop: input.stop,
+      base_distance_m: input.baseDistanceM,
+      base_duration_s: input.baseDurationS,
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(detail || `Detour request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<DetourResponse>;
 }

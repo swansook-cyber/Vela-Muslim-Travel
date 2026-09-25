@@ -1,9 +1,15 @@
 import { FormEvent, useState } from "react";
 
-import { fetchAlongRoute, fetchNearby, searchDestination } from "./api";
+import {
+  fetchAlongRoute,
+  fetchDetour,
+  fetchNearby,
+  searchDestination,
+} from "./api";
 import { MapView } from "./MapView";
 import type {
   AlongRouteResponse,
+  DetourResponse,
   GeocodeResult,
   PlaceResult,
   PlaceType,
@@ -91,9 +97,9 @@ function formatDuration(seconds: number): string {
   return hours > 0 ? `${hours} ชม. ${rest} นาที` : `${minutes} นาที`;
 }
 
-function formatRouteProgress(progress: number, totalSeconds: number): string {
-  const elapsed = Math.max(0, Math.min(1, progress)) * totalSeconds;
-  return `ประมาณ ${formatDuration(elapsed)} จากต้นทาง`;
+function formatRouteProgress(progress: number): string {
+  const percent = Math.round(Math.max(0, Math.min(1, progress)) * 100);
+  return `อยู่ช่วงประมาณ ${percent}% ของเส้นทาง`;
 }
 
 export default function App() {
@@ -117,6 +123,8 @@ export default function App() {
   const [geocoding, setGeocoding] = useState(false);
   const [error, setError] = useState("");
   const [locating, setLocating] = useState(false);
+  const [detours, setDetours] = useState<Record<string, DetourResponse>>({});
+  const [detourLoadingId, setDetourLoadingId] = useState<string | null>(null);
 
   const visiblePlaces = routeResult?.places ?? nearbyPlaces ?? [];
 
@@ -262,6 +270,7 @@ export default function App() {
       });
       setNearbyPlaces(null);
       setRouteResult(response);
+      setDetours({});
     } catch (err) {
       setError(err instanceof Error ? err.message : "ไม่สามารถค้นหาเส้นทางได้");
     } finally {
@@ -295,10 +304,63 @@ export default function App() {
       });
       setRouteResult(null);
       setNearbyPlaces(places);
+      setDetours({});
     } catch (err) {
       setError(err instanceof Error ? err.message : "ไม่สามารถค้นหาใกล้ฉันได้");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function calculateDetour(place: PlaceResult) {
+    if (!routeResult) return;
+
+    const originLatitude = Number(originLat);
+    const originLongitude = Number(originLng);
+    const destinationLatitude = Number(destinationLat);
+    const destinationLongitude = Number(destinationLng);
+
+    if (
+      !Number.isFinite(originLatitude) ||
+      !Number.isFinite(originLongitude) ||
+      !Number.isFinite(destinationLatitude) ||
+      !Number.isFinite(destinationLongitude)
+    ) {
+      setError("ต้นทางหรือปลายทางไม่ถูกต้อง");
+      return;
+    }
+
+    setDetourLoadingId(place.id);
+    setError("");
+
+    try {
+      const detour = await fetchDetour({
+        origin: {
+          latitude: originLatitude,
+          longitude: originLongitude,
+        },
+        destination: {
+          latitude: destinationLatitude,
+          longitude: destinationLongitude,
+        },
+        stop: {
+          latitude: place.latitude,
+          longitude: place.longitude,
+        },
+        baseDistanceM: routeResult.route.distance_m,
+        baseDurationS: routeResult.route.duration_s,
+      });
+
+      setDetours((current) => ({
+        ...current,
+        [place.id]: detour,
+      }));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "คำนวณเวลาแวะไม่สำเร็จ",
+      );
+    } finally {
+      setDetourLoadingId(null);
     }
   }
 
@@ -568,11 +630,27 @@ export default function App() {
                     </span>
                   )}
                   {routeResult && place.route_progress != null && (
-                    <span>
-                      {formatRouteProgress(
-                        place.route_progress,
-                        routeResult.route.duration_s,
-                      )}
+                    <span>{formatRouteProgress(place.route_progress)}</span>
+                  )}
+                  {routeResult && (
+                    <button
+                      type="button"
+                      className="detour-button"
+                      onClick={() => calculateDetour(place)}
+                      disabled={detourLoadingId === place.id}
+                    >
+                      {detourLoadingId === place.id
+                        ? "กำลังคำนวณเวลาแวะ…"
+                        : detours[place.id]
+                          ? "คำนวณเวลาแวะใหม่"
+                          : "เช็กเวลาแวะจริง"}
+                    </button>
+                  )}
+                  {detours[place.id] && (
+                    <span className="detour-result">
+                      เพิ่มประมาณ {formatDuration(detours[place.id].added_duration_s)}
+                      {" · "}
+                      {formatDistance(detours[place.id].added_distance_m)}
                     </span>
                   )}
                   <strong

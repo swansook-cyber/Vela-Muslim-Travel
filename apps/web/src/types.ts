@@ -172,3 +172,11 @@ export interface AdminVerificationResult {
   verified_by?: string | null;
   created_at: string;
 }
+
+
+export interface DetourResponse {
+  route_distance_m: number;
+  route_duration_s: number;
+  added_distance_m: number;
+  added_duration_s: number;
+}
