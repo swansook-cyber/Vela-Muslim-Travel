@@ -432,6 +432,20 @@ Primary discovery evidence:
   conflict is unresolved.
 
 
+
+### Coordinate verification update — 2026-09-25 (เพชรบุรี)
+
+- **อาหารอิสลามบังเพชรบุรี ลุงบัง** — GEOCODED at
+  `13.1301375, 99.868484375` from the current Google business Plus Code
+  `4VJ9+395`, recovered and decoded with Google's official Open Location Code
+  algorithm. The current Google phone matches Makan Halal Guide and staging.
+  Trust remains `UNVERIFIED`.
+- **มัสยิดกลางจังหวัดเพชรบุรี** remains `DISCOVERED`. Current Google and
+  Trip.com listings still match the staging identity/address, but this pass did
+  not obtain a direct coordinate or Plus Code. No coordinate is inferred from
+  the address alone.
+
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
