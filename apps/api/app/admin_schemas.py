@@ -51,6 +51,14 @@ class CandidateReviewUpdate(BaseModel):
     coordinate_checked_at: datetime | None = None
 
 
+class CandidateCoordinateSuggestion(BaseModel):
+    candidate_id: str
+    provider: Literal["google_places"]
+    external_id: str
+    latitude: float = Field(ge=-90, le=90)
+    longitude: float = Field(ge=-180, le=180)
+
+
 class CandidatePromoteRequest(BaseModel):
     slug: str = Field(min_length=2, max_length=160, pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     name_th: str | None = Field(default=None, min_length=1, max_length=250)
