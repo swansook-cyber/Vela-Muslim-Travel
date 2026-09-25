@@ -106,7 +106,7 @@ async def update_candidate_review(
     longitude: float | None,
     review_state: CandidateReviewState,
     review_note: str | None,
-    review_hold_reason: str | None,
+    review_hold_reason: str | None = None,
 ) -> dict:
     sql = text(
         f"""
