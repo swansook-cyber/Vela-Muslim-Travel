@@ -288,6 +288,85 @@ Supporting address evidence:
 Primary discovery evidence:
 - https://www.wongnai.com/restaurants/150373KW-%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%A7%E0%B8%A1%E0%B8%B8%E0%B8%AA%E0%B8%A5%E0%B8%B4%E0%B8%A1-%E0%B8%AA%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5
 
+
+## 2026-09-25 — นครราชสีมา / เขาใหญ่
+
+### SALASA HALAL RESTAURANT KHAOYAI
+
+- Existing Google business ID `ChIJgZfAAmsyHDERlceMtKji41g` still resolves
+  to **SALASA HALAL RESTAURANT KHAOYAI** at **165 หมู่ 15 ถนนธนะรัชต์
+  ตำบลหมูสี อำเภอปากช่อง จังหวัดนครราชสีมา 30130**, phone **080-050-4193**.
+- Current travel/restaurant sources continue to describe the venue as a halal
+  restaurant and show active opening hours.
+- These public sources do not establish an official halal certificate. Keep
+  `UNVERIFIED`.
+- Exact coordinates still require explicit visual review.
+
+### มัสยิดยันน่าตุ้ลฟิรเดาซ์
+
+- CICOT currently confirms **มัสยิดยันน่าตุ้ลฟิรเดาซ์** at หมู่ 2
+  ตำบลปากช่อง อำเภอปากช่อง จังหวัดนครราชสีมา 30130.
+- Existing Google business ID `ChIJg8AZfzEqHDERIEmyXoK-g_0` still resolves
+  to the mosque in Pak Chong, currently shown near ถนนเทศบาล 22 ซอย 1.
+- The two sources support the same mosque identity but use different address
+  styles. Exact coordinates require explicit visual review before
+  `GEOCODED`.
+
+Primary evidence:
+- https://cicot.or.th/th/mosque/lists/2/3
+
+### ร้านอาหารอิสลามตลาดแขก อ.ปากช่อง
+
+- Existing Google business ID `ChIJu4-pVzEqHDERNKY1RFId_Yc` still resolves to
+  the same halal restaurant in Pak Chong with phone **088-711-7127**.
+- Wongnai and current restaurant directories also show the same restaurant
+  name, Pak Chong location and phone.
+- Public halal-category listings are not official certification evidence.
+  Retain `UNVERIFIED`.
+- Exact coordinates still require controlled map review.
+
+Supporting evidence:
+- https://www.wongnai.com/restaurants/1141227fc-%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%AD%E0%B8%B2%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%AD%E0%B8%B4%E0%B8%AA%E0%B8%A5%E0%B8%B2%E0%B8%A1%E0%B8%95%E0%B8%A5%E0%B8%B2%E0%B8%94%E0%B9%81%E0%B8%82%E0%B8%81
+
+### อาซีย๊ะอาหารอิสลาม Halal
+
+- Existing Google business ID `ChIJ3XS9QSsrHDER4FprdurFZCo` still resolves to
+  **43 ซอยเทศบาล 35 อำเภอปากช่อง จังหวัดนครราชสีมา 30130**, phone
+  **087-445-1746**.
+- Makan Halal Guide independently lists the same address and phone and
+  identifies Muslim-travel amenities such as a prayer room.
+- These sources support the operating identity but do not establish official
+  halal certification. Keep `UNVERIFIED`.
+- Exact coordinates still require controlled review.
+
+Primary discovery evidence:
+- https://makanhalalguide.com/shop/detail/952
+
+### Ayah Restaurant Halal
+
+- Existing Google business ID `ChIJRzDp-aosHDERVOymRnYsn6o` still resolves to
+  **Ayah Restaurant Halal** at plus-code **M84W+X7F**, Pak Chong, phone
+  **083-652-6945**.
+- Current restaurant/travel sources show the same phone and active restaurant.
+- Tripadvisor uses the more conventional address **16/6 หมู่ 5 ถนนมิตรภาพ
+  ปากช่อง 30320** while other sources use the plus-code / Sap Wai wording.
+- Do not normalize the address automatically. Confirm exact location and
+  administrative address during coordinate review.
+- No official certification evidence was established in this review; keep
+  `UNVERIFIED`.
+
+### คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort
+
+- Existing Google business ID `ChIJVy7c7Bg7HDERjTbk8mJLjSI` still resolves to
+  the hotel at **49/1 หมู่ 5 ตำบลวังกะทะ อำเภอปากช่อง จังหวัดนครราชสีมา
+  30130**, phone **084-673-1717**, matching staging.
+- Current public sources continue to identify the property using the
+  `HalalResort` name.
+- No evidence reviewed here establishes whole-property halal certification.
+  Keep `UNVERIFIED` and do not infer certification from the property name.
+- Exact coordinates and Muslim-friendly facility claims still require manual
+  verification before approval.
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
