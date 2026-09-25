@@ -10,6 +10,7 @@ import {
   fetchCandidates,
   fetchPilotReadiness,
   promoteCandidate,
+  resolveCandidateGooglePlace,
   searchDestination,
   updateCandidate,
 } from "./api";
@@ -303,6 +304,47 @@ export default function AdminApp() {
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : "ค้นหาพิกัดไม่สำเร็จ");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function resolveGooglePlace(candidate: CandidateResult) {
+    if (
+      !candidate.external_id ||
+      !["google_business", "google_places"].includes(
+        candidate.external_provider || "",
+      )
+    ) {
+      setError("Candidate นี้ไม่มี Google Place ID ที่ใช้ resolve พิกัดได้");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const result = await resolveCandidateGooglePlace(adminKey, candidate.id);
+      const currentNote = drafts[candidate.id]?.note || "";
+      const resolverNote =
+        `Google Place ID coordinate suggestion: ${result.external_id}`;
+
+      updateDraft(candidate.id, {
+        latitude: result.latitude.toFixed(7),
+        longitude: result.longitude.toFixed(7),
+        note: [currentNote, resolverNote].filter(Boolean).join("\n"),
+        coordinateCheckedAt: "",
+      });
+      setMessage(
+        `ดึงพิกัดจาก Google Place ID ของ ${candidate.name} แล้ว กรุณาเปิดพิกัดบนแผนที่และยืนยันก่อนบันทึก`,
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "ดึงพิกัดจาก Google Place ID ไม่สำเร็จ",
+      );
     } finally {
       setLoading(false);
     }
