@@ -37,10 +37,12 @@ from .config import get_settings
 from .db import get_db
 from .geocoding import GeocodingError, search_places
 from .queries import find_nearby_places, find_place_by_slug, find_places_along_route
-from .routing import RoutingError, get_route
+from .routing import RoutingError, get_route, get_route_via
 from .schemas import (
     AlongRouteRequest,
     AlongRouteResponse,
+    DetourRequest,
+    DetourResponse,
     GeocodeResult,
     GeoJsonLineString,
     NearbyRequest,
@@ -146,6 +148,25 @@ async def along_route(
             geometry=GeoJsonLineString(coordinates=route.coordinates),
         ),
         places=[PlaceResult(**row) for row in rows],
+    )
+
+
+@app.post("/routes/detour", response_model=DetourResponse)
+async def route_detour(request: DetourRequest) -> DetourResponse:
+    try:
+        route = await get_route_via(
+            request.origin,
+            request.stop,
+            request.destination,
+        )
+    except RoutingError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return DetourResponse(
+        route_distance_m=route.distance_m,
+        route_duration_s=route.duration_s,
+        added_distance_m=max(0.0, route.distance_m - request.base_distance_m),
+        added_duration_s=max(0.0, route.duration_s - request.base_duration_s),
     )
 
 

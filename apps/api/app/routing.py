@@ -19,14 +19,21 @@ class RoutingError(RuntimeError):
     pass
 
 
-async def get_route(origin: Coordinate, destination: Coordinate) -> RouteResult:
+def _coordinate_path(points: list[Coordinate]) -> str:
+    return ";".join(
+        f"{point.longitude},{point.latitude}"
+        for point in points
+    )
+
+
+async def get_route_through(points: list[Coordinate]) -> RouteResult:
+    if len(points) < 2:
+        raise RoutingError("At least two routing points are required")
+
     if settings.routing_provider.lower() != "osrm":
         raise RoutingError(f"Unsupported routing provider: {settings.routing_provider}")
 
-    coordinates = (
-        f"{origin.longitude},{origin.latitude};"
-        f"{destination.longitude},{destination.latitude}"
-    )
+    coordinates = _coordinate_path(points)
     url = f"{settings.osrm_base_url.rstrip('/')}/route/v1/driving/{coordinates}"
     params = {
         "overview": "full",
@@ -57,3 +64,15 @@ async def get_route(origin: Coordinate, destination: Coordinate) -> RouteResult:
         distance_m=float(route["distance"]),
         duration_s=float(route["duration"]),
     )
+
+
+async def get_route(origin: Coordinate, destination: Coordinate) -> RouteResult:
+    return await get_route_through([origin, destination])
+
+
+async def get_route_via(
+    origin: Coordinate,
+    stop: Coordinate,
+    destination: Coordinate,
+) -> RouteResult:
+    return await get_route_through([origin, stop, destination])

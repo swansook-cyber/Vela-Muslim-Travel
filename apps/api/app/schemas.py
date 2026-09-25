@@ -94,3 +94,18 @@ class GeocodeResult(BaseModel):
     longitude: float
     category: str | None = None
     place_type: str | None = None
+
+
+class DetourRequest(BaseModel):
+    origin: Coordinate
+    destination: Coordinate
+    stop: Coordinate
+    base_distance_m: float = Field(ge=0)
+    base_duration_s: float = Field(ge=0)
+
+
+class DetourResponse(BaseModel):
+    route_distance_m: float
+    route_duration_s: float
+    added_distance_m: float
+    added_duration_s: float
