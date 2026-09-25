@@ -27,6 +27,7 @@ from .admin_schemas import (
     AdminPlaceUpdate,
     AdminVerificationCreate,
     AdminVerificationResult,
+    CandidateCoordinateSuggestion,
     CandidatePromoteRequest,
     CandidatePromoteResponse,
     CandidateProvinceReadiness,
@@ -48,6 +49,11 @@ from .candidate_review import candidate_approval_blockers, candidate_maps_search
 from .config import get_settings
 from .db import get_db
 from .geocoding import GeocodingError, search_places
+from .google_places import (
+    GooglePlacesError,
+    GooglePlacesNotConfigured,
+    resolve_google_place_location,
+)
 from .queries import find_nearby_places, find_place_by_slug, find_places_along_route
 from .routing import RoutingError, get_route, get_route_via
 from .schemas import (
@@ -427,6 +433,45 @@ async def admin_candidate_review_queue(
             )
         )
     return tasks
+
+
+@app.post(
+    "/admin/candidates/{candidate_id}/resolve-google-place",
+    response_model=CandidateCoordinateSuggestion,
+)
+async def admin_resolve_candidate_google_place(
+    candidate_id: str,
+    session: DbSession,
+    _admin: AdminGuard,
+) -> CandidateCoordinateSuggestion:
+    candidate = await get_candidate(session, candidate_id)
+    if candidate is None:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+
+    if candidate.get("external_provider") not in {"google_business", "google_places"}:
+        raise HTTPException(
+            status_code=409,
+            detail="Candidate does not use a Google place provider",
+        )
+
+    external_id = candidate.get("external_id")
+    if not external_id:
+        raise HTTPException(status_code=409, detail="Candidate has no Google place ID")
+
+    try:
+        result = await resolve_google_place_location(str(external_id))
+    except GooglePlacesNotConfigured as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except GooglePlacesError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return CandidateCoordinateSuggestion(
+        candidate_id=candidate_id,
+        provider="google_places",
+        external_id=result.place_id,
+        latitude=result.latitude,
+        longitude=result.longitude,
+    )
 
 
 @app.get("/admin/candidates", response_model=list[CandidateResult])
