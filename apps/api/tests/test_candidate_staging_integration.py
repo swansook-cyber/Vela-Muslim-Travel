@@ -93,8 +93,15 @@ async def test_admin_dashboard_counts_staged_candidates() -> None:
         dashboard = await get_admin_dashboard(session)
 
     assert dashboard["candidates_total"] >= 24
-    assert dashboard["discovered"] >= 22
-    assert dashboard["geocoded"] >= 2
+    assert dashboard["geocoded"] >= 5
+    assert (
+        dashboard["discovered"]
+        + dashboard["geocoded"]
+        + dashboard["approved"]
+        + dashboard["promoted"]
+        + dashboard["rejected"]
+        == dashboard["candidates_total"]
+    )
     assert dashboard["production_places"] >= 4
 
 
