@@ -80,6 +80,7 @@ class AdminDashboard(BaseModel):
     production_places: int
     expired_verifications: int
     certifications_expiring_30d: int
+    google_places_resolver_enabled: bool = False
 
 
 class AdminAuditEntry(BaseModel):
