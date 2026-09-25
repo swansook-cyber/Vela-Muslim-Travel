@@ -75,6 +75,7 @@ interface Draft {
   latitude: string;
   longitude: string;
   note: string;
+  holdReason: string;
   slug: string;
 }
 
@@ -141,6 +142,7 @@ export default function AdminApp() {
           latitude: item.latitude?.toString() || "",
           longitude: item.longitude?.toString() || "",
           note: item.review_note || "",
+          holdReason: item.review_hold_reason || "",
           slug: suggestedSlug(item),
         };
       }
@@ -292,6 +294,7 @@ export default function AdminApp() {
         longitude,
         review_state: state,
         review_note: draft?.note || undefined,
+        review_hold_reason: draft?.holdReason ?? "",
       });
       setMessage(`อัปเดต ${candidate.name} เป็น ${state} แล้ว`);
       await load();
@@ -553,6 +556,7 @@ export default function AdminApp() {
             latitude: "",
             longitude: "",
             note: "",
+            holdReason: "",
             slug: suggestedSlug(candidate),
           };
           const evidenceUrl = safeHttpUrl(candidate.source_reference);
@@ -701,6 +705,23 @@ export default function AdminApp() {
                   }
                   rows={3}
                 />
+              </label>
+
+              <label>
+                Manual review hold
+                <textarea
+                  value={draft.holdReason}
+                  onChange={(event) =>
+                    updateDraft(candidate.id, {
+                      holdReason: event.target.value,
+                    })
+                  }
+                  rows={2}
+                  placeholder="เว้นว่างเมื่อตรวจและแก้ประเด็นนี้เรียบร้อยแล้ว"
+                />
+                <small>
+                  ถ้ามีข้อความในช่องนี้ ระบบจะไม่อนุญาตให้ APPROVED
+                </small>
               </label>
 
               <div className="candidate-actions">
