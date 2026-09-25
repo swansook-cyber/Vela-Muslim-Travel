@@ -24,6 +24,7 @@ CANDIDATE_COLUMNS = """
     certification_expires_at,
     review_state::text,
     review_note,
+    review_hold_reason,
     created_at,
     updated_at
 """
@@ -105,6 +106,7 @@ async def update_candidate_review(
     longitude: float | None,
     review_state: CandidateReviewState,
     review_note: str | None,
+    review_hold_reason: str | None,
 ) -> dict:
     sql = text(
         f"""
@@ -114,6 +116,7 @@ async def update_candidate_review(
             longitude = :longitude,
             review_state = CAST(:review_state AS candidate_review_state),
             review_note = :review_note,
+            review_hold_reason = :review_hold_reason,
             updated_at = now()
         WHERE id = CAST(:candidate_id AS uuid)
         RETURNING {CANDIDATE_COLUMNS}
@@ -128,6 +131,7 @@ async def update_candidate_review(
                 "longitude": longitude,
                 "review_state": review_state.value,
                 "review_note": review_note,
+                "review_hold_reason": review_hold_reason,
             },
         )
     ).mappings().one()
