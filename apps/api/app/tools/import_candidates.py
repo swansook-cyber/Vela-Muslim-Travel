@@ -41,6 +41,7 @@ class Candidate:
     review_note: str | None
     review_hold_reason: str | None = None
     source_checked_at: datetime | None = None
+    coordinate_checked_at: datetime | None = None
 
 
 ALLOWED_REVIEW_STATES = {
@@ -70,6 +71,11 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
     source_checked_at = parse_datetime(
         row.get("source_checked_at"),
         "source_checked_at",
+        row_number,
+    )
+    coordinate_checked_at = parse_datetime(
+        row.get("coordinate_checked_at"),
+        "coordinate_checked_at",
         row_number,
     )
 
@@ -112,6 +118,14 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
     if review_state in {"GEOCODED", "APPROVED", "PROMOTED"} and latitude is None:
         raise ValueError(
             f"Row {row_number}: review state {review_state} requires coordinates"
+        )
+    if (
+        review_state in {"GEOCODED", "APPROVED", "PROMOTED"}
+        and coordinate_checked_at is None
+    ):
+        raise ValueError(
+            f"Row {row_number}: review state {review_state} "
+            "requires coordinate_checked_at"
         )
 
     if place_type == "ACCOMMODATION" and trust_status == "HALAL_CERTIFIED":
@@ -158,6 +172,7 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
         review_note=empty_to_none(row.get("review_note")),
         review_hold_reason=empty_to_none(row.get("review_hold_reason")),
         source_checked_at=source_checked_at,
+        coordinate_checked_at=coordinate_checked_at,
     )
 
 
@@ -191,6 +206,7 @@ UPSERT_CANDIDATE_SQL = text(
         review_note,
         review_hold_reason,
         source_checked_at,
+        coordinate_checked_at,
         updated_at
     )
     VALUES (
@@ -213,6 +229,7 @@ UPSERT_CANDIDATE_SQL = text(
         :review_note,
         :review_hold_reason,
         :source_checked_at,
+        :coordinate_checked_at,
         now()
     )
     ON CONFLICT (external_provider, external_id)
@@ -256,6 +273,10 @@ UPSERT_CANDIDATE_SQL = text(
             EXCLUDED.source_checked_at,
             place_candidates.source_checked_at
         ),
+        coordinate_checked_at = COALESCE(
+            EXCLUDED.coordinate_checked_at,
+            place_candidates.coordinate_checked_at
+        ),
         updated_at = now()
     """
 )
@@ -286,6 +307,7 @@ async def apply_candidates(candidates: list[Candidate]) -> None:
                     "review_note": candidate.review_note,
                     "review_hold_reason": candidate.review_hold_reason,
                     "source_checked_at": candidate.source_checked_at,
+                    "coordinate_checked_at": candidate.coordinate_checked_at,
                 },
             )
 
