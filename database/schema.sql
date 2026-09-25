@@ -53,6 +53,7 @@ CREATE TABLE place_candidates (
   review_state candidate_review_state NOT NULL DEFAULT 'DISCOVERED',
   review_note text,
   review_hold_reason text,
+  source_checked_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   CHECK (
