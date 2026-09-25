@@ -20,6 +20,7 @@ def base_candidate() -> dict:
         "certification_number": None,
         "certification_expires_at": None,
         "review_hold_reason": None,
+        "source_checked_at": datetime.now(UTC),
     }
 
 
@@ -87,3 +88,12 @@ def test_candidate_approval_is_blocked_by_manual_review_hold() -> None:
     assert blockers == [
         "manual review hold: Confirm reopening before approval"
     ]
+
+
+def test_candidate_approval_requires_source_cross_check_date() -> None:
+    candidate = base_candidate()
+    candidate["source_checked_at"] = None
+
+    blockers = candidate_approval_blockers(candidate)
+
+    assert "source cross-check date is required" in blockers
