@@ -30,6 +30,7 @@ def candidate_row(state: str) -> dict:
         "review_note": None,
         "review_hold_reason": None,
         "source_checked_at": now,
+        "coordinate_checked_at": now,
         "created_at": now,
         "updated_at": now,
     }
