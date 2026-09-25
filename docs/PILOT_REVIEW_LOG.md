@@ -57,6 +57,59 @@ Primary evidence:
 Secondary cross-check:
 - https://masjidthai.com/masjid/mosqhistory.php?id=TlJUMDA1Mw%3D%3D
 
+
+## 2026-09-25 — สุราษฎร์ธานี
+
+### มัสยิดมูฮัมมาดียะห์ บ้านดอนมะม่วง
+
+- CICOT currently confirms the mosque at หมู่ 2 ตำบลท่าชนะ อำเภอท่าชนะ
+  จังหวัดสุราษฎร์ธานี 84170 with phone **083-503-6602**.
+- A current Google business result with the same mosque name resolves in
+  ตำบลประสงค์, อำเภอท่าชนะ instead of the CICOT locality.
+- Treat that map result as potentially mismatched or imprecise. Do not accept
+  its coordinate automatically; geocode and visually verify against the
+  official CICOT address during manual review.
+- Keep the current staging address and phone from CICOT until the coordinate
+  identity is resolved.
+
+Primary evidence:
+- https://www.cicot.or.th/th/mosque/lists/6
+
+### มัสยิดอิกอมุสซอลาฮ์ บ้านหนองจอก
+
+- CICOT currently confirms the mosque at หมู่ 4 ตำบลท่าสะท้อน อำเภอพุนพิน
+  จังหวัดสุราษฎร์ธานี 84130 with phone **089-735-6089**.
+- A current Google business result resolves a mosque with the same name in
+  ตำบลท่าสะท้อน, พุนพิน and shows the same phone.
+- Local government material for ตำบลท่าสะท้อน also identifies the mosque
+  education center at **37 หมู่ 4 ตำบลท่าสะท้อน**.
+- This is a strong identity cross-check, but exact coordinates still require
+  explicit map review before `GEOCODED`.
+
+Primary evidence:
+- https://www.cicot.or.th/th/mosque/lists/4
+
+Supporting local-government evidence:
+- https://www.tasaton.go.th/storage/uploads/175393451026.pdf
+
+### สุราษฎร์ฮาลาลฟู๊ด
+
+- Makan Halal Guide currently lists the restaurant on the
+  สุราษฎร์ธานี-นครศรีธรรมราช road in ตำบลท่าทองใหม่, กาญจนดิษฐ์ with phone
+  **093-882-4903**.
+- Wongnai independently lists the same restaurant name, same phone and
+  ท่าทองใหม่ location.
+- These sources support the discovery identity, but neither source establishes
+  current official halal certification.
+- Keep `UNVERIFIED` until stronger certification/ownership evidence is found.
+- Exact coordinates still require explicit map review.
+
+Primary discovery evidence:
+- https://makanhalalguide.com/shop/detail/2909
+
+Secondary cross-check:
+- https://www.wongnai.com/restaurants/657355hU-%E0%B8%AA%E0%B8%B8%E0%B8%A3%E0%B8%B2%E0%B8%A9%E0%B8%8E%E0%B8%A3%E0%B9%8C%E0%B8%AE%E0%B8%B2%E0%B8%A5%E0%B8%B2%E0%B8%A5%E0%B8%9F%E0%B8%B9%E0%B9%8A%E0%B8%94
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
