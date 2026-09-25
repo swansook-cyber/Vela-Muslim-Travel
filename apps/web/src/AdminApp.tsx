@@ -96,6 +96,8 @@ export default function AdminApp() {
   const [provinceFilter, setProvinceFilter] = useState("");
   const [typeFilter, setTypeFilter] =
     useState<"" | CandidateResult["place_type"]>("");
+  const [readinessFilter, setReadinessFilter] =
+    useState<"ALL" | "READY" | "BLOCKED">("ALL");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
@@ -113,7 +115,23 @@ export default function AdminApp() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const filteredCount = useMemo(() => candidates.length, [candidates]);
+  const displayedCandidates = useMemo(() => {
+    if (
+      readinessFilter === "ALL" ||
+      (filter !== "DISCOVERED" && filter !== "GEOCODED")
+    ) {
+      return candidates;
+    }
+
+    return candidates.filter((candidate) => {
+      if (!isCandidateReviewTask(candidate)) return false;
+      return readinessFilter === "READY"
+        ? candidate.ready_to_approve
+        : !candidate.ready_to_approve;
+    });
+  }, [candidates, filter, readinessFilter]);
+
+  const filteredCount = displayedCandidates.length;
 
   function initializeDrafts(items: CandidateResult[]) {
     setDrafts((current) => {
@@ -130,7 +148,7 @@ export default function AdminApp() {
     });
   }
 
-  async function load() {
+  async function load(overrides?: { province?: string }) {
     if (!adminKey) {
       setError("กรุณาใส่ Admin API Key");
       return;
@@ -142,18 +160,19 @@ export default function AdminApp() {
     sessionStorage.setItem("vela-admin-key", adminKey);
 
     try {
+      const activeProvince = overrides?.province ?? provinceFilter;
       const candidateRequest =
         filter === "DISCOVERED" || filter === "GEOCODED"
           ? fetchCandidateReviewQueue(
               adminKey,
               filter,
-              provinceFilter || undefined,
+              activeProvince || undefined,
               typeFilter || undefined,
             )
           : fetchCandidates(
               adminKey,
               filter || undefined,
-              provinceFilter || undefined,
+              activeProvince || undefined,
               typeFilter || undefined,
             );
 
@@ -172,6 +191,9 @@ export default function AdminApp() {
         fetchCandidateReadiness(adminKey),
         fetchCandidateReviewProgress(adminKey),
       ]);
+      if (overrides?.province !== undefined) {
+        setProvinceFilter(overrides.province);
+      }
       setCandidates(items);
       setDashboard(stats);
       setAudit(recentAudit);
@@ -367,7 +389,23 @@ export default function AdminApp() {
             ))}
           </select>
         </label>
-        <button type="button" onClick={load} disabled={loading}>
+        <label>
+          ความพร้อม
+          <select
+            value={readinessFilter}
+            disabled={filter !== "DISCOVERED" && filter !== "GEOCODED"}
+            onChange={(event) =>
+              setReadinessFilter(
+                event.target.value as "ALL" | "READY" | "BLOCKED",
+              )
+            }
+          >
+            <option value="ALL">ทั้งหมด</option>
+            <option value="READY">พร้อมอนุมัติ</option>
+            <option value="BLOCKED">ยังติด blocker</option>
+          </select>
+        </label>
+        <button type="button" onClick={() => void load()} disabled={loading}>
           {loading ? "กำลังทำงาน…" : "โหลดรายการ"}
         </button>
       </section>
@@ -407,14 +445,20 @@ export default function AdminApp() {
           </div>
           <div className="pilot-readiness-grid">
             {reviewProgress.provinces.map((item) => (
-              <div key={item.province}>
+              <button
+                key={item.province}
+                type="button"
+                className="progress-province"
+                disabled={loading}
+                onClick={() => void load({ province: item.province })}
+              >
                 <strong>{item.province}</strong>
                 <span>{item.pending} ค้าง</span>
                 <small>
                   พร้อมอนุมัติ {item.ready_to_approve} · ติด blocker{" "}
                   {item.blocked}
                 </small>
-              </div>
+              </button>
             ))}
           </div>
         </section>
@@ -504,7 +548,7 @@ export default function AdminApp() {
       <ProductionPlaces adminKey={adminKey} />
 
       <section className="candidate-list">
-        {candidates.map((candidate) => {
+        {displayedCandidates.map((candidate) => {
           const draft = drafts[candidate.id] || {
             latitude: "",
             longitude: "",
