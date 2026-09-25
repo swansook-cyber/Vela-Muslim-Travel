@@ -140,6 +140,7 @@ export interface CandidateReviewInput {
   review_state?: CandidateReviewState;
   review_note?: string;
   review_hold_reason?: string;
+  source_checked_at?: string;
 }
 
 export async function updateCandidate(
