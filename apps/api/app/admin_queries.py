@@ -32,6 +32,8 @@ CANDIDATE_COLUMNS = """
 async def list_candidates(
     session: AsyncSession,
     review_state: CandidateReviewState | None,
+    province: str | None = None,
+    place_type: str | None = None,
     limit: int = 100,
 ) -> list[dict]:
     sql = text(
@@ -42,7 +44,23 @@ async def list_candidates(
             CAST(:review_state AS text) IS NULL
             OR review_state::text = CAST(:review_state AS text)
         )
-        ORDER BY updated_at DESC
+          AND (
+            CAST(:province AS text) IS NULL
+            OR province = CAST(:province AS text)
+          )
+          AND (
+            CAST(:place_type AS text) IS NULL
+            OR place_type::text = CAST(:place_type AS text)
+          )
+        ORDER BY
+            CASE province
+                WHEN 'นครศรีธรรมราช' THEN 1
+                WHEN 'ชุมพร' THEN 2
+                WHEN 'เพชรบุรี' THEN 3
+                WHEN 'นครราชสีมา' THEN 4
+                ELSE 99
+            END,
+            updated_at DESC
         LIMIT :limit
         """
     )
@@ -51,6 +69,8 @@ async def list_candidates(
             sql,
             {
                 "review_state": review_state.value if review_state else None,
+                "province": province,
+                "place_type": place_type,
                 "limit": limit,
             },
         )

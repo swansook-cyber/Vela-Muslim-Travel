@@ -346,9 +346,17 @@ async def admin_candidates(
     session: DbSession,
     _admin: AdminGuard,
     review_state: CandidateReviewState | None = None,
+    province: str | None = None,
+    place_type: str | None = None,
     limit: int = 100,
 ) -> list[CandidateResult]:
-    rows = await list_candidates(session, review_state=review_state, limit=min(limit, 500))
+    rows = await list_candidates(
+        session,
+        review_state=review_state,
+        province=province,
+        place_type=place_type,
+        limit=min(limit, 500),
+    )
     return [CandidateResult(**row) for row in rows]
 
 

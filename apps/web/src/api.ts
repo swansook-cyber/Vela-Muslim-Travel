@@ -106,10 +106,18 @@ function adminHeaders(adminKey: string): HeadersInit {
 export async function fetchCandidates(
   adminKey: string,
   reviewState?: CandidateReviewState,
+  province?: string,
+  placeType?: PlaceType,
 ): Promise<CandidateResult[]> {
   const url = new URL(`${API_BASE_URL}/admin/candidates`);
   if (reviewState) {
     url.searchParams.set("review_state", reviewState);
+  }
+  if (province) {
+    url.searchParams.set("province", province);
+  }
+  if (placeType) {
+    url.searchParams.set("place_type", placeType);
   }
 
   const response = await fetch(url, {

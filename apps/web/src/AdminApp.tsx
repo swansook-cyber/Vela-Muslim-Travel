@@ -19,6 +19,22 @@ import type {
   PilotReadinessResponse,
 } from "./types";
 
+const pilotProvinces = [
+  "",
+  "นครศรีธรรมราช",
+  "ชุมพร",
+  "เพชรบุรี",
+  "นครราชสีมา",
+];
+
+const candidateTypes: Array<{ value: "" | CandidateResult["place_type"]; label: string }> = [
+  { value: "", label: "ทุกประเภท" },
+  { value: "RESTAURANT", label: "ร้านอาหาร" },
+  { value: "ACCOMMODATION", label: "ที่พัก" },
+  { value: "MOSQUE", label: "มัสยิด" },
+  { value: "PRAYER_ROOM", label: "ห้องละหมาด" },
+];
+
 const reviewStates: Array<{ value: CandidateReviewState | ""; label: string }> = [
   { value: "", label: "ทั้งหมด" },
   { value: "DISCOVERED", label: "รอตรวจ" },
@@ -58,6 +74,9 @@ export default function AdminApp() {
     () => sessionStorage.getItem("vela-admin-key") || "",
   );
   const [filter, setFilter] = useState<CandidateReviewState | "">("DISCOVERED");
+  const [provinceFilter, setProvinceFilter] = useState("");
+  const [typeFilter, setTypeFilter] =
+    useState<"" | CandidateResult["place_type"]>("");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
@@ -101,7 +120,12 @@ export default function AdminApp() {
 
     try {
       const [items, stats, recentAudit, readiness] = await Promise.all([
-        fetchCandidates(adminKey, filter || undefined),
+        fetchCandidates(
+          adminKey,
+          filter || undefined,
+          provinceFilter || undefined,
+          typeFilter || undefined,
+        ),
         fetchAdminDashboard(adminKey),
         fetchAdminAudit(adminKey, 12),
         fetchPilotReadiness(adminKey),
