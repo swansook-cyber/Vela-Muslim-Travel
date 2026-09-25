@@ -183,3 +183,17 @@ class CandidateReviewTask(CandidateResult):
     maps_search_url: str
     approval_blockers: list[str]
     ready_to_approve: bool
+
+
+class CandidateReviewProvinceProgress(BaseModel):
+    province: str
+    pending: int
+    ready_to_approve: int
+    blocked: int
+
+
+class CandidateReviewProgressResponse(BaseModel):
+    pending: int
+    ready_to_approve: int
+    blocked: int
+    provinces: list[CandidateReviewProvinceProgress]
