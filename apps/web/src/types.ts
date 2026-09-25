@@ -105,6 +105,14 @@ export interface CandidateResult {
   updated_at: string;
 }
 
+export interface CandidateCoordinateSuggestion {
+  candidate_id: string;
+  provider: "google_places";
+  external_id: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface CandidateReviewTask extends CandidateResult {
   maps_search_url: string;
   approval_blockers: string[];
