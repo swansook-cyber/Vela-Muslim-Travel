@@ -4,6 +4,7 @@ import { ProductionPlaces } from "./ProductionPlaces";
 import {
   fetchAdminAudit,
   fetchAdminDashboard,
+  fetchCandidateReadiness,
   fetchCandidates,
   fetchPilotReadiness,
   promoteCandidate,
@@ -13,6 +14,7 @@ import {
 import type {
   AdminAuditEntry,
   AdminDashboard,
+  CandidateReadinessResponse,
   CandidateResult,
   CandidateReviewState,
   GeocodeResult,
@@ -85,6 +87,8 @@ export default function AdminApp() {
   const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
   const [pilotReadiness, setPilotReadiness] =
     useState<PilotReadinessResponse | null>(null);
+  const [candidateReadiness, setCandidateReadiness] =
+    useState<CandidateReadinessResponse | null>(null);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
@@ -122,7 +126,8 @@ export default function AdminApp() {
     sessionStorage.setItem("vela-admin-key", adminKey);
 
     try {
-      const [items, stats, recentAudit, readiness] = await Promise.all([
+      const [items, stats, recentAudit, readiness, candidateCoverage] =
+        await Promise.all([
         fetchCandidates(
           adminKey,
           filter || undefined,
@@ -132,11 +137,13 @@ export default function AdminApp() {
         fetchAdminDashboard(adminKey),
         fetchAdminAudit(adminKey, 12),
         fetchPilotReadiness(adminKey),
+        fetchCandidateReadiness(adminKey),
       ]);
       setCandidates(items);
       setDashboard(stats);
       setAudit(recentAudit);
       setPilotReadiness(readiness);
+      setCandidateReadiness(candidateCoverage);
       initializeDrafts(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "โหลด candidate ไม่สำเร็จ");
@@ -313,6 +320,39 @@ export default function AdminApp() {
           <div><strong>{dashboard.production_places}</strong><span>Production places</span></div>
           <div><strong>{dashboard.certifications_expiring_30d}</strong><span>หลักฐานใกล้หมดอายุ 30 วัน</span></div>
           <div><strong>{dashboard.expired_verifications}</strong><span>หลักฐานหมดอายุ</span></div>
+        </section>
+      )}
+
+      {candidateReadiness && (
+        <section className="pilot-readiness candidate-readiness">
+          <div className="pilot-readiness-head">
+            <div>
+              <h2>Candidate Coverage</h2>
+              <p>
+                {candidateReadiness.ready
+                  ? "Discovery queue ครบร้านอาหารและมัสยิดทุกจังหวัดเป้าหมาย และมีที่พักอย่างน้อย 2 จังหวัด"
+                  : "Discovery queue ยังมีช่องว่างก่อนเริ่ม review เต็มเส้นทาง"}
+              </p>
+            </div>
+            <strong className={candidateReadiness.ready ? "ready" : "not-ready"}>
+              {candidateReadiness.ready ? "REVIEW READY" : "GAPS"}
+            </strong>
+          </div>
+          <div className="pilot-readiness-grid">
+            {candidateReadiness.provinces.map((item) => (
+              <div key={item.province}>
+                <strong>{item.province}</strong>
+                <small>
+                  ร้าน {item.restaurants} · มัสยิด {item.mosques} · ที่พัก{" "}
+                  {item.accommodation}
+                </small>
+                <small>
+                  มีพิกัด {item.geocoded} · อนุมัติ {item.approved} · Promote{" "}
+                  {item.promoted}
+                </small>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 

@@ -195,3 +195,19 @@ export interface PilotReadinessResponse {
   ready: boolean;
   provinces: PilotProvinceReadiness[];
 }
+
+
+export interface CandidateProvinceReadiness {
+  province: string;
+  restaurants: number;
+  mosques: number;
+  accommodation: number;
+  geocoded: number;
+  approved: number;
+  promoted: number;
+}
+
+export interface CandidateReadinessResponse {
+  ready: boolean;
+  provinces: CandidateProvinceReadiness[];
+}

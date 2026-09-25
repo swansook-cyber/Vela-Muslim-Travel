@@ -5,6 +5,7 @@ import type {
   AdminPlaceUpdate,
   AdminVerificationResult,
   AlongRouteResponse,
+  CandidateReadinessResponse,
   CandidateResult,
   CandidateReviewState,
   Coordinate,
@@ -352,4 +353,19 @@ export async function fetchPilotReadiness(
   }
 
   return response.json() as Promise<PilotReadinessResponse>;
+}
+
+
+export async function fetchCandidateReadiness(
+  adminKey: string,
+): Promise<CandidateReadinessResponse> {
+  const response = await fetch(`${API_BASE_URL}/admin/candidate-readiness`, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<CandidateReadinessResponse>;
 }

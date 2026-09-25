@@ -779,3 +779,8 @@ button.danger {
 .pilot-readiness-grid small {
   color: #6a756d;
 }
+
+.candidate-readiness {
+  border-color: #cadfd1;
+  background: #f7fbf8;
+}
