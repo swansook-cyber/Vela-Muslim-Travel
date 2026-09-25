@@ -376,7 +376,7 @@ Primary discovery evidence:
 ### Coordinate verification update — 2026-09-25
 
 - **มัสยิดมูฮัมมาดียะห์ บ้านดอนมะม่วง** — GEOCODED at
-  `9.515438, 99.164563` from the current same-name Google business Plus Code
+  `9.5154625, 99.164546875` from the current same-name Google business Plus Code
   `G587+5RM`. The CICOT-vs-Google locality discrepancy remains an explicit
   manual hold, so this candidate is not approval-ready.
 - **มัสยิดอิกอมุสซอลาฮ์ บ้านหนองจอก** — GEOCODED at
@@ -384,18 +384,18 @@ Primary discovery evidence:
   Organization UTM coordinates `X 525875 / Y 998833`, converted from
   EPSG:32647 to WGS84. CICOT, MasjidThai and PSU sources support the same
   mosque identity.
-- **สุราษฎร์ฮาลาลฟู๊ด** — GEOCODED at `9.148563, 99.392688` from Cybo Plus
+- **สุราษฎร์ฮาลาลฟู๊ด** — GEOCODED at `9.1485375, 99.392671875` from Cybo Plus
   Code `49XV+C37`, with name/phone/address cross-checked against Wongnai and
   Makan Halal Guide. Trust remains `UNVERIFIED`.
 
 
 ### Coordinate verification update — 2026-09-25 (ชุมพร)
 
-- **มัสยิดนูรุ้ลเอี๊ยะซาน** — GEOCODED at `10.806188, 99.353063`
+- **มัสยิดนูรุ้ลเอี๊ยะซาน** — GEOCODED at `10.8061625, 99.353109375`
   from the current Google business Plus Code `R943+F69`. CICOT confirms the
   Moo 7, Chum Kho, Pathio identity, but the Google and CICOT phone numbers still
   conflict, so the existing manual hold remains.
-- **มัสยิดมูฮาญิรีน** — GEOCODED at `10.737813, 99.161313` from the
+- **มัสยิดมูฮาญิรีน** — GEOCODED at `10.7377875, 99.161328125` from the
   current Google business / Trip.com Plus Code `P5Q6+4G8`. MasjidThai
   registers the mosque at 1 Moo 1, Hong Charoen, Tha Sae; the address-identity
   discrepancy remains an explicit manual hold.
@@ -404,6 +404,13 @@ Primary discovery evidence:
   Sap Anan, Tha Sae and phone 096-698-7642, but no exact public coordinate or
   Plus Code was found in this pass. Nearby-distance descriptions are not
   sufficient evidence for coordinate promotion.
+
+
+> Plus Code coordinate note: short Plus Codes in this log are recovered using
+> the place locality and decoded with Google's official Open Location Code
+> 11-character grid algorithm. The stored coordinate is the center of the
+> decoded Plus Code area; direct coordinates from embedded maps, directions or
+> official UTM records remain preferred when available.
 
 ## Review rule
 
