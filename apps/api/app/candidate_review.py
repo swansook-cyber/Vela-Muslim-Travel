@@ -38,6 +38,10 @@ def candidate_approval_blockers(
     if lat is None or lng is None:
         blockers.append("reviewed coordinates are required")
 
+    source_checked_at = candidate.get("source_checked_at")
+    if source_checked_at is None:
+        blockers.append("source cross-check date is required")
+
     source_type = candidate.get("source_type")
     source_reference = candidate.get("source_reference")
     if source_type != "UNKNOWN" and not source_reference:
