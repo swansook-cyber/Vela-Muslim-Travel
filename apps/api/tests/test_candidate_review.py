@@ -107,3 +107,25 @@ def test_candidate_approval_requires_coordinate_verification_date() -> None:
     blockers = candidate_approval_blockers(candidate)
 
     assert "coordinate verification date is required" in blockers
+
+
+def test_candidate_maps_search_prefers_google_place_id() -> None:
+    candidate = base_candidate()
+    candidate["source_provider"] = "google_business"
+    candidate["external_id"] = "ChIJexact123"
+
+    url = candidate_maps_search_url(candidate)
+
+    assert "query_place_id=ChIJexact123" in url
+    assert "&query=" not in url
+
+
+def test_candidate_maps_search_falls_back_to_name_and_address() -> None:
+    candidate = base_candidate()
+    candidate["source_provider"] = "public_directory"
+    candidate["external_id"] = None
+
+    url = candidate_maps_search_url(candidate)
+
+    assert "query_place_id=" not in url
+    assert "query=" in url
