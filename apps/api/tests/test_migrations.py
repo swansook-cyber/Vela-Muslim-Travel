@@ -88,3 +88,37 @@ async def test_candidate_review_hold_migration_is_recorded() -> None:
 
     assert count == 1
     assert column_count == 1
+
+
+@pytest.mark.asyncio
+async def test_candidate_source_checked_at_migration_is_recorded() -> None:
+    await run_migrations()
+
+    async with SessionLocal() as session:
+        count = (
+            await session.execute(
+                text(
+                    """
+                    SELECT count(*)
+                    FROM schema_migrations
+                    WHERE version = '0004_candidate_source_checked_at'
+                    """
+                )
+            )
+        ).scalar_one()
+
+        column_count = (
+            await session.execute(
+                text(
+                    """
+                    SELECT count(*)
+                    FROM information_schema.columns
+                    WHERE table_name = 'place_candidates'
+                      AND column_name = 'source_checked_at'
+                    """
+                )
+            )
+        ).scalar_one()
+
+    assert count == 1
+    assert column_count == 1
