@@ -138,14 +138,33 @@ Only after that confirmation should the candidate be saved as `GEOCODED`.
 ### Exact Google place review links
 
 When a candidate came from `google_business` or `google_places` and has a
-stored Google place ID, the Admin review link opens that exact place via
-`query_place_id`. It does not fall back to a free-text name/address search.
-This is especially important for the remaining coordinate-review candidates,
-where similar names or nearby businesses can otherwise produce a wrong pin.
+stored Google place ID, the Admin review link uses Google's documented
+`query=PLACE_NAME&query_place_id=PLACE_ID` form. This targets the stored place
+ID while retaining the required search query parameter.
 
 Candidates without a Google place ID continue to use the name/address search
 fallback and still require manual map verification before
 `coordinate_checked_at` is recorded.
+
+### Optional Google Place coordinate resolver
+
+If the server has `GOOGLE_PLACES_API_KEY` configured, Admin exposes
+**ดึงพิกัดจาก Google Place ID** for Google-backed candidates. The API requests
+only the Place Details fields `id,location`.
+
+The resolver is deliberately read-only:
+
+1. it returns a coordinate suggestion,
+2. Admin fills latitude/longitude and clears any previous coordinate
+   confirmation,
+3. the reviewer opens the coordinate on Google Maps,
+4. the reviewer explicitly presses **ยืนยันพิกัดนี้แล้ว**,
+5. only then can the candidate be saved as `GEOCODED`.
+
+If the key is absent, the resolver returns a configuration error and the normal
+Nominatim/manual review workflow remains available. The Google key stays on the
+server and must never be embedded in the public web bundle. Google Places usage
+may incur charges according to the account's Maps Platform billing setup.
 
 ### Single-candidate review mode
 
