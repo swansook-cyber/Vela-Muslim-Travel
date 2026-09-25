@@ -40,6 +40,7 @@ class Candidate:
     review_state: str
     review_note: str | None
     review_hold_reason: str | None = None
+    source_checked_at: datetime | None = None
 
 
 ALLOWED_REVIEW_STATES = {
@@ -64,6 +65,11 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
     certification_expires_at = parse_datetime(
         row.get("certification_expires_at"),
         "certification_expires_at",
+        row_number,
+    )
+    source_checked_at = parse_datetime(
+        row.get("source_checked_at"),
+        "source_checked_at",
         row_number,
     )
 
@@ -151,6 +157,7 @@ def parse_candidate(row: dict[str, str], row_number: int) -> Candidate:
         review_state=review_state,
         review_note=empty_to_none(row.get("review_note")),
         review_hold_reason=empty_to_none(row.get("review_hold_reason")),
+        source_checked_at=source_checked_at,
     )
 
 
@@ -183,6 +190,7 @@ UPSERT_CANDIDATE_SQL = text(
         review_state,
         review_note,
         review_hold_reason,
+        source_checked_at,
         updated_at
     )
     VALUES (
@@ -204,6 +212,7 @@ UPSERT_CANDIDATE_SQL = text(
         CAST(:review_state AS candidate_review_state),
         :review_note,
         :review_hold_reason,
+        :source_checked_at,
         now()
     )
     ON CONFLICT (external_provider, external_id)
@@ -243,6 +252,10 @@ UPSERT_CANDIDATE_SQL = text(
                 )
             ELSE place_candidates.review_hold_reason
         END,
+        source_checked_at = COALESCE(
+            EXCLUDED.source_checked_at,
+            place_candidates.source_checked_at
+        ),
         updated_at = now()
     """
 )
@@ -272,6 +285,7 @@ async def apply_candidates(candidates: list[Candidate]) -> None:
                     "review_state": candidate.review_state,
                     "review_note": candidate.review_note,
                     "review_hold_reason": candidate.review_hold_reason,
+                    "source_checked_at": candidate.source_checked_at,
                 },
             )
 
