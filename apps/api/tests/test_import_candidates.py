@@ -69,7 +69,7 @@ def test_pilot_candidate_queue_is_valid() -> None:
     path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
     candidates = load_candidates(path)
 
-    assert len(candidates) >= 21
+    assert len(candidates) >= 24
     assert any(
         candidate.proposed_trust_status == "HALAL_CERTIFIED"
         for candidate in candidates
