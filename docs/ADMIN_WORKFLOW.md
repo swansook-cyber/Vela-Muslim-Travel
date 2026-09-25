@@ -89,6 +89,21 @@ Reviewers can filter the active queue to show only ready or blocked records, and
 can select a province directly from the progress summary to load that province's
 queue. This changes only the review view; it never changes candidate state.
 
+### Manual review hold
+
+Use `review_hold_reason` when research finds an unresolved issue that must block
+approval even after coordinates are available. Examples include:
+
+- a venue currently marked temporarily closed,
+- conflicting official/public phone numbers,
+- conflicting administrative addresses,
+- a same-name map result that may point to a different place.
+
+Any non-empty hold reason is returned as an approval blocker and prevents
+`APPROVED`. The reviewer must resolve the issue and explicitly clear the hold
+field in Admin. Candidate re-imports preserve an existing hold rather than
+silently clearing it.
+
 
 The guarded review queue supports both `DISCOVERED` and `GEOCODED` candidates. This keeps source evidence, Google Maps review links, and approval blockers visible after coordinates are saved and before approval.
 
