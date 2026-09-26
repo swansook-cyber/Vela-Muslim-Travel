@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ProductionPlaces } from "./ProductionPlaces";
 import {
+  acceptPhase0,
   checkCandidatePromotion,
   fetchAdminAudit,
   fetchAdminDashboard,
@@ -204,6 +205,13 @@ export default function AdminApp() {
   >({});
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [phase0Checks, setPhase0Checks] = useState({
+    route_smoke_2km_checked: false,
+    route_smoke_5km_core_pass: false,
+    route_smoke_10km_checked: false,
+    detours_and_evidence_checked: false,
+  });
+  const [phase0Note, setPhase0Note] = useState("");
 
   const displayedCandidates = useMemo(() => {
     const scopedCandidates = pilotQueueOnly
@@ -413,6 +421,27 @@ export default function AdminApp() {
       delete next[candidateId];
       return next;
     });
+  }
+
+  async function submitPhase0Acceptance() {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const result = await acceptPhase0(adminKey, {
+        ...phase0Checks,
+        note: phase0Note.trim() || undefined,
+      });
+      setPhase0Completion(result);
+      setMessage("บันทึก Final Phase 0 Acceptance แล้ว");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "บันทึก Phase 0 Acceptance ไม่สำเร็จ",
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function locate(candidate: CandidateResult) {
@@ -839,9 +868,11 @@ export default function AdminApp() {
             <div>
               <h2>Phase 0 Completion</h2>
               <p>
-                {phase0Completion.mechanical_ready
-                  ? "Mechanical Ready — เหลือ Final Manual Acceptance"
-                  : "ยังไม่สมบูรณ์ — ทำ blocker ด้านล่างให้หมดก่อน"}
+                {phase0Completion.final_complete
+                  ? "Phase 0 สมบูรณ์และผ่าน Final Manual Acceptance แล้ว"
+                  : phase0Completion.mechanical_ready
+                    ? "Mechanical Ready — เหลือ Final Manual Acceptance"
+                    : "ยังไม่สมบูรณ์ — ทำ blocker ด้านล่างให้หมดก่อน"}
               </p>
               <small>
                 Review ค้าง {phase0Completion.active_review_pending} · รอ Promote{" "}
@@ -851,7 +882,11 @@ export default function AdminApp() {
               </small>
             </div>
             <strong>
-              {phase0Completion.mechanical_ready ? "MECHANICAL READY" : "IN PROGRESS"}
+              {phase0Completion.final_complete
+                ? "PHASE 0 COMPLETE"
+                : phase0Completion.mechanical_ready
+                  ? "MECHANICAL READY"
+                  : "IN PROGRESS"}
             </strong>
           </div>
 
@@ -919,8 +954,89 @@ export default function AdminApp() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={phase0Checks.route_smoke_2km_checked}
+                    onChange={(event) =>
+                      setPhase0Checks((current) => ({
+                        ...current,
+                        route_smoke_2km_checked: event.target.checked,
+                      }))
+                    }
+                  />
+                  ตรวจ route smoke 2 km แล้ว
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={phase0Checks.route_smoke_5km_core_pass}
+                    onChange={(event) =>
+                      setPhase0Checks((current) => ({
+                        ...current,
+                        route_smoke_5km_core_pass: event.target.checked,
+                      }))
+                    }
+                  />
+                  5 km core gate ผ่าน
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={phase0Checks.route_smoke_10km_checked}
+                    onChange={(event) =>
+                      setPhase0Checks((current) => ({
+                        ...current,
+                        route_smoke_10km_checked: event.target.checked,
+                      }))
+                    }
+                  />
+                  ตรวจ route smoke 10 km แล้ว
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={phase0Checks.detours_and_evidence_checked}
+                    onChange={(event) =>
+                      setPhase0Checks((current) => ({
+                        ...current,
+                        detours_and_evidence_checked: event.target.checked,
+                      }))
+                    }
+                  />
+                  ตรวจ detour และความสดของหลักฐานแล้ว
+                </label>
+                <label>
+                  Acceptance note
+                  <textarea
+                    value={phase0Note}
+                    onChange={(event) => setPhase0Note(event.target.value)}
+                    rows={2}
+                    placeholder="บันทึกผล QA / route smoke เพิ่มเติม (ถ้ามี)"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => void submitPhase0Acceptance()}
+                  disabled={
+                    loading ||
+                    !Object.values(phase0Checks).every(Boolean)
+                  }
+                >
+                  Accept Phase 0
+                </button>
               </div>
             )}
+
+          {phase0Completion.final_complete && (
+            <p className="admin-message">
+              Final acceptance{" "}
+              {phase0Completion.accepted_at
+                ? new Date(phase0Completion.accepted_at).toLocaleString("th-TH")
+                : "บันทึกแล้ว"}
+            </p>
+          )}
         </section>
       )}
 
