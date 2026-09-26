@@ -7,6 +7,19 @@ from .verification import certification_is_current
 CERTIFIED_STATUSES = {"HALAL_CERTIFIED", "HALAL_CERTIFIED_SERVICE"}
 
 
+_ALLOWED_REVIEW_TRANSITIONS = {
+    "DISCOVERED": {"DISCOVERED", "GEOCODED", "REJECTED"},
+    "GEOCODED": {"DISCOVERED", "GEOCODED", "APPROVED", "REJECTED"},
+    "APPROVED": {"GEOCODED", "APPROVED", "REJECTED"},
+    "REJECTED": {"DISCOVERED", "REJECTED"},
+    "PROMOTED": {"PROMOTED"},
+}
+
+
+def candidate_review_transition_allowed(current_state: str, next_state: str) -> bool:
+    return next_state in _ALLOWED_REVIEW_TRANSITIONS.get(current_state, set())
+
+
 def candidate_maps_search_url(candidate: dict) -> str:
     provider = candidate.get("external_provider")
     external_id = candidate.get("external_id")
