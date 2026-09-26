@@ -17,6 +17,7 @@ import type {
   DetourResponse,
   GeocodeResult,
   PilotReadinessResponse,
+  Phase0AcceptanceInput,
   Phase0CompletionResponse,
   PlaceResult,
   PlaceType,
@@ -494,6 +495,23 @@ export async function fetchPhase0Completion(
 ): Promise<Phase0CompletionResponse> {
   const response = await fetch(`${API_BASE_URL}/admin/phase0-completion`, {
     headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<Phase0CompletionResponse>;
+}
+
+export async function acceptPhase0(
+  adminKey: string,
+  input: Phase0AcceptanceInput,
+): Promise<Phase0CompletionResponse> {
+  const response = await fetch(`${API_BASE_URL}/admin/phase0-acceptance`, {
+    method: "POST",
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify(input),
   });
 
   if (!response.ok) {
