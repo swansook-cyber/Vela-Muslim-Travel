@@ -40,6 +40,8 @@ const pilotProvinces = [
   "นครราชสีมา",
 ];
 
+const pilotProvinceSet = new Set(pilotProvinces.filter(Boolean));
+
 const candidateTypes: Array<{ value: "" | CandidateResult["place_type"]; label: string }> = [
   { value: "", label: "ทุกประเภท" },
   { value: "RESTAURANT", label: "ร้านอาหาร" },
@@ -223,7 +225,11 @@ export default function AdminApp() {
         );
       }
       if (readinessFilter === "GOOGLE_RESOLVABLE") {
-        return isGoogleResolvableCandidate(candidate);
+        return (
+          isGoogleResolvableCandidate(candidate) &&
+          Boolean(candidate.province) &&
+          pilotProvinceSet.has(candidate.province || "")
+        );
       }
       if (readinessFilter === "MANUAL_HOLD") {
         return candidate.approval_blockers.some((blocker) =>
@@ -285,6 +291,7 @@ export default function AdminApp() {
     province?: string;
     reviewState?: CandidateReviewState | "";
     readiness?: typeof readinessFilter;
+    placeType?: "" | CandidateResult["place_type"];
   }) {
     if (!adminKey) {
       setError("กรุณาใส่ Admin API Key");
@@ -299,6 +306,7 @@ export default function AdminApp() {
     try {
       const activeProvince = overrides?.province ?? provinceFilter;
       const activeFilter = overrides?.reviewState ?? filter;
+      const activeType = overrides?.placeType ?? typeFilter;
       const candidateRequest =
         activeFilter === "DISCOVERED" || activeFilter === "GEOCODED"
           ? fetchCandidateReviewQueue(
@@ -337,6 +345,9 @@ export default function AdminApp() {
       }
       if (overrides?.readiness !== undefined) {
         setReadinessFilter(overrides.readiness);
+      }
+      if (overrides?.placeType !== undefined) {
+        setTypeFilter(overrides.placeType);
       }
       setCandidates(items);
       setPromotionChecks({});
@@ -808,6 +819,7 @@ export default function AdminApp() {
                     province: "",
                     reviewState: "APPROVED",
                     readiness: "ALL",
+                    placeType: "",
                   })
                 }
               >
@@ -849,6 +861,7 @@ export default function AdminApp() {
                       province: "",
                       reviewState: "GEOCODED",
                       readiness: "READY",
+                      placeType: "",
                     })
                   }
                 >
@@ -867,6 +880,7 @@ export default function AdminApp() {
                       province: "",
                       reviewState: "DISCOVERED",
                       readiness: "GOOGLE_RESOLVABLE",
+                      placeType: "",
                     });
                   }}
                 >
