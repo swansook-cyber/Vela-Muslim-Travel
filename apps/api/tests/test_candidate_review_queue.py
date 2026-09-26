@@ -260,3 +260,38 @@ async def test_review_queue_includes_non_blocking_warnings(monkeypatch) -> None:
     assert tasks[0].ready_to_approve is True
     assert tasks[0].approval_blockers == []
     assert len(tasks[0].review_warnings) == 1
+
+
+@pytest.mark.asyncio
+async def test_review_queue_pilot_only_excludes_outside_corridor(monkeypatch) -> None:
+    inside = candidate_row(CandidateReviewState.DISCOVERED.value)
+    outside = {
+        **candidate_row(CandidateReviewState.DISCOVERED.value),
+        "id": "22222222-2222-2222-2222-222222222222",
+        "name": "ร้านนอกพื้นที่นำร่อง",
+        "province": "กรุงเทพมหานคร",
+    }
+
+    async def fake_list_candidates(
+        session,
+        review_state,
+        province=None,
+        place_type=None,
+        limit=100,
+    ):
+        return [inside, outside]
+
+    monkeypatch.setattr(main, "list_candidates", fake_list_candidates)
+
+    tasks = await main.admin_candidate_review_queue(
+        session=None,
+        _admin=None,
+        review_state=CandidateReviewState.DISCOVERED,
+        province=None,
+        place_type=None,
+        pilot_only=True,
+        limit=100,
+    )
+
+    assert [task.id for task in tasks] == [inside["id"]]
+    assert tasks[0].province == "นครราชสีมา"
