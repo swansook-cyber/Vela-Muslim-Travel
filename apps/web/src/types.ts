@@ -145,6 +145,7 @@ export interface CandidateReviewProgressResponse {
   ready_to_approve: number;
   blocked: number;
   coordinate_pending: number;
+  google_resolvable: number;
   manual_hold: number;
   evidence_blocked: number;
   provinces: CandidateReviewProvinceProgress[];
