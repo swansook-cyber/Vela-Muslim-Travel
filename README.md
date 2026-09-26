@@ -427,3 +427,15 @@ accommodations with explicit halal dining/breakfast evidence. Coordinates remain
 blank until controlled map review.
 
 See `docs/SAMUT_PRAKAN_EXPANSION.md`.
+
+### Nonthaburi Batch 1
+
+Nonthaburi expansion is available at
+`database/seeds/nonthaburi_expansion_review_queue.csv`.
+
+Batch 1 contains 11 conservative candidates: 5 current CICOT mosque records, 3
+active Muslim-friendly restaurant candidates and 3 Muslim-friendly
+accommodations with explicit halal dining evidence. Coordinates remain blank
+until controlled map review.
+
+See `docs/NONTHABURI_EXPANSION.md`.
