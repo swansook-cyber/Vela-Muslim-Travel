@@ -665,6 +665,27 @@ async def admin_update_candidate(
     if existing is None:
         raise HTTPException(status_code=404, detail="Candidate not found")
 
+    name = update.name.strip() if update.name is not None else existing["name"]
+    address = (
+        (update.address.strip() or None)
+        if update.address is not None
+        else existing["address"]
+    )
+    district = (
+        (update.district.strip() or None)
+        if update.district is not None
+        else existing["district"]
+    )
+    province = (
+        (update.province.strip() or None)
+        if update.province is not None
+        else existing["province"]
+    )
+    phone = (
+        (update.phone.strip() or None)
+        if update.phone is not None
+        else existing["phone"]
+    )
     latitude = update.latitude if update.latitude is not None else existing["latitude"]
     longitude = update.longitude if update.longitude is not None else existing["longitude"]
     review_state = update.review_state or CandidateReviewState(existing["review_state"])
@@ -697,12 +718,31 @@ async def admin_update_candidate(
     coordinates_changed = (
         latitude != existing["latitude"] or longitude != existing["longitude"]
     )
+    location_metadata_changed = any(
+        (
+            name != existing["name"],
+            address != existing["address"],
+            district != existing["district"],
+            province != existing["province"],
+        )
+    )
+    coordinate_verification_invalidated = (
+        coordinates_changed or location_metadata_changed
+    )
+    supplied_coordinate_check_is_new = (
+        update.coordinate_checked_at is not None
+        and update.coordinate_checked_at != existing["coordinate_checked_at"]
+    )
     coordinate_checked_at = (
         update.coordinate_checked_at
-        if update.coordinate_checked_at is not None
+        if (
+            not coordinate_verification_invalidated
+            or supplied_coordinate_check_is_new
+        )
+        and update.coordinate_checked_at is not None
         else (
             None
-            if coordinates_changed
+            if coordinate_verification_invalidated
             else existing["coordinate_checked_at"]
         )
     )
@@ -725,6 +765,11 @@ async def admin_update_candidate(
     if review_state == CandidateReviewState.APPROVED:
         approval_candidate = {
             **existing,
+            "name": name,
+            "address": address,
+            "district": district,
+            "province": province,
+            "phone": phone,
             "latitude": latitude,
             "longitude": longitude,
             "review_hold_reason": review_hold_reason,
@@ -745,6 +790,11 @@ async def admin_update_candidate(
     row = await update_candidate_review(
         session=session,
         candidate_id=candidate_id,
+        name=name,
+        address=address,
+        district=district,
+        province=province,
+        phone=phone,
         latitude=latitude,
         longitude=longitude,
         review_state=review_state,
@@ -760,6 +810,17 @@ async def admin_update_candidate(
         entity_id=candidate_id,
         details={
             "review_state": review_state.value,
+            "metadata_changes": {
+                field: {"from": existing[field], "to": value}
+                for field, value in {
+                    "name": name,
+                    "address": address,
+                    "district": district,
+                    "province": province,
+                    "phone": phone,
+                }.items()
+                if value != existing[field]
+            },
             "latitude": latitude,
             "longitude": longitude,
             "review_hold_reason": review_hold_reason,
