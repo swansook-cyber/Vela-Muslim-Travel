@@ -209,6 +209,25 @@ The admin UI:
 
 Re-importing the discovery CSV must not erase coordinates or review state that were already checked by an admin.
 
+
+### Promotion preflight
+
+Before an APPROVED candidate can be promoted from Admin, run
+**ตรวจ duplicate / slug**.
+
+The preflight is read-only and checks:
+
+- whether the proposed production slug already exists,
+- whether an active production place of the same type is within 150 m.
+
+Admin enables the final **Promote เข้า production** action only after the
+preflight passes. Promotion performs the same checks again server-side before
+writing, so a stale browser preflight cannot bypass duplicate protection.
+
+A nearby match is not automatically deleted or merged. It must be reviewed as
+a potential duplicate and resolved deliberately.
+
+
 ## Certification freshness
 
 A certified label is current only while its evidence has a future expiry date.
