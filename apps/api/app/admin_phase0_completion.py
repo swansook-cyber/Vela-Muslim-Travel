@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .admin_queries import list_candidates
+from .admin_queries import list_admin_audit, list_candidates
 from .admin_review_progress import load_candidate_review_progress
 from .admin_schemas import CandidateReviewState
 from .tools.pilot_readiness import load_readiness, readiness_passes
@@ -26,6 +26,23 @@ async def load_phase0_completion(session: AsyncSession) -> dict:
     active_review_pending = review_progress["pending"]
     production_ready = readiness_passes(production)
 
+    audit = await list_admin_audit(session, limit=100)
+    acceptance = next(
+        (item for item in audit if item["action"] == "PHASE0_ACCEPTANCE"),
+        None,
+    )
+    latest_candidate_update = max(
+        (row["updated_at"] for row in candidates),
+        default=None,
+    )
+    acceptance_current = bool(
+        acceptance
+        and (
+            latest_candidate_update is None
+            or acceptance["created_at"] >= latest_candidate_update
+        )
+    )
+
     blockers: list[str] = []
     if active_review_pending:
         blockers.append(
@@ -41,9 +58,11 @@ async def load_phase0_completion(session: AsyncSession) -> dict:
         )
 
     mechanical_ready = not blockers
+    final_complete = mechanical_ready and acceptance_current
 
     return {
         "mechanical_ready": mechanical_ready,
+        "final_complete": final_complete,
         "candidate_review_complete": active_review_pending == 0,
         "promotion_queue_complete": approved_waiting_promotion == 0,
         "production_coverage_ready": production_ready,
@@ -54,7 +73,10 @@ async def load_phase0_completion(session: AsyncSession) -> dict:
         "manual_hold": review_progress["manual_hold"],
         "google_fast_lane": review_progress["google_fast_lane"],
         "blockers": blockers,
-        "manual_acceptance_required": True,
+        "manual_acceptance_required": not final_complete,
+        "accepted_at": (
+            acceptance["created_at"] if acceptance_current and acceptance else None
+        ),
         "manual_acceptance_steps": [
             "Run the real pilot route smoke matrix at 2/5/10 km.",
             "Require the 5 km route to include restaurant, prayer, and accommodation coverage.",
