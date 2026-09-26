@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from urllib.parse import quote_plus
 
 from .verification import certification_is_current
@@ -43,6 +44,24 @@ def candidate_maps_search_url(candidate: dict) -> str:
 
     return "https://www.google.com/maps/search/?api=1&query=" + quote_plus(query)
 
+
+
+def candidate_review_warnings(candidate: dict) -> list[str]:
+    warnings: list[str] = []
+    trust_status = candidate.get("proposed_trust_status")
+    expires_at = candidate.get("certification_expires_at")
+
+    if trust_status in CERTIFIED_STATUSES and expires_at is not None:
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=UTC)
+        now = datetime.now(UTC)
+        if now <= expires_at <= now + timedelta(days=30):
+            days_left = max((expires_at - now).days, 0)
+            warnings.append(
+                f"certification expires within 30 days ({days_left} days left)"
+            )
+
+    return warnings
 
 def candidate_approval_blockers(
     candidate: dict,
