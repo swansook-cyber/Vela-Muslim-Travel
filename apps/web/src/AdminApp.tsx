@@ -1145,6 +1145,17 @@ export default function AdminApp() {
                   </div>
                 )}
 
+              {reviewTask && reviewTask.review_warnings.length > 0 && (
+                <div className="approval-blockers">
+                  <strong>คำเตือนก่อน Promote</strong>
+                  <ul>
+                    {reviewTask.review_warnings.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {hasUnsavedCoordinateDraft && (
                 <p className="admin-message">
                   มีพิกัดใหม่ใน draft — ยังไม่ได้บันทึกหรือยืนยัน
