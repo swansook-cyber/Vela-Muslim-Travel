@@ -954,7 +954,7 @@ def test_chiang_rai_expansion_seed_has_balanced_coverage() -> None:
     path = Path("../../database/seeds/chiang_rai_expansion_review_queue.csv")
     candidates = load_candidates(path)
 
-    assert len(candidates) == 10
+    assert len(candidates) == 11
     assert {candidate.province for candidate in candidates} == {"เชียงราย"}
     assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
     assert all(candidate.latitude is None for candidate in candidates)
