@@ -1668,3 +1668,33 @@ def test_uthai_thani_commercial_candidates_do_not_overclaim_trust() -> None:
         for candidate in commercial
     )
     assert all(not candidate.certification_number for candidate in commercial)
+
+
+def test_suphan_buri_expansion_uses_conservative_batch_size() -> None:
+    path = Path("../../database/seeds/suphan_buri_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 6
+    assert {candidate.province for candidate in candidates} == {"สุพรรณบุรี"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 1
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 0
+
+
+def test_suphan_buri_commercial_candidates_do_not_overclaim_trust() -> None:
+    path = Path("../../database/seeds/suphan_buri_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate for candidate in candidates if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert len(restaurants) == 5
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in restaurants
+    )
+    assert all(not candidate.certification_number for candidate in restaurants)
