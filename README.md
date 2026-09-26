@@ -463,3 +463,15 @@ forced into this batch without sufficiently strong current halal-service
 evidence. Coordinates remain blank until controlled map review.
 
 See `docs/NAKHON_NAYOK_EXPANSION.md`.
+
+### Saraburi Batch 1
+
+Saraburi expansion is available at
+`database/seeds/saraburi_expansion_review_queue.csv`.
+
+Batch 1 contains 9 conservative candidates: 5 current CICOT mosque records and
+4 active Muslim-friendly restaurant candidates. No accommodation candidate is
+forced into this batch without sufficiently strong current halal-service
+evidence. Coordinates remain blank until controlled map review.
+
+See `docs/SARABURI_EXPANSION.md`.
