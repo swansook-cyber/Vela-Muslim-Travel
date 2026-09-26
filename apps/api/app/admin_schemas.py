@@ -84,6 +84,7 @@ class CandidatePromotionCheckResponse(BaseModel):
     can_promote: bool
     slug_exists: bool
     duplicate: CandidatePromotionDuplicate | None = None
+    promotion_blockers: list[str] = Field(default_factory=list)
 
 
 class CandidatePromoteRequest(BaseModel):
