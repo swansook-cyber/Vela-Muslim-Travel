@@ -77,6 +77,8 @@ Phase 0 now includes:
 - replaceable routing-provider adapter,
 - controlled reviewed-place importer,
 - controlled geocode candidate review with explicit coordinate selection,
+- exact Google Place-ID coordinate suggestions with server-side caching,
+- one-request batch coordinate suggestions for the filtered Admin queue,
 - candidate readiness dashboard,
 - reviewed-coordinate preservation across candidate re-imports,
 - verification-evidence guardrails and certificate-expiry handling,
@@ -102,4 +104,8 @@ The discovery seed currently contains **24 curated candidates total**: **23 cand
 - at least one mosque in every target province,
 - accommodation candidates in at least two target provinces.
 
-A first public-source cross-check pass has now been recorded for all **23 corridor candidates** in `docs/PILOT_REVIEW_LOG.md`. The public pilot is still **not** production-ready: exact coordinate review, resolution of flagged evidence/address/phone/closure discrepancies, duplicate checks, approval, and promotion are required before listings can appear in route results.
+A first public-source cross-check pass has now been recorded for all **23 corridor candidates** in `docs/PILOT_REVIEW_LOG.md`.
+
+**Coordinate-review checkpoint (2026-09-26): 15/23 corridor candidates are GEOCODED and 8 remain DISCOVERED.** The Admin workflow can now resolve Google-backed candidates directly from their stored Place IDs, singly or as a capped read-only batch. Returned coordinates remain draft suggestions until a reviewer opens the map and explicitly records `coordinate_checked_at`.
+
+The public pilot is still **not** production-ready: the remaining coordinate review, resolution of flagged evidence/address/phone/closure discrepancies, duplicate checks, approval, and promotion are required before listings can appear in route results.
