@@ -24,7 +24,11 @@ Do not embed this key in the public web client.
 4. Set state to `GEOCODED`.
 5. Review trust label and certification scope.
 6. Set state to `APPROVED`.
-7. Promote the candidate into the production `places` table.
+7. Run promotion preflight.
+8. Promote the candidate into the production `places` table.
+
+Forward review states cannot be skipped. In particular, Admin rejects a direct
+`DISCOVERED → APPROVED` update.
 
 ## Endpoints
 
@@ -94,8 +98,10 @@ Reviewers can filter the active queue by readiness and blocker type:
 - other evidence blockers.
 
 A province can also be selected directly from the progress summary to load that
-province's queue. These controls change only the review view; they never change
-candidate state.
+province's queue. Admin also provides shortcuts for the Google-resolvable queue,
+the GEOCODED candidates that are ready to approve, and the APPROVED candidates
+waiting for promotion. These controls change only the review view; they never
+change candidate state.
 
 ### Manual review hold
 
