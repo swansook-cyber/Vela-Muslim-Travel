@@ -11,6 +11,7 @@ import {
   fetchPilotReadiness,
   promoteCandidate,
   resolveCandidateGooglePlace,
+  resolveCandidateGooglePlaces,
   searchDestination,
   updateCandidate,
 } from "./api";
@@ -372,60 +373,75 @@ export default function AdminApp() {
     setLoading(true);
     setError("");
     setMessage(
-      `กำลังดึงพิกัด Google Place ID 0/${batchGoogleCandidates.length} รายการ…`,
+      `กำลังดึงพิกัด Google Place ID ${batchGoogleCandidates.length} รายการ…`,
     );
 
-    const patches: Record<string, Partial<Draft>> = {};
-    const failures: string[] = [];
+    try {
+      const response = await resolveCandidateGooglePlaces(
+        adminKey,
+        batchGoogleCandidates.map((candidate) => candidate.id),
+      );
+      const patches: Record<string, Partial<Draft>> = {};
+      const failures: string[] = [];
+      const byId = new Map(
+        batchGoogleCandidates.map((candidate) => [candidate.id, candidate]),
+      );
 
-    for (let index = 0; index < batchGoogleCandidates.length; index += 1) {
-      const candidate = batchGoogleCandidates[index];
-      try {
-        const result = await resolveCandidateGooglePlace(adminKey, candidate.id);
-        const currentNote = drafts[candidate.id]?.note || candidate.review_note || "";
+      for (const item of response.results) {
+        const candidate = byId.get(item.candidate_id);
+        if (!candidate) continue;
+
+        if (!item.suggestion) {
+          failures.push(candidate.name);
+          continue;
+        }
+
+        const currentNote =
+          drafts[candidate.id]?.note || candidate.review_note || "";
         const resolverNote =
-          `Google Place ID coordinate suggestion: ${result.external_id}`;
+          `Google Place ID coordinate suggestion: ${item.suggestion.external_id}`;
         const note = currentNote.includes(resolverNote)
           ? currentNote
           : [currentNote, resolverNote].filter(Boolean).join("\n");
 
         patches[candidate.id] = {
-          latitude: result.latitude.toFixed(7),
-          longitude: result.longitude.toFixed(7),
+          latitude: item.suggestion.latitude.toFixed(7),
+          longitude: item.suggestion.longitude.toFixed(7),
           note,
           coordinateCheckedAt: "",
         };
-      } catch {
-        failures.push(candidate.name);
       }
 
+      if (Object.keys(patches).length > 0) {
+        setDrafts((current) => {
+          const next = { ...current };
+          for (const [candidateId, patch] of Object.entries(patches)) {
+            next[candidateId] = {
+              ...next[candidateId],
+              ...patch,
+            };
+          }
+          return next;
+        });
+      }
+
+      if (failures.length > 0) {
+        setError(
+          `ดึงพิกัดไม่สำเร็จ ${failures.length} รายการ: ${failures.join(", ")}`,
+        );
+      }
       setMessage(
-        `กำลังดึงพิกัด Google Place ID ${index + 1}/${batchGoogleCandidates.length} รายการ…`,
+        `ดึงพิกัดเข้า draft แล้ว ${Object.keys(patches).length}/${batchGoogleCandidates.length} รายการ กรุณาเปิดแผนที่และยืนยันแต่ละจุดก่อนบันทึก`,
       );
-    }
-
-    if (Object.keys(patches).length > 0) {
-      setDrafts((current) => {
-        const next = { ...current };
-        for (const [candidateId, patch] of Object.entries(patches)) {
-          next[candidateId] = {
-            ...next[candidateId],
-            ...patch,
-          };
-        }
-        return next;
-      });
-    }
-
-    if (failures.length > 0) {
+    } catch (err) {
       setError(
-        `ดึงพิกัดไม่สำเร็จ ${failures.length} รายการ: ${failures.join(", ")}`,
+        err instanceof Error
+          ? err.message
+          : "ดึงพิกัด Google Place ID แบบกลุ่มไม่สำเร็จ",
       );
+    } finally {
+      setLoading(false);
     }
-    setMessage(
-      `ดึงพิกัดเข้า draft แล้ว ${Object.keys(patches).length}/${batchGoogleCandidates.length} รายการ กรุณาเปิดแผนที่และยืนยันแต่ละจุดก่อนบันทึก`,
-    );
-    setLoading(false);
   }
 
   function chooseCoordinate(candidate: CandidateResult, item: GeocodeResult) {
