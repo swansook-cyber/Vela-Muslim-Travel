@@ -49,13 +49,9 @@ address/phone evidence must be resolved rather than normalized automatically.
 The pilot corridor currently has **15 GEOCODED** candidates and **8 DISCOVERED**
 candidates remaining.
 
-Of those 8 coordinate-pending candidates:
-
-- **7** already carry a Google business/place ID and can use the Admin
-  server-side Google batch resolver to obtain draft coordinate suggestions.
-- **1** (`เน้นเนื้อ@ประจวบฮาลาล`) does not use a Google provider in staging.
-  Its operating-status hold was resolved on 2026-09-26, but exact coordinates
-  still require manual review.
+All **8** coordinate-pending candidates now carry a Google business/place ID
+and can use the Admin server-side Google batch resolver to obtain draft
+coordinate suggestions. Manual hold count is **0**.
 
 Google resolver output is still a suggestion only. A reviewer must open the
 suggested point on the map, confirm the exact venue, record
@@ -64,9 +60,9 @@ suggested point on the map, confirm the exact venue, record
 
 ## Google coordinate execution queue
 
-All **7** Google-resolvable pilot candidates now have no manual hold. Review
-them in the focused Google coordinate queue so the DISCOVERED count can shrink
-quickly.
+All **8** DISCOVERED pilot candidates are now Google-resolvable and have no
+manual hold. Review them in the focused Google coordinate queue so the
+DISCOVERED count can shrink quickly.
 
 ### Straightforward coordinate review
 
@@ -99,10 +95,8 @@ approve the candidate.
    - Google Place ID: `ChIJVy7c7Bg7HDERjTbk8mJLjSI`
    - Canonical phone: 089-791-3785 from current Makan, TripNiceDay and Cybo.
    - Phone-only hold resolved 2026-09-26; trust remains UNVERIFIED.
-### Non-Google coordinate review
+### Newly resolver-ready candidate
 
-**เน้นเนื้อ@ประจวบฮาลาล** stays outside the Google queue because staging does
-not carry a Google provider ID. The prior temporary-closure hold was cleared on
-2026-09-26 after current Makan, Wongnai/LINE MAN and Restaurant Guru activity
-confirmed ongoing operation. It remains `DISCOVERED` until an exact coordinate
-is manually reviewed.
+**เน้นเนื้อ@ประจวบฮาลาล** now carries Google Place ID
+`ChIJP1rc7lSF_jAREG6AfeqnSho`. Its prior temporary-closure hold is cleared, but
+it remains `DISCOVERED` until the Google resolver result is visually confirmed.
