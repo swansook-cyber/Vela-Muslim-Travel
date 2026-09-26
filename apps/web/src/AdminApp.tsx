@@ -174,6 +174,7 @@ export default function AdminApp() {
       | "BLOCKED"
       | "COORDINATE_PENDING"
       | "GOOGLE_RESOLVABLE"
+      | "GOOGLE_FAST_LANE"
       | "MANUAL_HOLD"
       | "EVIDENCE"
     >("ALL");
@@ -235,6 +236,14 @@ export default function AdminApp() {
       }
       if (readinessFilter === "GOOGLE_RESOLVABLE") {
         return isGoogleResolvableCandidate(candidate);
+      }
+      if (readinessFilter === "GOOGLE_FAST_LANE") {
+        return (
+          isGoogleResolvableCandidate(candidate) &&
+          !candidate.approval_blockers.some((blocker) =>
+            blocker.startsWith("manual review hold:"),
+          )
+        );
       }
       if (readinessFilter === "MANUAL_HOLD") {
         return candidate.approval_blockers.some((blocker) =>
@@ -800,6 +809,7 @@ export default function AdminApp() {
             <option value="BLOCKED">ยังติด blocker</option>
             <option value="COORDINATE_PENDING">พิกัดยังไม่ครบ</option>
             <option value="GOOGLE_RESOLVABLE">Google ดึงพิกัดได้</option>
+            <option value="GOOGLE_FAST_LANE">Google Fast Lane (ไม่มี hold)</option>
             <option value="MANUAL_HOLD">มี Manual hold</option>
             <option value="EVIDENCE">หลักฐานยังไม่ผ่าน</option>
           </select>
@@ -882,6 +892,26 @@ export default function AdminApp() {
                   }
                 >
                   เปิดคิวพร้อมอนุมัติ {reviewProgress.ready_to_approve}
+                </button>
+              )}
+              {reviewProgress.google_fast_lane > 0 && (
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={loading}
+                  onClick={() => {
+                    setSingleReviewMode(true);
+                    setReviewIndex(0);
+                    void load({
+                      province: "",
+                      reviewState: "DISCOVERED",
+                      readiness: "GOOGLE_FAST_LANE",
+                      placeType: "",
+                      pilotOnly: true,
+                    });
+                  }}
+                >
+                  เปิด Google Fast Lane {reviewProgress.google_fast_lane}
                 </button>
               )}
               {reviewProgress.google_resolvable > 0 && (
