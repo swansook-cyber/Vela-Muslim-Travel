@@ -269,3 +269,15 @@ Batch 1 contains 10 candidates: 5 mosques, 3 Muslim-owned restaurants and
 coordinates until map verification is completed.
 
 See `docs/CHIANG_RAI_EXPANSION.md`.
+
+
+### Rayong / Koh Samet Batch 1
+
+Rayong / Koh Samet expansion is available at
+`database/seeds/rayong_koh_samet_expansion_review_queue.csv`.
+
+Batch 1 contains 11 candidates: 5 mosques, 3 restaurants and 3
+Muslim-friendly accommodations. Coordinates remain blank until controlled map
+review.
+
+See `docs/RAYONG_KOH_SAMET_EXPANSION.md`.
