@@ -71,6 +71,39 @@ target database, and downtime window.
 
 The API container applies ordered SQL migrations before serving traffic.
 
+## Sync pilot candidate review data
+
+Database migrations do not re-import the candidate review seed automatically.
+When the curated seed changes, sync it explicitly so staging review holds and
+notes match the repository without silently changing production places.
+
+Copy the current seed into the running API container:
+
+```bash
+docker compose --env-file deploy/.env -f docker-compose.prod.yml cp \
+  database/seeds/pilot_candidates_review_queue.csv \
+  api:/tmp/pilot_candidates_review_queue.csv
+```
+
+Validate first (dry-run):
+
+```bash
+docker compose --env-file deploy/.env -f docker-compose.prod.yml exec api \
+  python -m app.tools.import_candidates /tmp/pilot_candidates_review_queue.csv
+```
+
+Only after the dry-run is correct, apply to candidate staging:
+
+```bash
+docker compose --env-file deploy/.env -f docker-compose.prod.yml exec api \
+  python -m app.tools.import_candidates /tmp/pilot_candidates_review_queue.csv --apply
+```
+
+The importer preserves advanced review progress: GEOCODED candidates are not
+downgraded by DISCOVERED seed state, and APPROVED/PROMOTED/REJECTED states are
+preserved. Seed holds/notes can update candidates that are still DISCOVERED.
+Promotion into the production `places` table is still a separate Admin action.
+
 ## Optional Google Places resolver
 
 Set `GOOGLE_PLACES_API_KEY` in the private deploy environment only when the
