@@ -255,6 +255,8 @@ export interface PilotProvinceReadiness {
 
 export interface PilotReadinessResponse {
   ready: boolean;
+  accommodation_provinces: number;
+  required_accommodation_provinces: number;
   provinces: PilotProvinceReadiness[];
 }
 
