@@ -439,3 +439,15 @@ accommodations with explicit halal dining evidence. Coordinates remain blank
 until controlled map review.
 
 See `docs/NONTHABURI_EXPANSION.md`.
+
+### Pathum Thani Batch 1
+
+Pathum Thani expansion is available at
+`database/seeds/pathum_thani_expansion_review_queue.csv`.
+
+Batch 1 contains 8 conservative candidates: 5 current CICOT mosque records and
+3 active Muslim-friendly restaurant candidates. No accommodation candidate is
+forced into this batch without sufficiently strong current halal-service
+evidence. Coordinates remain blank until controlled map review.
+
+See `docs/PATHUM_THANI_EXPANSION.md`.
