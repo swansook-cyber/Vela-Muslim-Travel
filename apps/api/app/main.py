@@ -10,6 +10,7 @@ from .admin_candidate_readiness import (
     load_candidate_readiness,
 )
 from .admin_places import get_admin_place, list_admin_places, update_admin_place
+from .admin_phase0_completion import load_phase0_completion
 from .admin_queries import (
     check_candidate_promotion,
     get_admin_dashboard,
@@ -44,6 +45,7 @@ from .admin_schemas import (
     CandidateReviewUpdate,
     PilotProvinceReadiness,
     PilotReadinessResponse,
+    Phase0CompletionResponse,
 )
 from .admin_verifications import (
     add_place_verification,
@@ -232,6 +234,17 @@ async def admin_candidate_review_progress(
 ) -> CandidateReviewProgressResponse:
     progress = await load_candidate_review_progress(session)
     return CandidateReviewProgressResponse(**progress)
+
+
+
+
+@app.get("/admin/phase0-completion", response_model=Phase0CompletionResponse)
+async def admin_phase0_completion(
+    session: DbSession,
+    _admin: AdminGuard,
+) -> Phase0CompletionResponse:
+    summary = await load_phase0_completion(session)
+    return Phase0CompletionResponse(**summary)
 
 
 @app.get("/admin/pilot-readiness", response_model=PilotReadinessResponse)
