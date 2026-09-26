@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .admin_queries import list_candidates
 from .admin_schemas import CandidateReviewState
 from .candidate_review import candidate_approval_blockers
-from .tools.candidate_queue_readiness import PILOT_PROVINCES
+from .pilot import PILOT_PROVINCES
 
 
 async def load_candidate_review_progress(session: AsyncSession) -> dict:
