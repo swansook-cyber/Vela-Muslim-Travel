@@ -59,10 +59,10 @@ Seed checkpoint:
 - 23 candidates inside the seven-province pilot corridor,
 - 15 GEOCODED,
 - 8 DISCOVERED,
-- 7 DISCOVERED candidates are Google-resolvable,
-- all 7 are Google Fast Lane candidates without manual holds,
+- all 8 DISCOVERED candidates are Google-resolvable,
+- all 8 are Google Fast Lane candidates without manual holds,
 - 7 Google-resolvable candidates have no manual holds,
-- 1 non-Google candidate still needs coordinate review but has no manual hold.
+- manual hold count is 0.
 
 ### Execute first — Google Fast Lane
 
@@ -88,7 +88,8 @@ review state or trust automatically.
 - KhunYaa Khaoyai: canonical phone is 089-791-3785 from current Makan,
   TripNiceDay and Cybo evidence; trust remains UNVERIFIED.
 - Nen Nuea Prachuap Halal: stale temporary-closure hold cleared from current
-  operating/order/review evidence; exact coordinate review remains.
+  operating/order/review evidence; Google Place ID `ChIJP1rc7lSF_jAREG6AfeqnSho`
+  now makes it resolver-ready like the other DISCOVERED candidates.
 
 ### Resolve existing GEOCODED holds before approval
 
