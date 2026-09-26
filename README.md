@@ -390,3 +390,16 @@ Muslim-friendly accommodation with explicit halal-breakfast evidence.
 Coordinates remain blank until controlled map review.
 
 See `docs/NAKHON_PATHOM_EXPANSION.md`.
+
+### Samut Sakhon / Mahachai Batch 1
+
+Samut Sakhon / Mahachai expansion is available at
+`database/seeds/samut_sakhon_mahachai_expansion_review_queue.csv`.
+
+Batch 1 contains 7 conservative candidates: the 1 Samut Sakhon mosque currently
+surfaced by CICOT and 6 active Muslim-friendly restaurant candidates. No
+accommodation candidate is forced into this batch without sufficiently strong
+current halal-service evidence. Coordinates remain blank until controlled map
+review.
+
+See `docs/SAMUT_SAKHON_MAHACHAI_EXPANSION.md`.
