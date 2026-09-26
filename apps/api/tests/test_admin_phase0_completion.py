@@ -36,9 +36,6 @@ async def test_phase0_completion_reports_blockers(monkeypatch) -> None:
     async def fake_audit(session, limit=100):
         return []
 
-    async def fake_audit(session, limit=100):
-        return []
-
     async def fake_readiness():
         return [
             ProvinceReadiness(
@@ -108,6 +105,9 @@ async def test_phase0_completion_becomes_mechanically_ready(monkeypatch) -> None
             "manual_hold": 0,
             "google_fast_lane": 0,
         }
+
+    async def fake_audit(session, limit=100):
+        return []
 
     async def fake_readiness():
         return [
@@ -215,3 +215,67 @@ async def test_phase0_acceptance_is_current_only_after_latest_candidate_update(
     assert result["final_complete"] is True
     assert result["manual_acceptance_required"] is False
     assert result["accepted_at"] is not None
+
+
+@pytest.mark.asyncio
+async def test_phase0_acceptance_becomes_stale_after_candidate_update(
+    monkeypatch,
+) -> None:
+    acceptance_at = datetime.now(UTC)
+
+    async def fake_list_candidates(
+        session,
+        review_state,
+        province=None,
+        place_type=None,
+        pilot_only=False,
+        limit=100,
+    ):
+        return [
+            {
+                "review_state": "PROMOTED",
+                "updated_at": acceptance_at + timedelta(minutes=1),
+            }
+        ]
+
+    async def fake_review_progress(session):
+        return {
+            "pending": 0,
+            "manual_hold": 0,
+            "google_fast_lane": 0,
+        }
+
+    async def fake_readiness():
+        return [
+            ProvinceReadiness(
+                province=f"province-{index}",
+                restaurants=1,
+                mosques=1,
+                accommodation=1 if index < 2 else 0,
+            )
+            for index in range(7)
+        ]
+
+    async def fake_audit(session, limit=100):
+        return [
+            {
+                "action": "PHASE0_ACCEPTANCE",
+                "created_at": acceptance_at,
+            }
+        ]
+
+    monkeypatch.setattr(admin_phase0_completion, "list_candidates", fake_list_candidates)
+    monkeypatch.setattr(
+        admin_phase0_completion,
+        "load_candidate_review_progress",
+        fake_review_progress,
+    )
+    monkeypatch.setattr(admin_phase0_completion, "load_readiness", fake_readiness)
+    monkeypatch.setattr(admin_phase0_completion, "list_admin_audit", fake_audit)
+
+    result = await admin_phase0_completion.load_phase0_completion(None)
+
+    assert result["mechanical_ready"] is True
+    assert result["final_complete"] is False
+    assert result["manual_acceptance_required"] is True
+    assert result["accepted_at"] is None
