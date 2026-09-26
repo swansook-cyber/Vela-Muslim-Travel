@@ -991,3 +991,35 @@ def test_chiang_rai_hotels_remain_muslim_friendly_without_certificate_number() -
         for candidate in hotels
     )
     assert all(not candidate.certification_number for candidate in hotels)
+
+
+def test_rayong_koh_samet_expansion_seed_has_balanced_coverage() -> None:
+    path = Path("../../database/seeds/rayong_koh_samet_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 11
+    assert {candidate.province for candidate in candidates} == {"ระยอง"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 3
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_rayong_commercial_candidates_stay_muslim_friendly_without_owner_or_certificate_proof() -> None:
+    path = Path("../../database/seeds/rayong_koh_samet_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    commercial = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type in {"RESTAURANT", "ACCOMMODATION"}
+    ]
+
+    assert commercial
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in commercial
+    )
+    assert all(not candidate.certification_number for candidate in commercial)
