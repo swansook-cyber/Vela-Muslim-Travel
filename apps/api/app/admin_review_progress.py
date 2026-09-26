@@ -81,12 +81,16 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
             evidence_blocked += 1
             per_province[province]["evidence_blocked"] += 1
 
-        if blockers:
-            blocked += 1
-            per_province[province]["blocked"] += 1
-        else:
+        can_approve_now = (
+            row["review_state"] == CandidateReviewState.GEOCODED.value
+            and not blockers
+        )
+        if can_approve_now:
             ready_to_approve += 1
             per_province[province]["ready_to_approve"] += 1
+        else:
+            blocked += 1
+            per_province[province]["blocked"] += 1
 
     return {
         "pending": pending,
