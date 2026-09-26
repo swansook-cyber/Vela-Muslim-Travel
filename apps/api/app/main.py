@@ -251,6 +251,9 @@ async def admin_pilot_readiness(
     ]
     return PilotReadinessResponse(
         ready=readiness_passes(items),
+        accommodation_provinces=sum(
+            1 for item in items if item.accommodation > 0
+        ),
         provinces=provinces,
     )
 
