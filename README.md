@@ -126,3 +126,16 @@ Use `docs/RELEASE_READINESS.md` as the single execution checklist from the
 current pilot checkpoint to `PHASE 0 COMPLETE`. It intentionally freezes
 unrelated feature expansion until data review, promotion, route QA and deploy
 verification are finished.
+
+
+## City expansion
+
+Bangkok expansion has started with a separate review seed:
+`database/seeds/bangkok_expansion_review_queue.csv`.
+
+Batch 1 adds 9 new Bangkok candidates (5 mosques, 3 accommodations, 1
+restaurant). Together with the existing Sophia Restaurant candidate, the
+Bangkok starter set is 10 places. Google Places is optional for coordinates,
+not the primary discovery source.
+
+See `docs/BANGKOK_EXPANSION.md`.
