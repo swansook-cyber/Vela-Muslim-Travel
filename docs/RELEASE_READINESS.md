@@ -100,11 +100,14 @@ Ayah Restaurant Halal address mapping was resolved on 2026-09-26: the current
 Google Plus Code address and the 16/6 Moo 5 Mittraphap representation refer to
 the same business identity. It remains UNVERIFIED for trust/certification.
 
+Nurul Iman address was resolved on 2026-09-26 using the Prachuap Provincial
+Islamic Committee, MasjidThai, and a 2026 mosque event notice: canonical address
+is **2 Moo 9, Phong Prasat, Bang Saphan**. The reviewed coordinate is unchanged.
+
 - มัสยิดอันซอรุสซุนนะฮฺ — conflicting phone sources.
 - มัสยิดนูรุ้ลเอี๊ยะซาน — conflicting CICOT/Google phone.
 - มัสยิดมูฮาญิรีน — registered address versus map address.
 - มัสยิดมูฮัมมาดียะห์ บ้านดอนมะม่วง — Tha Chana versus same-name map result.
-- มัสยิดนุรุ้ลอีมาน — Moo 2 versus Moo 9.
 - Twin Lotus Hotel — halal certification is service/kitchen scope only and
   expires 2026-10-22; re-check before promotion.
 
