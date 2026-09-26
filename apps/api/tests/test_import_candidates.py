@@ -259,7 +259,7 @@ def test_pilot_seed_checkpoint_counts_match_release_readiness() -> None:
     assert len(geocoded) == 15
     assert len(discovered) == 8
     assert len(google_resolvable) == 7
-    assert len(google_fast_lane) == 6
+    assert len(google_fast_lane) == 7
 
 
 def test_ayah_address_identity_is_resolved_without_changing_trust() -> None:
