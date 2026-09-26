@@ -318,3 +318,15 @@ Muslim-friendly accommodations with explicit halal dining/breakfast evidence.
 Coordinates remain blank until controlled map review.
 
 See `docs/UDON_THANI_EXPANSION.md`.
+
+### Khon Kaen Batch 1
+
+Khon Kaen expansion is available at
+`database/seeds/khon_kaen_expansion_review_queue.csv`.
+
+Batch 1 contains 11 conservative candidates: 5 CICOT mosques, 3 active
+Muslim-friendly restaurant candidates and 3 Muslim-friendly accommodations with
+explicit halal dining/breakfast evidence. Coordinates remain blank until
+controlled map review.
+
+See `docs/KHON_KAEN_EXPANSION.md`.
