@@ -187,3 +187,14 @@ accommodations. Hard Rock Hotel Pattaya uses a current official
 `HALAL_CERTIFIED_SERVICE` record for its restaurant kitchen only.
 
 See `docs/CHONBURI_PATTAYA_EXPANSION.md`.
+
+
+### Songkhla / Hat Yai Batch 1
+
+Songkhla / Hat Yai expansion is available at
+`database/seeds/songkhla_hat_yai_expansion_review_queue.csv`.
+
+Batch 1 contains 13 candidates: 5 mosques, 5 Muslim-owned restaurants and 3
+Muslim-friendly accommodations.
+
+See `docs/SONGKHLA_HAT_YAI_EXPANSION.md`.
