@@ -976,10 +976,18 @@ export default function AdminApp() {
       <div className="review-queue-bar">
         <div className="admin-summary">
           {filteredCount} candidates ในรายการปัจจุบัน
+          {readinessFilter === "GOOGLE_RESOLVABLE" && (
+            <span>
+              {" "}· Google queue เหลือ {filteredCount}
+            </span>
+          )}
           {singleReviewMode && filteredCount > 0 && (
             <span>
               {" "}· กำลังตรวจ {safeReviewIndex + 1}/{filteredCount}
             </span>
+          )}
+          {singleReviewMode && filteredCount === 0 && (
+            <span>{" "}· คิวนี้เสร็จแล้ว</span>
           )}
         </div>
         <div className="review-queue-actions">
