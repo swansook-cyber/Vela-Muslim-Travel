@@ -475,3 +475,15 @@ forced into this batch without sufficiently strong current halal-service
 evidence. Coordinates remain blank until controlled map review.
 
 See `docs/SARABURI_EXPANSION.md`.
+
+### Lopburi Batch 1
+
+Lopburi expansion is available at
+`database/seeds/lopburi_expansion_review_queue.csv`.
+
+Batch 1 contains 7 conservative candidates: 5 current CICOT mosque records and
+2 current Muslim-friendly restaurant candidates with OFFICIAL listings. No
+accommodation candidate is forced into this batch without sufficiently strong
+halal-service evidence. Coordinates remain blank until controlled map review.
+
+See `docs/LOPBURI_EXPANSION.md`.
