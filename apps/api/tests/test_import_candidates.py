@@ -471,3 +471,54 @@ def test_krabi_muslim_friendly_hotels_do_not_overstate_certification() -> None:
         "Railay Princess Resort & Spa",
     }
     assert all(not candidate.certification_number for candidate in muslim_friendly)
+
+
+def test_chiang_mai_expansion_seed_has_balanced_tourism_coverage() -> None:
+    path = Path("../../database/seeds/chiang_mai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 13
+    assert {candidate.province for candidate in candidates} == {"เชียงใหม่"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_chiang_mai_muslim_owned_labels_require_explicit_evidence() -> None:
+    path = Path("../../database/seeds/chiang_mai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    muslim_owned = [
+        candidate
+        for candidate in candidates
+        if candidate.proposed_trust_status == "MUSLIM_OWNED"
+    ]
+
+    assert len(muslim_owned) == 6
+    assert {candidate.name for candidate in muslim_owned} == {
+        "Tai Restaurant",
+        "Khao Soi Islam",
+        "Ruammit II",
+        "Gulf Restaurant Chiang Mai",
+        "Ruammit 1",
+        "Al-Farooq Hotel Chiang Mai",
+    }
+    assert all(not candidate.certification_number for candidate in muslim_owned)
+
+
+def test_chiang_mai_uncertain_hotel_operation_is_held() -> None:
+    path = Path("../../database/seeds/chiang_mai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    hotel = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "Al-Farooq Hotel Chiang Mai"
+    )
+
+    assert hotel.proposed_trust_status == "MUSLIM_OWNED"
+    assert hotel.review_hold_reason is not None
+    assert "current hotel operation" in hotel.review_hold_reason
