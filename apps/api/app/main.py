@@ -11,8 +11,8 @@ from .admin_candidate_readiness import (
 )
 from .admin_places import get_admin_place, list_admin_places, update_admin_place
 from .admin_queries import (
-    get_admin_dashboard,
     check_candidate_promotion,
+    get_admin_dashboard,
     get_candidate,
     list_admin_audit,
     list_candidates,
