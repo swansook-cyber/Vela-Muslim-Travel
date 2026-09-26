@@ -303,3 +303,97 @@ async def test_review_queue_pilot_only_excludes_outside_corridor(monkeypatch) ->
     assert seen["pilot_only"] is True
     assert [task.id for task in tasks] == [inside["id"]]
     assert tasks[0].province == "นครราชสีมา"
+
+
+@pytest.mark.asyncio
+async def test_phone_correction_keeps_coordinate_verification(monkeypatch) -> None:
+    row = candidate_row(CandidateReviewState.GEOCODED.value)
+    captured: dict[str, object] = {}
+
+    async def fake_get_candidate(session, candidate_id):
+        return row
+
+    async def fake_update_candidate_review(
+        session,
+        candidate_id,
+        name,
+        address,
+        district,
+        province,
+        phone,
+        latitude,
+        longitude,
+        review_state,
+        review_note,
+        review_hold_reason=None,
+        source_checked_at=None,
+        coordinate_checked_at=None,
+    ):
+        captured.update(
+            {
+                "phone": phone,
+                "coordinate_checked_at": coordinate_checked_at,
+            }
+        )
+        return {
+            **row,
+            "phone": phone,
+            "coordinate_checked_at": coordinate_checked_at,
+        }
+
+    async def fake_log_admin_action(
+        session,
+        *,
+        action,
+        entity_type,
+        entity_id,
+        details,
+    ):
+        captured["audit"] = details
+
+    class Session:
+        async def commit(self):
+            return None
+
+    monkeypatch.setattr(main, "get_candidate", fake_get_candidate)
+    monkeypatch.setattr(main, "update_candidate_review", fake_update_candidate_review)
+    monkeypatch.setattr(main, "log_admin_action", fake_log_admin_action)
+
+    result = await main.admin_update_candidate(
+        candidate_id=row["id"],
+        update=CandidateReviewUpdate(phone="+66 80 000 0000"),
+        session=Session(),
+        _admin=None,
+    )
+
+    assert result.phone == "+66 80 000 0000"
+    assert captured["coordinate_checked_at"] == row["coordinate_checked_at"]
+    audit = captured["audit"]
+    assert isinstance(audit, dict)
+    assert audit["metadata_changes"]["phone"] == {
+        "from": row["phone"],
+        "to": "+66 80 000 0000",
+    }
+
+
+@pytest.mark.asyncio
+async def test_address_correction_requires_new_coordinate_verification(
+    monkeypatch,
+) -> None:
+    row = candidate_row(CandidateReviewState.GEOCODED.value)
+
+    async def fake_get_candidate(session, candidate_id):
+        return row
+
+    monkeypatch.setattr(main, "get_candidate", fake_get_candidate)
+
+    with pytest.raises(HTTPException) as exc_info:
+        await main.admin_update_candidate(
+            candidate_id=row["id"],
+            update=CandidateReviewUpdate(address="ที่อยู่ใหม่ที่ตรวจแล้ว"),
+            session=None,
+            _admin=None,
+        )
+
+    assert exc_info.value.status_code == 422
+    assert "Coordinate verification is required" in str(exc_info.value.detail)
