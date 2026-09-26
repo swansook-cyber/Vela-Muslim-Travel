@@ -199,6 +199,14 @@ reused. The batch is capped at 25 candidate IDs. Per-candidate failures are
 returned alongside successes, so one bad or missing candidate does not discard
 successful draft suggestions.
 
+For focused manual review, **เปิดคิว Google** switches Admin into single-candidate
+mode. Each Google-backed candidate also has a per-card
+**ดึงพิกัดจาก Google Place ID** action. After opening the returned coordinate on
+Google Maps and visually confirming the venue, the reviewer can use
+**ยืนยันพิกัด + บันทึก GEOCODED**. That action records the explicit coordinate
+verification timestamp and advances only to GEOCODED; it never approves or
+promotes the candidate.
+
 ### Single-candidate review mode
 
 Admin supports **ตรวจทีละรายการ** for mobile review. The mode displays one
