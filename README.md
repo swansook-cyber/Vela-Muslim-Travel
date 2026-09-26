@@ -366,3 +366,15 @@ current halal-food evidence. Coordinates remain blank until controlled map
 review.
 
 See `docs/PHETCHABURI_CHA_AM_EXPANSION.md`.
+
+### Ratchaburi Batch 1
+
+Ratchaburi expansion is available at
+`database/seeds/ratchaburi_expansion_review_queue.csv`.
+
+Batch 1 contains 11 conservative candidates: the 4 Ratchaburi mosques currently
+surfaced by CICOT, 4 active Muslim-friendly restaurant candidates and 3 Suan
+Phueng accommodations with explicit halal-breakfast evidence. Coordinates remain
+blank until controlled map review.
+
+See `docs/RATCHABURI_EXPANSION.md`.
