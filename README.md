@@ -342,3 +342,15 @@ accommodations with halal breakfast/meal evidence. Coordinates remain blank
 until controlled map review.
 
 See `docs/NAKHON_RATCHASIMA_KHAO_YAI_EXPANSION.md`.
+
+### Prachuap Khiri Khan / Hua Hin Batch 1
+
+Prachuap Khiri Khan / Hua Hin expansion is available at
+`database/seeds/prachuap_hua_hin_expansion_review_queue.csv`.
+
+Batch 1 contains 11 conservative candidates: 5 CICOT mosques, 3 active Hua Hin
+Muslim-friendly restaurant candidates and 3 Muslim-friendly accommodations with
+explicit current halal dining evidence. Coordinates remain blank until
+controlled map review.
+
+See `docs/PRACHUAP_HUA_HIN_EXPANSION.md`.
