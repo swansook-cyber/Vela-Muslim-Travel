@@ -421,3 +421,53 @@ def test_phuket_hotels_remain_muslim_friendly_without_certificate_number() -> No
         for candidate in hotels
     )
     assert all(not candidate.certification_number for candidate in hotels)
+
+
+def test_krabi_expansion_seed_has_balanced_tourism_coverage() -> None:
+    path = Path("../../database/seeds/krabi_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 13
+    assert {candidate.province for candidate in candidates} == {"กระบี่"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_krabi_expansion_preserves_muslim_owned_without_certification_claim() -> None:
+    path = Path("../../database/seeds/krabi_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    muslim_owned = [
+        candidate
+        for candidate in candidates
+        if candidate.proposed_trust_status == "MUSLIM_OWNED"
+    ]
+
+    assert len(muslim_owned) == 6
+    assert any(
+        candidate.name == "Aonang Silver Orchid Resort"
+        and candidate.place_type == "ACCOMMODATION"
+        for candidate in muslim_owned
+    )
+    assert all(not candidate.certification_number for candidate in muslim_owned)
+
+
+def test_krabi_muslim_friendly_hotels_do_not_overstate_certification() -> None:
+    path = Path("../../database/seeds/krabi_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    muslim_friendly = [
+        candidate
+        for candidate in candidates
+        if candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+    ]
+
+    assert {candidate.name for candidate in muslim_friendly} == {
+        "Krabi Front Bay Resort",
+        "Railay Princess Resort & Spa",
+    }
+    assert all(not candidate.certification_number for candidate in muslim_friendly)
