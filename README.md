@@ -139,3 +139,15 @@ Bangkok starter set is 10 places. Google Places is optional for coordinates,
 not the primary discovery source.
 
 See `docs/BANGKOK_EXPANSION.md`.
+
+
+### Phuket Batch 1
+
+Phuket expansion is available at
+`database/seeds/phuket_expansion_review_queue.csv`.
+
+Batch 1 contains 13 candidates: 5 mosques, 5 explicitly Muslim-owned
+restaurants, and 3 Muslim-friendly accommodations. All remain review candidates
+with blank coordinates until map verification is completed.
+
+See `docs/PHUKET_EXPANSION.md`.
