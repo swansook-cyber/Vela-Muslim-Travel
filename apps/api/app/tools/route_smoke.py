@@ -20,6 +20,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--corridor-km", type=float, default=5.0)
     parser.add_argument("--limit", type=int, default=50)
     parser.add_argument(
+        "--require-core-types",
+        action="store_true",
+        help=(
+            "Exit non-zero unless the corridor contains food, prayer, "
+            "and accommodation coverage."
+        ),
+    )
+    parser.add_argument(
         "--type",
         action="append",
         dest="place_types",
@@ -27,6 +35,37 @@ def build_parser() -> argparse.ArgumentParser:
         help="Repeat to restrict place types.",
     )
     return parser
+
+
+def summarize_rows(rows: list[dict]) -> dict:
+    counts = {item.value: 0 for item in PlaceType}
+    provinces: set[str] = set()
+    expired = 0
+
+    for row in rows:
+        place_type = str(row["place_type"])
+        if place_type in counts:
+            counts[place_type] += 1
+        if row.get("province"):
+            provinces.add(str(row["province"]))
+        if row.get("verification_expired"):
+            expired += 1
+
+    core = {
+        "food": counts[PlaceType.RESTAURANT.value] > 0,
+        "prayer": (
+            counts[PlaceType.MOSQUE.value] > 0
+            or counts[PlaceType.PRAYER_ROOM.value] > 0
+        ),
+        "accommodation": counts[PlaceType.ACCOMMODATION.value] > 0,
+    }
+    return {
+        "counts": counts,
+        "provinces": sorted(provinces),
+        "expired": expired,
+        "core": core,
+        "core_ready": all(core.values()),
+    }
 
 
 async def async_main() -> int:
@@ -63,6 +102,27 @@ async def async_main() -> int:
     )
     print(f"Places inside {args.corridor_km:g} km corridor: {len(rows)}")
 
+    summary = summarize_rows(rows)
+    counts = summary["counts"]
+    print(
+        "Coverage: "
+        f"restaurant={counts[PlaceType.RESTAURANT.value]}, "
+        f"mosque={counts[PlaceType.MOSQUE.value]}, "
+        f"prayer_room={counts[PlaceType.PRAYER_ROOM.value]}, "
+        f"accommodation={counts[PlaceType.ACCOMMODATION.value]}"
+    )
+    print(
+        f"Provinces represented: {len(summary['provinces'])} | "
+        f"Expired evidence: {summary['expired']}"
+    )
+    missing_core = [
+        label for label, present in summary["core"].items() if not present
+    ]
+    if missing_core:
+        print("Mechanical core gaps: " + ", ".join(missing_core))
+    else:
+        print("Mechanical core coverage: PASS")
+
     for row in rows:
         progress = float(row["route_progress"] or 0) * 100
         distance = float(row["distance_m"] or 0) / 1000
@@ -72,6 +132,9 @@ async def async_main() -> int:
             f"{progress:5.1f}% | {distance:5.1f} km from route | "
             f"{row['place_type']:<13} | {row['name_th']} | {trust}{expired}"
         )
+
+    if args.require_core_types and not summary["core_ready"]:
+        return 2
 
     return 0
 
