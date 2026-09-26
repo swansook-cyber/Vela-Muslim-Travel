@@ -339,6 +339,7 @@ export default function AdminApp() {
         setReadinessFilter(overrides.readiness);
       }
       setCandidates(items);
+      setPromotionChecks({});
       setDashboard(stats);
       setAudit(recentAudit);
       setPilotReadiness(readiness);
@@ -368,6 +369,12 @@ export default function AdminApp() {
         ...patch,
       },
     }));
+    setPromotionChecks((current) => {
+      if (!(candidateId in current)) return current;
+      const next = { ...current };
+      delete next[candidateId];
+      return next;
+    });
   }
 
   async function locate(candidate: CandidateResult) {
@@ -1391,14 +1398,9 @@ export default function AdminApp() {
                     Production slug
                     <input
                       value={draft.slug}
-                      onChange={(event) => {
-                        updateDraft(candidate.id, { slug: event.target.value });
-                        setPromotionChecks((current) => {
-                          const nextChecks = { ...current };
-                          delete nextChecks[candidate.id];
-                          return nextChecks;
-                        });
-                      }}
+                      onChange={(event) =>
+                        updateDraft(candidate.id, { slug: event.target.value })
+                      }
                     />
                   </label>
                   <button
