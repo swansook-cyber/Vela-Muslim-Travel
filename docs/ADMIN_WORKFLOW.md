@@ -169,6 +169,23 @@ Successful Place ID resolutions are cached server-side (24 hours by default)
 to avoid repeated provider requests and unnecessary cost when a reviewer opens
 the same candidate more than once.
 
+### Batch Google coordinate suggestions
+
+When the Google Places resolver is configured, Admin also offers
+**ดึง Google พิกัด N รายการ** for the currently filtered DISCOVERED queue.
+This is a convenience action only:
+
+1. each Google-backed candidate is resolved by its stored Place ID,
+2. the returned coordinates are copied into that candidate's local Admin draft,
+3. no candidate state is changed,
+4. `coordinate_checked_at` remains empty,
+5. each coordinate must still be opened on the map and explicitly confirmed
+   before saving as `GEOCODED`.
+
+The batch runs candidates sequentially rather than flooding the provider, and
+the server-side Place resolver cache is reused. Failed candidates are reported
+without discarding successful draft suggestions.
+
 ### Single-candidate review mode
 
 Admin supports **ตรวจทีละรายการ** for mobile review. The mode displays one
