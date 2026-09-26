@@ -87,7 +87,14 @@ async def load_readiness() -> list[ProvinceReadiness]:
 
 
 def readiness_passes(items: list[ProvinceReadiness]) -> bool:
-    return all(item.total > 0 for item in items)
+    route_ready = all(
+        item.restaurants > 0 and item.mosques > 0
+        for item in items
+    )
+    accommodation_provinces = sum(
+        1 for item in items if item.accommodation > 0
+    )
+    return route_ready and accommodation_provinces >= 2
 
 
 async def async_main() -> int:
@@ -106,11 +113,17 @@ async def async_main() -> int:
 
     if not readiness_passes(items):
         print()
-        print("Pilot is not ready: at least one corridor province has no production place.")
+        print(
+            "Pilot is not ready: every target province needs at least one "
+            "restaurant and mosque, with accommodation in at least two provinces."
+        )
         return 2
 
     print()
-    print("Pilot corridor has at least one production place in every target province.")
+    print(
+        "Pilot production coverage meets the structural gate: restaurant and "
+        "mosque in every target province, accommodation in at least two provinces."
+    )
     return 0
 
 
