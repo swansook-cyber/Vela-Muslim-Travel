@@ -106,6 +106,55 @@ function isGoogleResolvableCandidate(candidate: CandidateResult): boolean {
   );
 }
 
+
+function candidateNextAction(
+  candidate: CandidateResult,
+  reviewTask: CandidateReviewTask | null,
+  draft: Draft,
+): string {
+  if (candidate.review_state === "PROMOTED") {
+    return "อยู่ใน production แล้ว";
+  }
+  if (candidate.review_state === "APPROVED") {
+    return "ตรวจ duplicate / slug แล้ว Promote";
+  }
+  if (candidate.review_state === "REJECTED") {
+    return "ตรวจเหตุผลก่อนเปิดกลับเข้า review";
+  }
+
+  if (draft.holdReason.trim()) {
+    return "แก้ Manual hold ก่อนดำเนินต่อ";
+  }
+
+  if (!draft.latitude || !draft.longitude) {
+    return isGoogleResolvableCandidate(candidate)
+      ? "ดึงพิกัดจาก Google Place ID"
+      : "ค้นหาและเลือกพิกัด";
+  }
+
+  if (!draft.coordinateCheckedAt) {
+    return "เปิดแผนที่ ตรวจตำแหน่ง แล้ว ยืนยันพิกัด";
+  }
+
+  if (candidate.review_state === "DISCOVERED") {
+    return "บันทึกเป็น GEOCODED";
+  }
+
+  if (reviewTask?.ready_to_approve) {
+    return "พร้อมอนุมัติ";
+  }
+
+  if (!draft.sourceCheckedAt) {
+    return "ตรวจหลักฐานต้นทางและยืนยัน Source cross-check";
+  }
+
+  if (reviewTask && reviewTask.approval_blockers.length > 0) {
+    return "แก้ Approval blockers ที่เหลือ";
+  }
+
+  return "ตรวจข้อมูลก่อนดำเนินการต่อ";
+}
+
 export default function AdminApp() {
   const [adminKey, setAdminKey] = useState(
     () => sessionStorage.getItem("vela-admin-key") || "",
@@ -1007,6 +1056,7 @@ export default function AdminApp() {
           const reviewTask = isCandidateReviewTask(candidate)
             ? candidate
             : null;
+          const nextAction = candidateNextAction(candidate, reviewTask, draft);
 
           return (
             <article className="candidate-card" key={candidate.id}>
@@ -1019,6 +1069,9 @@ export default function AdminApp() {
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
+                  <small>
+                    ขั้นตอนถัดไป: <strong>{nextAction}</strong>
+                  </small>
                 </div>
                 <strong>{candidate.review_state}</strong>
               </div>
