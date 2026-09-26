@@ -175,3 +175,15 @@ accommodations. Al-Farooq Hotel is held for current-operation confirmation
 rather than being treated as active automatically.
 
 See `docs/CHIANG_MAI_EXPANSION.md`.
+
+
+### Chonburi / Pattaya Batch 1
+
+Chonburi / Pattaya expansion is available at
+`database/seeds/chonburi_pattaya_expansion_review_queue.csv`.
+
+Batch 1 contains 13 candidates: 5 mosques, 5 Muslim-owned restaurants and 3
+accommodations. Hard Rock Hotel Pattaya uses a current official
+`HALAL_CERTIFIED_SERVICE` record for its restaurant kitchen only.
+
+See `docs/CHONBURI_PATTAYA_EXPANSION.md`.
