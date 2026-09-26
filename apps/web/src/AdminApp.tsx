@@ -225,7 +225,11 @@ export default function AdminApp() {
     });
   }
 
-  async function load(overrides?: { province?: string }) {
+  async function load(overrides?: {
+    province?: string;
+    reviewState?: CandidateReviewState | "";
+    readiness?: typeof readinessFilter;
+  }) {
     if (!adminKey) {
       setError("กรุณาใส่ Admin API Key");
       return;
@@ -238,17 +242,18 @@ export default function AdminApp() {
 
     try {
       const activeProvince = overrides?.province ?? provinceFilter;
+      const activeFilter = overrides?.reviewState ?? filter;
       const candidateRequest =
-        filter === "DISCOVERED" || filter === "GEOCODED"
+        activeFilter === "DISCOVERED" || activeFilter === "GEOCODED"
           ? fetchCandidateReviewQueue(
               adminKey,
-              filter,
+              activeFilter,
               activeProvince || undefined,
               typeFilter || undefined,
             )
           : fetchCandidates(
               adminKey,
-              filter || undefined,
+              activeFilter || undefined,
               activeProvince || undefined,
               typeFilter || undefined,
             );
@@ -270,6 +275,12 @@ export default function AdminApp() {
       ]);
       if (overrides?.province !== undefined) {
         setProvinceFilter(overrides.province);
+      }
+      if (overrides?.reviewState !== undefined) {
+        setFilter(overrides.reviewState);
+      }
+      if (overrides?.readiness !== undefined) {
+        setReadinessFilter(overrides.readiness);
       }
       setCandidates(items);
       setDashboard(stats);
@@ -658,13 +669,31 @@ export default function AdminApp() {
                 {reviewProgress.evidence_blocked}
               </small>
             </div>
-            <strong
-              className={
-                reviewProgress.blocked === 0 ? "ready" : "not-ready"
-              }
-            >
-              {reviewProgress.ready_to_approve} READY · {reviewProgress.blocked} BLOCKED
-            </strong>
+            <div className="review-queue-actions">
+              {reviewProgress.google_resolvable > 0 && (
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={loading}
+                  onClick={() =>
+                    void load({
+                      province: "",
+                      reviewState: "DISCOVERED",
+                      readiness: "GOOGLE_RESOLVABLE",
+                    })
+                  }
+                >
+                  เปิดคิว Google {reviewProgress.google_resolvable}
+                </button>
+              )}
+              <strong
+                className={
+                  reviewProgress.blocked === 0 ? "ready" : "not-ready"
+                }
+              >
+                {reviewProgress.ready_to_approve} READY · {reviewProgress.blocked} BLOCKED
+              </strong>
+            </div>
           </div>
           <div className="pilot-readiness-grid">
             {reviewProgress.provinces.map((item) => (
