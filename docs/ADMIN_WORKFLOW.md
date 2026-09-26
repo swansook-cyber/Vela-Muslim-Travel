@@ -89,6 +89,11 @@ The admin dashboard also exposes a manual-review progress summary. It counts onl
 records that are ready for approval from records still blocked by coordinate or
 evidence requirements.
 
+**READY** has one strict meaning: the candidate is already `GEOCODED` and has
+no approval blockers. A `DISCOVERED` record is never shown as approval-ready,
+even if coordinates and evidence fields happen to be complete; it must first be
+saved through the GEOCODED review step.
+
 Reviewers can filter the active queue by readiness and blocker type:
 
 - ready to approve,
