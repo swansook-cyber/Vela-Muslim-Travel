@@ -210,3 +210,20 @@ def test_pak_chong_mosque_has_address_reconciliation_hold() -> None:
     assert mosque.review_hold_reason is not None
     assert "Moo 2" in mosque.review_hold_reason
     assert "Mu 11" in mosque.review_hold_reason
+
+
+def test_khunyaa_phone_conflict_is_held_for_manual_review() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    khunyaa = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort"
+    )
+
+    assert khunyaa.review_state == "DISCOVERED"
+    assert khunyaa.phone == "+66 84 673 1717"
+    assert khunyaa.review_hold_reason is not None
+    assert "084-673-1717" in khunyaa.review_hold_reason
+    assert "089-791-3785" in khunyaa.review_hold_reason
