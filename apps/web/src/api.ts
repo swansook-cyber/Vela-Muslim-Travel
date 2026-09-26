@@ -27,6 +27,14 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
   "http://localhost:8000";
 
+function apiUrl(path: string): URL {
+  const base = API_BASE_URL.startsWith("http://") || API_BASE_URL.startsWith("https://")
+    ? API_BASE_URL
+    : new URL(API_BASE_URL, window.location.origin).toString().replace(/\/$/, "");
+
+  return new URL(`${base}${path}`);
+}
+
 export interface AlongRouteInput {
   origin: Coordinate;
   destination: Coordinate;
@@ -90,7 +98,7 @@ export async function fetchNearby(input: NearbyInput): Promise<PlaceResult[]> {
 
 
 export async function searchDestination(query: string): Promise<GeocodeResult[]> {
-  const url = new URL(`${API_BASE_URL}/geocode/search`);
+  const url = apiUrl("/geocode/search");
   url.searchParams.set("q", query);
 
   const response = await fetch(url);
@@ -117,7 +125,7 @@ export async function fetchCandidates(
   province?: string,
   placeType?: PlaceType,
 ): Promise<CandidateResult[]> {
-  const url = new URL(`${API_BASE_URL}/admin/candidates`);
+  const url = apiUrl("/admin/candidates");
   if (reviewState) {
     url.searchParams.set("review_state", reviewState);
   }
@@ -283,7 +291,7 @@ export async function fetchAdminAudit(
   adminKey: string,
   limit = 20,
 ): Promise<AdminAuditEntry[]> {
-  const url = new URL(`${API_BASE_URL}/admin/audit`);
+  const url = apiUrl("/admin/audit");
   url.searchParams.set("limit", String(limit));
 
   const response = await fetch(url, {
@@ -302,7 +310,7 @@ export async function fetchAdminPlaces(
   adminKey: string,
   includeInactive = true,
 ): Promise<AdminPlaceResult[]> {
-  const url = new URL(`${API_BASE_URL}/admin/places`);
+  const url = apiUrl("/admin/places");
   url.searchParams.set("include_inactive", String(includeInactive));
 
   const response = await fetch(url, {
@@ -472,7 +480,7 @@ export async function fetchCandidateReviewQueue(
   placeType?: PlaceType,
   pilotOnly = false,
 ): Promise<CandidateReviewTask[]> {
-  const url = new URL(`${API_BASE_URL}/admin/candidates/review-queue`);
+  const url = apiUrl("/admin/candidates/review-queue");
   url.searchParams.set("review_state", reviewState);
   if (province) {
     url.searchParams.set("province", province);
