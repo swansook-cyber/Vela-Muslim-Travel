@@ -227,3 +227,37 @@ def test_khunyaa_phone_conflict_is_held_for_manual_review() -> None:
     assert khunyaa.review_hold_reason is not None
     assert "084-673-1717" in khunyaa.review_hold_reason
     assert "089-791-3785" in khunyaa.review_hold_reason
+
+
+def test_pilot_seed_checkpoint_counts_match_release_readiness() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    pilot = [
+        candidate
+        for candidate in candidates
+        if candidate.province != "กรุงเทพมหานคร"
+    ]
+    discovered = [
+        candidate for candidate in pilot if candidate.review_state == "DISCOVERED"
+    ]
+    geocoded = [
+        candidate for candidate in pilot if candidate.review_state == "GEOCODED"
+    ]
+    google_resolvable = [
+        candidate
+        for candidate in discovered
+        if candidate.external_provider in {"google_business", "google_places"}
+        and candidate.external_id
+    ]
+    google_fast_lane = [
+        candidate
+        for candidate in google_resolvable
+        if not candidate.review_hold_reason
+    ]
+
+    assert len(pilot) == 23
+    assert len(geocoded) == 15
+    assert len(discovered) == 8
+    assert len(google_resolvable) == 7
+    assert len(google_fast_lane) == 5
