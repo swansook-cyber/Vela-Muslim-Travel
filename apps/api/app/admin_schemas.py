@@ -42,6 +42,11 @@ class CandidateResult(BaseModel):
 
 
 class CandidateReviewUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=250)
+    address: str | None = None
+    district: str | None = None
+    province: str | None = None
+    phone: str | None = None
     latitude: float | None = Field(default=None, ge=-90, le=90)
     longitude: float | None = Field(default=None, ge=-180, le=180)
     review_state: CandidateReviewState | None = None
