@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ProductionPlaces } from "./ProductionPlaces";
 import {
+  checkCandidatePromotion,
   fetchAdminAudit,
   fetchAdminDashboard,
   fetchCandidateReadiness,
@@ -18,6 +19,7 @@ import {
 import type {
   AdminAuditEntry,
   AdminDashboard,
+  CandidatePromotionCheckResponse,
   CandidateReadinessResponse,
   CandidateResult,
   CandidateReviewProgressResponse,
@@ -137,6 +139,9 @@ export default function AdminApp() {
   const [loading, setLoading] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
     Record<string, GeocodeResult[]>
+  >({});
+  const [promotionChecks, setPromotionChecks] = useState<
+    Record<string, CandidatePromotionCheckResponse>
   >({});
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -514,6 +519,48 @@ export default function AdminApp() {
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "อัปเดต candidate ไม่สำเร็จ");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function preflightPromotion(candidate: CandidateResult) {
+    const draft = drafts[candidate.id];
+    if (!draft?.slug.trim()) {
+      setError("กรุณาระบุ slug ก่อนตรวจ promotion");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const result = await checkCandidatePromotion(
+        adminKey,
+        candidate.id,
+        draft.slug.trim(),
+      );
+      setPromotionChecks((current) => ({
+        ...current,
+        [candidate.id]: result,
+      }));
+
+      if (result.can_promote) {
+        setMessage(`${candidate.name} ผ่าน duplicate/slug preflight`);
+      } else if (result.duplicate) {
+        setError(
+          `พบสถานที่ประเภทเดียวกันใกล้ ${result.duplicate.distance_m.toFixed(
+            0,
+          )} ม.: ${result.duplicate.name_th} (${result.duplicate.slug})`,
+        );
+      } else if (result.slug_exists) {
+        setError(`slug "${draft.slug.trim()}" ถูกใช้แล้ว`);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "ตรวจ promotion preflight ไม่สำเร็จ",
+      );
     } finally {
       setLoading(false);
     }
