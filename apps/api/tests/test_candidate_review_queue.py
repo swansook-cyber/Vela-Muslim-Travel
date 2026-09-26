@@ -220,3 +220,43 @@ async def test_candidate_update_rejects_discovered_to_approved_jump(monkeypatch)
 
     assert exc_info.value.status_code == 409
     assert "DISCOVERED -> APPROVED" in str(exc_info.value.detail)
+
+
+@pytest.mark.asyncio
+async def test_review_queue_includes_non_blocking_warnings(monkeypatch) -> None:
+    from datetime import UTC, datetime, timedelta
+
+    row = candidate_row(CandidateReviewState.GEOCODED.value)
+    row.update(
+        {
+            "proposed_trust_status": "HALAL_CERTIFIED",
+            "source_type": "OFFICIAL_CERTIFICATION",
+            "source_reference": "https://example.com/cert",
+            "certification_number": "CERT-SOON",
+            "certification_expires_at": datetime.now(UTC) + timedelta(days=10),
+        }
+    )
+
+    async def fake_list_candidates(
+        session,
+        review_state,
+        province=None,
+        place_type=None,
+        limit=100,
+    ):
+        return [row]
+
+    monkeypatch.setattr(main, "list_candidates", fake_list_candidates)
+
+    tasks = await main.admin_candidate_review_queue(
+        session=None,
+        _admin=None,
+        review_state=CandidateReviewState.GEOCODED,
+        province=None,
+        place_type=None,
+        limit=100,
+    )
+
+    assert tasks[0].ready_to_approve is True
+    assert tasks[0].approval_blockers == []
+    assert len(tasks[0].review_warnings) == 1
