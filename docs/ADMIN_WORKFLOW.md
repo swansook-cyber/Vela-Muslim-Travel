@@ -256,6 +256,11 @@ Shortcuts opened from that progress summary therefore use **Pilot queue** scope
 and reset the place-type filter to **ทุกประเภท** so the displayed count matches
 the summary count.
 
+Pilot scope is enforced by the review API itself through
+`GET /admin/candidates/review-queue?...&pilot_only=true`. The API excludes
+candidates outside the seven corridor provinces before returning review tasks,
+so this is not only a browser-side display filter.
+
 The APPROVED / promotion queue is not pilot-scoped; it remains a global Admin
 queue and explicitly clears Pilot queue scope when opened.
 
