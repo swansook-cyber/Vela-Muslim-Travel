@@ -800,13 +800,15 @@ export default function AdminApp() {
                   type="button"
                   className="secondary"
                   disabled={loading}
-                  onClick={() =>
+                  onClick={() => {
+                    setSingleReviewMode(true);
+                    setReviewIndex(0);
                     void load({
                       province: "",
                       reviewState: "DISCOVERED",
                       readiness: "GOOGLE_RESOLVABLE",
-                    })
-                  }
+                    });
+                  }}
                 >
                   เปิดคิว Google {reviewProgress.google_resolvable}
                 </button>
