@@ -3,6 +3,7 @@ from datetime import UTC, datetime, timedelta
 from app.candidate_review import (
     candidate_approval_blockers,
     candidate_maps_search_url,
+    candidate_review_transition_allowed,
 )
 
 
@@ -129,3 +130,16 @@ def test_candidate_maps_search_falls_back_to_name_and_address() -> None:
 
     assert "query_place_id=" not in url
     assert "query=" in url
+
+
+def test_candidate_review_transition_requires_geocoded_before_approved() -> None:
+    assert candidate_review_transition_allowed("DISCOVERED", "GEOCODED") is True
+    assert candidate_review_transition_allowed("GEOCODED", "APPROVED") is True
+    assert candidate_review_transition_allowed("DISCOVERED", "APPROVED") is False
+
+
+def test_candidate_review_transition_allows_remediation_and_reopen() -> None:
+    assert candidate_review_transition_allowed("APPROVED", "GEOCODED") is True
+    assert candidate_review_transition_allowed("APPROVED", "REJECTED") is True
+    assert candidate_review_transition_allowed("REJECTED", "DISCOVERED") is True
+    assert candidate_review_transition_allowed("PROMOTED", "GEOCODED") is False
