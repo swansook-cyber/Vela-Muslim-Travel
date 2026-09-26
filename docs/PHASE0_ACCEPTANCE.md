@@ -42,4 +42,17 @@ GitHub Actions must pass:
 
 ## Exit criterion
 
-Once CI is green and a manually reviewed real-world pilot dataset returns sensible results on a real Thailand route, development can move to the first usable PWA.
+Before the pilot can be considered structurally ready in production data:
+
+- every target corridor province has at least one restaurant,
+- every target corridor province has at least one mosque,
+- accommodation coverage exists in at least two target provinces,
+- reviewed/promoted production places return sensible results on the real southern-Thailand → Khao Yai route,
+- the 2/5/10 km route smoke matrix has been inspected for practical detour coverage.
+
+This structural gate is necessary but not sufficient by itself. Manual route acceptance
+must still confirm that the returned stops are useful, correctly ordered, evidence-backed,
+and practical for a real drive.
+
+Once CI is green and this manually reviewed real-world pilot returns sensible route results,
+development can move to the first usable PWA.
