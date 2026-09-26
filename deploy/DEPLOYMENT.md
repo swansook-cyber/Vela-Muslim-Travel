@@ -71,15 +71,6 @@ target database, and downtime window.
 
 The API container applies ordered SQL migrations before serving traffic.
 
-<!-- legacy ordered list retained below for compatibility -->
-<!--
-3. inspect pending migration files,
-4. rebuild and restart Compose,
-5. verify `/api/health`,
-6. verify the web UI and admin dashboard.
-
-The API container applies ordered SQL migrations before serving traffic.
-
 ## Optional Google Places resolver
 
 Set `GOOGLE_PLACES_API_KEY` in the private deploy environment only when the
