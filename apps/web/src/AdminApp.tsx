@@ -693,7 +693,27 @@ export default function AdminApp() {
           <div><strong>{dashboard.candidates_total}</strong><span>Candidate ทั้งหมด</span></div>
           <div><strong>{dashboard.discovered}</strong><span>รอตรวจ</span></div>
           <div><strong>{dashboard.geocoded}</strong><span>มีพิกัดแล้ว</span></div>
-          <div><strong>{dashboard.approved}</strong><span>อนุมัติแล้ว</span></div>
+          <div>
+            <strong>{dashboard.approved}</strong>
+            <span>รอ Promote</span>
+            {dashboard.approved > 0 && (
+              <button
+                type="button"
+                className="secondary"
+                disabled={loading}
+                onClick={() =>
+                  void load({
+                    province: "",
+                    reviewState: "APPROVED",
+                    readiness: "ALL",
+                  })
+                }
+              >
+                เปิดคิว
+              </button>
+            )}
+          </div>
+          <div><strong>{dashboard.promoted}</strong><span>Promoted</span></div>
           <div><strong>{dashboard.production_places}</strong><span>Production places</span></div>
           <div><strong>{dashboard.certifications_expiring_30d}</strong><span>หลักฐานใกล้หมดอายุ 30 วัน</span></div>
           <div><strong>{dashboard.expired_verifications}</strong><span>หลักฐานหมดอายุ</span></div>
@@ -717,6 +737,22 @@ export default function AdminApp() {
               </small>
             </div>
             <div className="review-queue-actions">
+              {reviewProgress.ready_to_approve > 0 && (
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={loading}
+                  onClick={() =>
+                    void load({
+                      province: "",
+                      reviewState: "GEOCODED",
+                      readiness: "READY",
+                    })
+                  }
+                >
+                  เปิดคิวพร้อมอนุมัติ {reviewProgress.ready_to_approve}
+                </button>
+              )}
               {reviewProgress.google_resolvable > 0 && (
                 <button
                   type="button"
