@@ -113,6 +113,11 @@ async def get_candidate(
 async def update_candidate_review(
     session: AsyncSession,
     candidate_id: str,
+    name: str,
+    address: str | None,
+    district: str | None,
+    province: str | None,
+    phone: str | None,
     latitude: float | None,
     longitude: float | None,
     review_state: CandidateReviewState,
@@ -125,6 +130,11 @@ async def update_candidate_review(
         f"""
         UPDATE place_candidates
         SET
+            name = :name,
+            address = :address,
+            district = :district,
+            province = :province,
+            phone = :phone,
             latitude = :latitude,
             longitude = :longitude,
             review_state = CAST(:review_state AS candidate_review_state),
@@ -145,6 +155,11 @@ async def update_candidate_review(
             sql,
             {
                 "candidate_id": candidate_id,
+                "name": name,
+                "address": address,
+                "district": district,
+                "province": province,
+                "phone": phone,
                 "latitude": latitude,
                 "longitude": longitude,
                 "review_state": review_state.value,
