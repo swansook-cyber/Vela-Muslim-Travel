@@ -358,3 +358,18 @@ def test_bangkok_expansion_does_not_overstate_halal_certification() -> None:
         for candidate in commercial
     )
     assert all(not candidate.certification_number for candidate in commercial)
+
+
+def test_bangkok_expansion_supports_non_certified_muslim_business_labels() -> None:
+    path = Path("../../database/seeds/bangkok_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    allowed = {"MUSLIM_OWNED", "MUSLIM_FRIENDLY", "UNVERIFIED"}
+    uncertified = [
+        candidate
+        for candidate in candidates
+        if not candidate.certification_number
+    ]
+
+    assert uncertified
+    assert all(candidate.proposed_trust_status in allowed for candidate in uncertified)
