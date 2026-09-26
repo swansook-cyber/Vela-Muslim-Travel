@@ -137,6 +137,7 @@ export interface CandidateReviewProvinceProgress {
   blocked: number;
   coordinate_pending: number;
   google_resolvable: number;
+  google_fast_lane: number;
   manual_hold: number;
   evidence_blocked: number;
 }
@@ -147,6 +148,7 @@ export interface CandidateReviewProgressResponse {
   blocked: number;
   coordinate_pending: number;
   google_resolvable: number;
+  google_fast_lane: number;
   manual_hold: number;
   evidence_blocked: number;
   provinces: CandidateReviewProvinceProgress[];
