@@ -190,3 +190,24 @@ async def test_admin_audit_log_records_review_action() -> None:
         and row["entity_id"] == "integration-test"
         for row in rows
     )
+
+
+@pytest.mark.asyncio
+async def test_list_candidates_pilot_only_filters_before_return() -> None:
+    from app.admin_queries import list_candidates
+    from app.admin_schemas import CandidateReviewState
+    from app.tools.candidate_queue_readiness import PILOT_PROVINCES
+
+    async with SessionLocal() as session:
+        rows = await list_candidates(
+            session,
+            review_state=CandidateReviewState.DISCOVERED,
+            province=None,
+            place_type=None,
+            pilot_only=True,
+            limit=500,
+        )
+
+    assert rows
+    assert all(row["province"] in PILOT_PROVINCES for row in rows)
+    assert all(row["province"] != "กรุงเทพมหานคร" for row in rows)
