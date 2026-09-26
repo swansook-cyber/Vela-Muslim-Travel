@@ -723,3 +723,58 @@ def test_trang_oasis_requires_exact_address_review() -> None:
     assert hotel.proposed_trust_status == "MUSLIM_FRIENDLY"
     assert hotel.review_hold_reason is not None
     assert "street address" in hotel.review_hold_reason
+
+
+def test_ayutthaya_expansion_seed_has_balanced_tourism_coverage() -> None:
+    path = Path("../../database/seeds/ayutthaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 13
+    assert {candidate.province for candidate in candidates} == {"พระนครศรีอยุธยา"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_ayutthaya_muslim_owned_is_explicit_not_inferred() -> None:
+    path = Path("../../database/seeds/ayutthaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    owned = {
+        candidate.name
+        for candidate in candidates
+        if candidate.proposed_trust_status == "MUSLIM_OWNED"
+    }
+
+    assert owned == {
+        "Krua Muslim Krung Kao Ayutthaya",
+        "Hatyai Fried Chicken Muhammad Ayutthaya",
+    }
+
+
+def test_ayutthaya_hotels_remain_muslim_friendly_without_cert_number() -> None:
+    path = Path("../../database/seeds/ayutthaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    hotels = [
+        candidate for candidate in candidates if candidate.place_type == "ACCOMMODATION"
+    ]
+
+    assert len(hotels) == 3
+    assert all(candidate.proposed_trust_status == "MUSLIM_FRIENDLY" for candidate in hotels)
+    assert all(not candidate.certification_number for candidate in hotels)
+
+
+def test_ayutthaya_incomplete_addresses_are_held() -> None:
+    path = Path("../../database/seeds/ayutthaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    held = [candidate.name for candidate in candidates if candidate.review_hold_reason]
+
+    assert set(held) == {
+        "Krua Muslim Krung Kao Ayutthaya",
+        "RUS Hotel & Convention Ayutthaya",
+    }
