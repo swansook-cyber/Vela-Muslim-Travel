@@ -822,3 +822,50 @@ def test_sanctuary_kanchanaburi_has_address_hold_not_certification_claim() -> No
     assert hotel.proposed_trust_status == "MUSLIM_FRIENDLY"
     assert hotel.review_hold_reason is not None
     assert hotel.certification_number is None
+
+
+def test_wave_one_expansion_manifest_counts() -> None:
+    paths = [
+        Path("../../database/seeds/bangkok_expansion_review_queue.csv"),
+        Path("../../database/seeds/phuket_expansion_review_queue.csv"),
+        Path("../../database/seeds/krabi_expansion_review_queue.csv"),
+        Path("../../database/seeds/chiang_mai_expansion_review_queue.csv"),
+        Path("../../database/seeds/chonburi_pattaya_expansion_review_queue.csv"),
+        Path("../../database/seeds/songkhla_hat_yai_expansion_review_queue.csv"),
+        Path("../../database/seeds/phang_nga_expansion_review_queue.csv"),
+        Path("../../database/seeds/trang_expansion_review_queue.csv"),
+        Path("../../database/seeds/ayutthaya_expansion_review_queue.csv"),
+        Path("../../database/seeds/kanchanaburi_expansion_review_queue.csv"),
+    ]
+
+    candidates = [
+        candidate
+        for path in paths
+        for candidate in load_candidates(path)
+    ]
+
+    assert len(candidates) == 118
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 50
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 42
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 26
+
+    commercial = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type in {"RESTAURANT", "ACCOMMODATION"}
+    ]
+
+    assert len(commercial) == 68
+    assert sum(
+        candidate.proposed_trust_status == "MUSLIM_OWNED"
+        for candidate in commercial
+    ) == 29
+    assert sum(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in commercial
+    ) == 38
+    assert sum(
+        candidate.proposed_trust_status == "HALAL_CERTIFIED_SERVICE"
+        for candidate in commercial
+    ) == 1
+    assert sum(bool(candidate.review_hold_reason) for candidate in candidates) == 6
