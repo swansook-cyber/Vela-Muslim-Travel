@@ -5,6 +5,7 @@ import type {
   AdminPlaceUpdate,
   AdminVerificationResult,
   AlongRouteResponse,
+  CandidateCoordinateBatchResponse,
   CandidateCoordinateSuggestion,
   CandidateReadinessResponse,
   CandidateResult,
@@ -183,6 +184,27 @@ export async function resolveCandidateGooglePlace(
   }
 
   return response.json() as Promise<CandidateCoordinateSuggestion>;
+}
+
+
+export async function resolveCandidateGooglePlaces(
+  adminKey: string,
+  candidateIds: string[],
+): Promise<CandidateCoordinateBatchResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/candidates/resolve-google-places`,
+    {
+      method: "POST",
+      headers: adminHeaders(adminKey),
+      body: JSON.stringify({ candidate_ids: candidateIds }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<CandidateCoordinateBatchResponse>;
 }
 
 
