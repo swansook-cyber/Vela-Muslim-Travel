@@ -10,6 +10,7 @@ import {
   fetchCandidateReviewQueue,
   fetchCandidates,
   fetchPilotReadiness,
+  fetchPhase0Completion,
   promoteCandidate,
   resolveCandidateGooglePlace,
   resolveCandidateGooglePlaces,
@@ -27,6 +28,7 @@ import type {
   CandidateReviewTask,
   GeocodeResult,
   PilotReadinessResponse,
+  Phase0CompletionResponse,
 } from "./types";
 
 const pilotProvinces = [
@@ -190,6 +192,8 @@ export default function AdminApp() {
     useState<CandidateReadinessResponse | null>(null);
   const [reviewProgress, setReviewProgress] =
     useState<CandidateReviewProgressResponse | null>(null);
+  const [phase0Completion, setPhase0Completion] =
+    useState<Phase0CompletionResponse | null>(null);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(false);
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
@@ -346,6 +350,7 @@ export default function AdminApp() {
         readiness,
         candidateCoverage,
         progress,
+        completion,
       ] = await Promise.all([
         candidateRequest,
         fetchAdminDashboard(adminKey),
@@ -353,6 +358,7 @@ export default function AdminApp() {
         fetchPilotReadiness(adminKey),
         fetchCandidateReadiness(adminKey),
         fetchCandidateReviewProgress(adminKey),
+        fetchPhase0Completion(adminKey),
       ]);
       if (overrides?.province !== undefined) {
         setProvinceFilter(overrides.province);
@@ -376,6 +382,7 @@ export default function AdminApp() {
       setPilotReadiness(readiness);
       setCandidateReadiness(candidateCoverage);
       setReviewProgress(progress);
+      setPhase0Completion(completion);
       initializeDrafts(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "โหลด candidate ไม่สำเร็จ");
