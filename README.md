@@ -294,3 +294,15 @@ Muslim-friendly accommodations. Coordinates remain blank until controlled map
 review.
 
 See `docs/TRAT_KOH_CHANG_EXPANSION.md`.
+
+### Mae Hong Son / Pai Batch 1
+
+Mae Hong Son / Pai expansion is available at
+`database/seeds/mae_hong_son_pai_expansion_review_queue.csv`.
+
+Batch 1 contains 9 conservative candidates: all 3 mosques currently returned by
+the CICOT directory, 4 Muslim-friendly restaurant candidates and 2
+Muslim-friendly accommodations with explicit halal-breakfast evidence.
+Coordinates remain blank until controlled map review.
+
+See `docs/MAE_HONG_SON_PAI_EXPANSION.md`.
