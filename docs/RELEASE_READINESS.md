@@ -60,8 +60,8 @@ Seed checkpoint:
 - 15 GEOCODED,
 - 8 DISCOVERED,
 - 7 DISCOVERED candidates are Google-resolvable,
-- 5 of those are Google Fast Lane candidates without manual holds,
-- 2 Google-resolvable candidates have explicit holds,
+- 6 of those are Google Fast Lane candidates without manual holds,
+- 1 Google-resolvable candidate has an explicit hold,
 - 1 non-Google candidate has a temporary-closure hold.
 
 ### Execute first — Google Fast Lane
@@ -71,6 +71,7 @@ Seed checkpoint:
 3. ร้านอาหารอิสลามตลาดแขก อ.ปากช่อง
 4. อาซีย๊ะอาหารอิสลาม Halal
 5. กะมา ครัวมุสลิม ฮาลาล
+6. มัสยิดยันน่าตุ้ลฟิรเดาซ์
 
 For every item:
 
@@ -80,13 +81,15 @@ Do not infer certification or approve automatically.
 
 ### Then resolve held coordinate work
 
+Yannatul Firdaus address convention was resolved on 2026-09-26. Current Google
+and Cybo street-address evidence plus CICOT/historical records consistently
+identify the same Pak Chong mosque. It is now in the coordinate Fast Lane, but
+still requires visual coordinate confirmation before GEOCODED.
+
 - คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort:
   Google currently matches the seed phone 084-673-1717, while Makan Halal Guide
   and TripNiceDay publish 089-791-3785. Resolve the phone conflict before
   approval; coordinate review can proceed while the hold remains.
-- มัสยิดยันน่าตุ้ลฟิรเดาซ์:
-  keep the address hold until current CICOT Moo 2 and historical
-  Mu 11 / Kaek Market / Trok Chumchon Surao evidence is reconciled.
 - เน้นเนื้อ@ประจวบฮาลาล:
   confirm reopening before approval; current checkpoint records a temporarily
   closed Google business status.
