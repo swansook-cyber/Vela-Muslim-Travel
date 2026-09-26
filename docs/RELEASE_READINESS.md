@@ -61,7 +61,7 @@ Seed checkpoint:
 - 8 DISCOVERED,
 - 7 DISCOVERED candidates are Google-resolvable,
 - 6 of those are Google Fast Lane candidates without manual holds,
-- 1 Google-resolvable candidate has an explicit hold,
+- 7 Google-resolvable candidates have no manual holds,
 - 1 non-Google candidate still needs coordinate review but has no manual hold.
 
 ### Execute first — Google Fast Lane
@@ -79,21 +79,16 @@ For every item:
 
 Do not infer certification or approve automatically.
 
-### Then resolve held coordinate work
+### Resolved manual holds
 
-Yannatul Firdaus address convention was resolved on 2026-09-26. Current Google
-and Cybo street-address evidence plus CICOT/historical records consistently
-identify the same Pak Chong mosque. It is now in the coordinate Fast Lane, but
-still requires visual coordinate confirmation before GEOCODED.
+All pilot manual holds are resolved as of 2026-09-26. This does not advance
+review state or trust automatically.
 
-- คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort:
-  Google currently matches the seed phone 084-673-1717, while Makan Halal Guide
-  and TripNiceDay publish 089-791-3785. Resolve the phone conflict before
-  approval; coordinate review can proceed while the hold remains.
-- เน้นเนื้อ@ประจวบฮาลาล:
-  operating-status hold was resolved on 2026-09-26 using current Makan,
-  Wongnai/LINE MAN and Restaurant Guru activity. It remains DISCOVERED because
-  exact coordinates still need manual review; trust remains UNVERIFIED.
+- Yannatul Firdaus: address conventions reconciled; visual coordinate review remains.
+- KhunYaa Khaoyai: canonical phone is 089-791-3785 from current Makan,
+  TripNiceDay and Cybo evidence; trust remains UNVERIFIED.
+- Nen Nuea Prachuap Halal: stale temporary-closure hold cleared from current
+  operating/order/review evidence; exact coordinate review remains.
 
 ### Resolve existing GEOCODED holds before approval
 
