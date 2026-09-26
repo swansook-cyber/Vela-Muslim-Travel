@@ -339,3 +339,31 @@ A certified label is current only while its evidence has a future expiry date.
 - production place count,
 - expired verification evidence,
 - certification evidence expiring in the next 30 days.
+
+
+### Correct candidate metadata before approval
+
+Admin review can correct staged candidate metadata after evidence is checked:
+
+- name,
+- address,
+- district,
+- province,
+- phone.
+
+These edits affect candidate staging only. Production `places` are unchanged
+until an APPROVED candidate is promoted.
+
+Safety behavior:
+
+- phone-only corrections keep the existing coordinate verification,
+- changing name, address, district, province, latitude, or longitude invalidates
+  the previous coordinate verification,
+- GEOCODED/APPROVED cannot be retained after such a location/identity change
+  until the map point is explicitly re-verified,
+- metadata changes are stored in the Admin audit log under
+  `REVIEW_CANDIDATE.metadata_changes`.
+
+This is the intended way to resolve evidence conflicts such as a verified phone
+or administrative-address correction. Do not edit the database directly to
+clear a review hold.
