@@ -53,6 +53,7 @@ async def test_review_queue_supports_manual_review_states(monkeypatch, state) ->
         review_state,
         province=None,
         place_type=None,
+        pilot_only=False,
         limit=100,
     ):
         seen["review_state"] = review_state
@@ -110,6 +111,7 @@ async def test_review_queue_uses_exact_google_place_id(monkeypatch) -> None:
         review_state,
         province=None,
         place_type=None,
+        pilot_only=False,
         limit=100,
     ):
         return [row]
@@ -242,6 +244,7 @@ async def test_review_queue_includes_non_blocking_warnings(monkeypatch) -> None:
         review_state,
         province=None,
         place_type=None,
+        pilot_only=False,
         limit=100,
     ):
         return [row]
@@ -272,14 +275,18 @@ async def test_review_queue_pilot_only_excludes_outside_corridor(monkeypatch) ->
         "province": "กรุงเทพมหานคร",
     }
 
+    seen: dict[str, object] = {}
+
     async def fake_list_candidates(
         session,
         review_state,
         province=None,
         place_type=None,
+        pilot_only=False,
         limit=100,
     ):
-        return [inside, outside]
+        seen["pilot_only"] = pilot_only
+        return [inside] if pilot_only else [inside, outside]
 
     monkeypatch.setattr(main, "list_candidates", fake_list_candidates)
 
@@ -293,5 +300,6 @@ async def test_review_queue_pilot_only_excludes_outside_corridor(monkeypatch) ->
         limit=100,
     )
 
+    assert seen["pilot_only"] is True
     assert [task.id for task in tasks] == [inside["id"]]
     assert tasks[0].province == "นครราชสีมา"
