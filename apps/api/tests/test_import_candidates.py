@@ -943,3 +943,51 @@ def test_surat_thani_koh_samui_excludes_closed_ihsan_restaurant() -> None:
         candidate.name != "Ihsan Muslim Restaurant"
         for candidate in candidates
     )
+
+
+def test_chiang_rai_expansion_seed_has_balanced_coverage() -> None:
+    path = Path("../../database/seeds/chiang_rai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 10
+    assert {candidate.province for candidate in candidates} == {"เชียงราย"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 3
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 2
+
+
+def test_chiang_rai_muslim_owned_restaurants_do_not_claim_certification() -> None:
+    path = Path("../../database/seeds/chiang_rai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate for candidate in candidates if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert len(restaurants) == 3
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_OWNED"
+        for candidate in restaurants
+    )
+    assert all(not candidate.certification_number for candidate in restaurants)
+
+
+def test_chiang_rai_hotels_remain_muslim_friendly_without_certificate_number() -> None:
+    path = Path("../../database/seeds/chiang_rai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    hotels = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type == "ACCOMMODATION"
+    ]
+
+    assert len(hotels) == 2
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in hotels
+    )
+    assert all(not candidate.certification_number for candidate in hotels)
