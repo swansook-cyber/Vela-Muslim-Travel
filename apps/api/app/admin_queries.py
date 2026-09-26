@@ -5,7 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .admin_schemas import CandidateReviewState
-from .tools.candidate_queue_readiness import PILOT_PROVINCES
+from .pilot import PILOT_PROVINCES
 
 CANDIDATE_COLUMNS = """
     id::text,
