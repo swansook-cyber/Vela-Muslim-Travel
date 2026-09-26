@@ -80,7 +80,7 @@ from .schemas import (
     RouteSummary,
 )
 from .security import require_admin
-from .tools.pilot_readiness import PILOT_PROVINCES, load_readiness, readiness_passes
+from .tools.pilot_readiness import load_readiness, readiness_passes
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
 AdminGuard = Annotated[None, Depends(require_admin)]
@@ -435,11 +435,9 @@ async def admin_candidate_review_queue(
         review_state=review_state,
         province=province,
         place_type=place_type.value if place_type else None,
+        pilot_only=pilot_only,
         limit=min(max(limit, 1), 500),
     )
-
-    if pilot_only:
-        rows = [row for row in rows if row.get("province") in PILOT_PROVINCES]
 
     tasks: list[CandidateReviewTask] = []
     for row in rows:
