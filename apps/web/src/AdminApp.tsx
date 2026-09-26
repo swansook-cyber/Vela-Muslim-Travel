@@ -833,6 +833,7 @@ export default function AdminApp() {
                     reviewState: "APPROVED",
                     readiness: "ALL",
                     placeType: "",
+                    pilotOnly: false,
                   })
                 }
               >
