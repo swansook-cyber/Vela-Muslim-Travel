@@ -29,6 +29,11 @@ No new product feature is required to close Phase 0.
 
 ## 2. Pilot data readiness
 
+Before continuing manual review on an existing deployment, sync the current
+candidate seed using the controlled dry-run/apply procedure in
+`deploy/DEPLOYMENT.md`. This is required for the 2026-09-26 KhunYaa phone
+conflict hold to appear in the running Admin queue.
+
 Seed checkpoint:
 
 - 23 candidates inside the seven-province pilot corridor,
