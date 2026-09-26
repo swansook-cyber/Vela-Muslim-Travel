@@ -1183,15 +1183,45 @@ export default function AdminApp() {
                     Production slug
                     <input
                       value={draft.slug}
-                      onChange={(event) =>
-                        updateDraft(candidate.id, { slug: event.target.value })
-                      }
+                      onChange={(event) => {
+                        updateDraft(candidate.id, { slug: event.target.value });
+                        setPromotionChecks((current) => {
+                          const nextChecks = { ...current };
+                          delete nextChecks[candidate.id];
+                          return nextChecks;
+                        });
+                      }}
                     />
                   </label>
                   <button
                     type="button"
-                    onClick={() => promote(candidate)}
+                    className="secondary"
+                    onClick={() => void preflightPromotion(candidate)}
                     disabled={loading}
+                  >
+                    ตรวจ duplicate / slug
+                  </button>
+                  {promotionChecks[candidate.id] && (
+                    <small>
+                      {promotionChecks[candidate.id].can_promote
+                        ? "Preflight ผ่าน"
+                        : promotionChecks[candidate.id].duplicate
+                          ? `พบ ${promotionChecks[candidate.id].duplicate?.name_th} ใกล้ ${promotionChecks[candidate.id].duplicate?.distance_m.toFixed(0)} ม.`
+                          : "slug ซ้ำ"}
+                    </small>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => promote(candidate)}
+                    disabled={
+                      loading ||
+                      promotionChecks[candidate.id]?.can_promote !== true
+                    }
+                    title={
+                      promotionChecks[candidate.id]?.can_promote === true
+                        ? undefined
+                        : "ตรวจ duplicate / slug ให้ผ่านก่อน promote"
+                    }
                   >
                     Promote เข้า production
                   </button>
