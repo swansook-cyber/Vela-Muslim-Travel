@@ -306,3 +306,15 @@ Muslim-friendly accommodations with explicit halal-breakfast evidence.
 Coordinates remain blank until controlled map review.
 
 See `docs/MAE_HONG_SON_PAI_EXPANSION.md`.
+
+### Udon Thani Batch 1
+
+Udon Thani expansion is available at
+`database/seeds/udon_thani_expansion_review_queue.csv`.
+
+Batch 1 contains 8 conservative candidates: the 2 Udon Thani mosques currently
+returned by CICOT, 3 Muslim-friendly restaurant candidates and 3
+Muslim-friendly accommodations with explicit halal dining/breakfast evidence.
+Coordinates remain blank until controlled map review.
+
+See `docs/UDON_THANI_EXPANSION.md`.
