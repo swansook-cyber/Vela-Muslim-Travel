@@ -59,3 +59,51 @@ Of those 8 coordinate-pending candidates:
 Google resolver output is still a suggestion only. A reviewer must open the
 suggested point on the map, confirm the exact venue, record
 `coordinate_checked_at`, and resolve any manual hold before approval.
+
+
+## Google coordinate execution queue
+
+For the current 7 Google-resolvable pilot candidates, review the straightforward
+items first so the queue shrinks quickly, then handle the address-discrepancy
+case separately.
+
+### Straightforward coordinate review
+
+1. **มัสยิดกลางจังหวัดเพชรบุรี**
+   - Google Place ID: `ChIJP0BtFTom_TARfXE8GeUMrYM`
+   - No manual hold recorded.
+2. **SALASA HALAL RESTAURANT KHAOYAI**
+   - Google Place ID: `ChIJgZfAAmsyHDERlceMtKji41g`
+   - No manual hold recorded.
+3. **ร้านอาหารอิสลามตลาดแขก อ.ปากช่อง**
+   - Google Place ID: `ChIJu4-pVzEqHDERNKY1RFId_Yc`
+   - No manual hold recorded.
+4. **อาซีย๊ะอาหารอิสลาม Halal**
+   - Google Place ID: `ChIJ3XS9QSsrHDER4FprdurFZCo`
+   - No manual hold recorded.
+5. **กะมา ครัวมุสลิม ฮาลาล**
+   - Google Place ID: `ChIJBzAp2VpN_zARrGXZ_BL7X98`
+   - No manual hold recorded.
+6. **คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort**
+   - Google Place ID: `ChIJVy7c7Bg7HDERjTbk8mJLjSI`
+   - No manual hold recorded.
+
+For each item: resolve the Google coordinate into draft, open the exact point on
+Google Maps, visually confirm the venue identity, then use
+**ยืนยันพิกัด + บันทึก GEOCODED**. This step must not infer certification or
+approve the candidate.
+
+### Coordinate review with an existing hold
+
+7. **มัสยิดยันน่าตุ้ลฟิรเดาซ์**
+   - Google Place ID: `ChIJg8AZfzEqHDERIEmyXoK-g_0`
+   - Keep the manual hold after coordinate confirmation.
+   - Reconcile current CICOT Moo 2 with historical Mu 11 / Kaek Market /
+     Trok Chumchon Surao evidence before approval.
+   - Do not infer coordinates from the historical address.
+
+### Non-Google coordinate hold
+
+**เน้นเนื้อ@ประจวบฮาลาล** stays outside the Google queue. Its current Google
+business status was recorded as temporarily closed, so reopening must be
+confirmed before approval even after coordinates are established.
