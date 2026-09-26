@@ -354,3 +354,15 @@ explicit current halal dining evidence. Coordinates remain blank until
 controlled map review.
 
 See `docs/PRACHUAP_HUA_HIN_EXPANSION.md`.
+
+### Phetchaburi / Cha-am Batch 1
+
+Phetchaburi / Cha-am expansion is available at
+`database/seeds/phetchaburi_cha_am_expansion_review_queue.csv`.
+
+Batch 1 contains 11 conservative candidates: 5 CICOT mosques, 3 active
+Muslim-friendly restaurant candidates and 3 Muslim-friendly accommodations with
+current halal-food evidence. Coordinates remain blank until controlled map
+review.
+
+See `docs/PHETCHABURI_CHA_AM_EXPANSION.md`.
