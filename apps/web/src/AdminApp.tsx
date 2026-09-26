@@ -855,6 +855,49 @@ export default function AdminApp() {
             </strong>
           </div>
 
+          {!phase0Completion.mechanical_ready && (
+            <div className="review-queue-actions">
+              {phase0Completion.google_fast_lane > 0 && (
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={loading}
+                  onClick={() => {
+                    setSingleReviewMode(true);
+                    setReviewIndex(0);
+                    void load({
+                      province: "",
+                      reviewState: "DISCOVERED",
+                      readiness: "GOOGLE_FAST_LANE",
+                      placeType: "",
+                      pilotOnly: true,
+                    });
+                  }}
+                >
+                  ทำ Google Fast Lane {phase0Completion.google_fast_lane}
+                </button>
+              )}
+              {phase0Completion.approved_waiting_promotion > 0 && (
+                <button
+                  type="button"
+                  className="secondary"
+                  disabled={loading}
+                  onClick={() =>
+                    void load({
+                      province: "",
+                      reviewState: "APPROVED",
+                      readiness: "ALL",
+                      placeType: "",
+                      pilotOnly: true,
+                    })
+                  }
+                >
+                  Promote คิว Pilot {phase0Completion.approved_waiting_promotion}
+                </button>
+              )}
+            </div>
+          )}
+
           {!phase0Completion.mechanical_ready &&
             phase0Completion.blockers.length > 0 && (
               <div className="approval-blockers">
