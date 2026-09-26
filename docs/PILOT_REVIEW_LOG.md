@@ -380,10 +380,9 @@ Primary discovery evidence:
   30130**, phone **084-673-1717**, matching staging.
 - **Recheck 2026-09-26:** current Makan Halal Guide and TripNiceDay instead
   publish phone **089-791-3785** for the same KhunYaa identity/location.
-- Do not choose or overwrite either phone automatically. The candidate now has
-  an explicit phone-conflict hold that must be resolved before approval.
-- Coordinate review may continue independently, but the hold must remain after
-  GEOCODED until the phone discrepancy is reconciled.
+- **Resolved 2026-09-26:** current Makan, TripNiceDay and Cybo consistently use
+  **089-791-3785**; this is now the canonical staging contact. The older
+  **084-673-1717** is retained as stale Google contact evidence.
 - Current public sources continue to identify the property using the
   `HalalResort` name.
 - No evidence reviewed here establishes whole-property halal certification.
@@ -561,6 +560,20 @@ Primary discovery evidence:
   the outlying address representation.
 - Existing reviewed coordinates remain unchanged; trust remains
   `UNVERIFIED`.
+
+
+### คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort — phone hold resolved
+
+- **Resolved 2026-09-26:** current Makan Halal Guide, TripNiceDay and Cybo all
+  publish **089-791-3785** for the same KhunYaa identity/location.
+- TripNiceDay links the same listing to the business Facebook page.
+- No additional current source was found supporting the older Google/staging
+  phone **084-673-1717**, so that number is retained only as stale historical
+  contact evidence.
+- Canonical staging phone is now **089-791-3785**.
+- The phone-only manual hold is cleared. Trust remains `UNVERIFIED`; no
+  whole-property halal certification is inferred from the property name.
+- Exact coordinates still require controlled visual review before GEOCODED.
 
 ## Review rule
 
