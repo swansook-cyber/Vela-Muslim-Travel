@@ -1028,3 +1028,35 @@ def test_rayong_commercial_candidates_stay_muslim_friendly_without_owner_or_cert
         for candidate in commercial
     )
     assert all(not candidate.certification_number for candidate in commercial)
+
+
+def test_trat_koh_chang_expansion_seed_has_balanced_coverage() -> None:
+    path = Path("../../database/seeds/trat_koh_chang_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 11
+    assert {candidate.province for candidate in candidates} == {"ตราด"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 3
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_trat_commercial_candidates_do_not_claim_muslim_ownership_or_certification() -> None:
+    path = Path("../../database/seeds/trat_koh_chang_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    commercial = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type in {"RESTAURANT", "ACCOMMODATION"}
+    ]
+
+    assert commercial
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in commercial
+    )
+    assert all(not candidate.certification_number for candidate in commercial)
