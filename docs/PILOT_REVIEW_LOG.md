@@ -530,6 +530,21 @@ Primary discovery evidence:
   the business is currently operating. Do not promote on schedule metadata
   alone.
 
+
+### Ayah Restaurant Halal — address hold resolved
+
+- **Resolved 2026-09-26:** current Google business ID
+  `ChIJRzDp-aosHDERVOymRnYsn6o` resolves to **Ayah Restaurant Halal** at
+  **M84W+X7F, Sap Wai, Pak Chong**, phone **083-652-6945**.
+- Current Restaurant Guru and Wanderlog use the same Plus Code/phone.
+- Tripadvisor and a 2026 halal travel guide use **16/6 Moo 5, Mittraphap Road**
+  for the same venue identity.
+- These are treated as alternate address representations of the same business,
+  not separate candidates. The current Google Plus Code address remains the
+  canonical staging address.
+- The address-identity hold is cleared. This does **not** establish official
+  halal certification; keep `UNVERIFIED`.
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
