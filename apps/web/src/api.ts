@@ -17,6 +17,7 @@ import type {
   DetourResponse,
   GeocodeResult,
   PilotReadinessResponse,
+  Phase0CompletionResponse,
   PlaceResult,
   PlaceType,
 } from "./types";
@@ -486,4 +487,18 @@ export async function fetchCandidateReviewQueue(
   }
 
   return response.json() as Promise<CandidateReviewTask[]>;
+}
+
+export async function fetchPhase0Completion(
+  adminKey: string,
+): Promise<Phase0CompletionResponse> {
+  const response = await fetch(`${API_BASE_URL}/admin/phase0-completion`, {
+    headers: adminHeaders(adminKey),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<Phase0CompletionResponse>;
 }
