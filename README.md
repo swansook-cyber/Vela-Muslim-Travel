@@ -549,3 +549,15 @@ current halal-service evidence. Coordinates remain blank until controlled map
 review.
 
 See `docs/SUPHAN_BURI_EXPANSION.md`.
+
+### Nakhon Sawan Batch 1
+
+Nakhon Sawan expansion is available at
+`database/seeds/nakhon_sawan_expansion_review_queue.csv`.
+
+Batch 1 contains 7 conservative candidates: 4 current CICOT mosque records and
+3 active Muslim-friendly restaurant candidates. No accommodation candidate is
+forced into this batch without sufficiently strong current halal-service
+evidence. Coordinates remain blank until controlled map review.
+
+See `docs/NAKHON_SAWAN_EXPANSION.md`.
