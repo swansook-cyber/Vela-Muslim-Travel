@@ -43,6 +43,7 @@ from .admin_schemas import (
     CandidateReviewState,
     CandidateReviewTask,
     CandidateReviewUpdate,
+    Phase0AcceptanceRequest,
     Phase0CompletionResponse,
     PilotProvinceReadiness,
     PilotReadinessResponse,
@@ -236,6 +237,50 @@ async def admin_candidate_review_progress(
     return CandidateReviewProgressResponse(**progress)
 
 
+
+
+
+
+@app.post("/admin/phase0-acceptance", response_model=Phase0CompletionResponse)
+async def admin_phase0_acceptance(
+    request: Phase0AcceptanceRequest,
+    session: DbSession,
+    _admin: AdminGuard,
+) -> Phase0CompletionResponse:
+    summary = await load_phase0_completion(session)
+    if not summary["mechanical_ready"]:
+        raise HTTPException(
+            status_code=409,
+            detail="Phase 0 must be mechanically ready before final acceptance",
+        )
+
+    checks = {
+        "route_smoke_2km_checked": request.route_smoke_2km_checked,
+        "route_smoke_5km_core_pass": request.route_smoke_5km_core_pass,
+        "route_smoke_10km_checked": request.route_smoke_10km_checked,
+        "detours_and_evidence_checked": request.detours_and_evidence_checked,
+    }
+    missing = [name for name, passed in checks.items() if not passed]
+    if missing:
+        raise HTTPException(
+            status_code=422,
+            detail="Final acceptance checks incomplete: " + ", ".join(missing),
+        )
+
+    await log_admin_action(
+        session,
+        action="PHASE0_ACCEPTANCE",
+        entity_type="phase0",
+        entity_id="pilot",
+        details={
+            **checks,
+            "note": request.note,
+        },
+    )
+    await session.commit()
+
+    refreshed = await load_phase0_completion(session)
+    return Phase0CompletionResponse(**refreshed)
 
 
 @app.get("/admin/phase0-completion", response_model=Phase0CompletionResponse)
