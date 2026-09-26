@@ -179,6 +179,7 @@ export default function AdminApp() {
     >("ALL");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [singleReviewMode, setSingleReviewMode] = useState(false);
+  const [pilotQueueOnly, setPilotQueueOnly] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [audit, setAudit] = useState<AdminAuditEntry[]>([]);
@@ -200,14 +201,22 @@ export default function AdminApp() {
   const [error, setError] = useState("");
 
   const displayedCandidates = useMemo(() => {
+    const scopedCandidates = pilotQueueOnly
+      ? candidates.filter(
+          (candidate) =>
+            Boolean(candidate.province) &&
+            pilotProvinceSet.has(candidate.province || ""),
+        )
+      : candidates;
+
     if (
       readinessFilter === "ALL" ||
       (filter !== "DISCOVERED" && filter !== "GEOCODED")
     ) {
-      return candidates;
+      return scopedCandidates;
     }
 
-    return candidates.filter((candidate) => {
+    return scopedCandidates.filter((candidate) => {
       if (!isCandidateReviewTask(candidate)) return false;
 
       if (readinessFilter === "READY") {
@@ -225,11 +234,7 @@ export default function AdminApp() {
         );
       }
       if (readinessFilter === "GOOGLE_RESOLVABLE") {
-        return (
-          isGoogleResolvableCandidate(candidate) &&
-          Boolean(candidate.province) &&
-          pilotProvinceSet.has(candidate.province || "")
-        );
+        return isGoogleResolvableCandidate(candidate);
       }
       if (readinessFilter === "MANUAL_HOLD") {
         return candidate.approval_blockers.some((blocker) =>
@@ -248,7 +253,7 @@ export default function AdminApp() {
       }
       return true;
     });
-  }, [candidates, filter, readinessFilter]);
+  }, [candidates, filter, pilotQueueOnly, readinessFilter]);
 
   const filteredCount = displayedCandidates.length;
   const batchGoogleCandidates = displayedCandidates.filter(
@@ -292,6 +297,7 @@ export default function AdminApp() {
     reviewState?: CandidateReviewState | "";
     readiness?: typeof readinessFilter;
     placeType?: "" | CandidateResult["place_type"];
+    pilotOnly?: boolean;
   }) {
     if (!adminKey) {
       setError("กรุณาใส่ Admin API Key");
@@ -348,6 +354,9 @@ export default function AdminApp() {
       }
       if (overrides?.placeType !== undefined) {
         setTypeFilter(overrides.placeType);
+      }
+      if (overrides?.pilotOnly !== undefined) {
+        setPilotQueueOnly(overrides.pilotOnly);
       }
       setCandidates(items);
       setPromotionChecks({});
@@ -793,7 +802,11 @@ export default function AdminApp() {
             <option value="EVIDENCE">หลักฐานยังไม่ผ่าน</option>
           </select>
         </label>
-        <button type="button" onClick={() => void load()} disabled={loading}>
+        <button
+          type="button"
+          onClick={() => void load({ pilotOnly: false })}
+          disabled={loading}
+        >
           {loading ? "กำลังทำงาน…" : "โหลดรายการ"}
         </button>
       </section>
@@ -881,6 +894,7 @@ export default function AdminApp() {
                       reviewState: "DISCOVERED",
                       readiness: "GOOGLE_RESOLVABLE",
                       placeType: "",
+                      pilotOnly: true,
                     });
                   }}
                 >
@@ -903,7 +917,9 @@ export default function AdminApp() {
                 type="button"
                 className="progress-province"
                 disabled={loading}
-                onClick={() => void load({ province: item.province })}
+                onClick={() =>
+                  void load({ province: item.province, pilotOnly: true })
+                }
               >
                 <strong>{item.province}</strong>
                 <span>{item.pending} ค้าง</span>
@@ -999,6 +1015,7 @@ export default function AdminApp() {
       <div className="review-queue-bar">
         <div className="admin-summary">
           {filteredCount} candidates ในรายการปัจจุบัน
+          {pilotQueueOnly && <span>{" "}· Pilot queue</span>}
           {readinessFilter === "GOOGLE_RESOLVABLE" && (
             <span>
               {" "}· Google queue เหลือ {filteredCount}
