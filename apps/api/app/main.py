@@ -441,7 +441,10 @@ async def admin_candidate_review_queue(
                 **row,
                 maps_search_url=candidate_maps_search_url(row),
                 approval_blockers=blockers,
-                ready_to_approve=not blockers,
+                ready_to_approve=(
+                    row["review_state"] == CandidateReviewState.GEOCODED.value
+                    and not blockers
+                ),
             )
         )
     return tasks
