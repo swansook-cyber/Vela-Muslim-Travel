@@ -584,3 +584,57 @@ def test_muslim_seafood_address_requires_reconciliation() -> None:
 
     assert restaurant.review_hold_reason is not None
     assert "locality" in restaurant.review_hold_reason
+
+
+def test_songkhla_hat_yai_expansion_seed_has_balanced_tourism_coverage() -> None:
+    path = Path("../../database/seeds/songkhla_hat_yai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 13
+    assert {candidate.province for candidate in candidates} == {"สงขลา"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_songkhla_hat_yai_restaurants_preserve_muslim_owned_label() -> None:
+    path = Path("../../database/seeds/songkhla_hat_yai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert len(restaurants) == 5
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_OWNED"
+        for candidate in restaurants
+    )
+    assert all(not candidate.certification_number for candidate in restaurants)
+
+
+def test_songkhla_hat_yai_hotels_do_not_overstate_certification() -> None:
+    path = Path("../../database/seeds/songkhla_hat_yai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    hotels = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type == "ACCOMMODATION"
+    ]
+
+    assert {candidate.name for candidate in hotels} == {
+        "Alfahad Hotel",
+        "Hatyai Paradise Hotel",
+        "Yannaty Hotel",
+    }
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in hotels
+    )
+    assert all(not candidate.certification_number for candidate in hotels)
