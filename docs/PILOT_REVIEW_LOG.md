@@ -545,6 +545,21 @@ Primary discovery evidence:
 - The address-identity hold is cleared. This does **not** establish official
   halal certification; keep `UNVERIFIED`.
 
+
+### มัสยิดนุรุ้ลอีมาน — address hold resolved
+
+- **Resolved 2026-09-26:** the Provincial Islamic Committee of Prachuap Khiri
+  Khan lists mosque registry **002** at **เลขที่ 2 หมู่ 9 ต.พงศ์ประศาสน์
+  อ.บางสะพาน**.
+- MasjidThai independently lists **Moo 9**, and a 2026 mosque event notice uses
+  **2 Moo 9** for the same mosque.
+- Current Google business ID `ChIJuRf2yOIg_zARYoz1y1-VwV8` resolves to the
+  same mosque/Plus Code area already used for the reviewed coordinate.
+- Use **2 Moo 9** as canonical staging address. Treat the CICOT Moo 2 record as
+  the outlying address representation.
+- Existing reviewed coordinates remain unchanged; trust remains
+  `UNVERIFIED`.
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
