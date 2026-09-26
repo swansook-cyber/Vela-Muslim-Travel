@@ -249,6 +249,24 @@ a potential duplicate and resolved deliberately.
 
 
 
+### Google address cross-check
+
+The Google Place-ID resolver now returns `formatted_address` together with the
+draft coordinate. Admin displays it as **Google address** beside the candidate
+review data.
+
+Use this only as a reviewer comparison aid:
+
+- compare Google address with the staged address and identity evidence,
+- do not overwrite the candidate address automatically,
+- if the addresses materially disagree, keep or add a manual hold,
+- still open the exact coordinate in Google Maps and visually confirm the venue
+  before recording `coordinate_checked_at` or moving to GEOCODED.
+
+The resolver intentionally requests `formattedAddress` without broader
+higher-cost Place Details fields; business status and certification are not
+inferred by this coordinate-review step.
+
 ### Google Fast Lane
 
 Manual Review Progress exposes a **Google Fast Lane** count for pilot candidates
