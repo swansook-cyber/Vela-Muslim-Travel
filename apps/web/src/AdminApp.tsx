@@ -493,6 +493,48 @@ export default function AdminApp() {
     );
   }
 
+  async function confirmCoordinateAndSave(candidate: CandidateResult) {
+    const draft = drafts[candidate.id];
+    if (!draft?.latitude || !draft?.longitude) {
+      setError("ต้องมี latitude/longitude ก่อนยืนยันพิกัด");
+      return;
+    }
+
+    const latitude = Number(draft.latitude);
+    const longitude = Number(draft.longitude);
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      setError("latitude/longitude ไม่ถูกต้อง");
+      return;
+    }
+
+    const coordinateCheckedAt = new Date().toISOString();
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      await updateCandidate(adminKey, candidate.id, {
+        latitude,
+        longitude,
+        review_state: "GEOCODED",
+        review_note: draft.note || undefined,
+        review_hold_reason: draft.holdReason ?? "",
+        source_checked_at: draft.sourceCheckedAt || undefined,
+        coordinate_checked_at: coordinateCheckedAt,
+      });
+      setMessage(`ยืนยันพิกัดและบันทึก ${candidate.name} เป็น GEOCODED แล้ว`);
+      await load();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "ยืนยันพิกัดและบันทึก GEOCODED ไม่สำเร็จ",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function saveState(
     candidate: CandidateResult,
     state: CandidateReviewState,
@@ -1060,14 +1102,30 @@ export default function AdminApp() {
                 </label>
               </div>
 
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => locate(candidate)}
-                disabled={loading}
-              >
-                ค้นหาพิกัดจากชื่อ/ที่อยู่
-              </button>
+              <div className="candidate-actions">
+                {dashboard?.google_places_resolver_enabled &&
+                  candidate.external_id &&
+                  ["google_business", "google_places"].includes(
+                    candidate.external_provider || "",
+                  ) && (
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => void resolveGooglePlace(candidate)}
+                      disabled={loading}
+                    >
+                      ดึงพิกัดจาก Google Place ID
+                    </button>
+                  )}
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => locate(candidate)}
+                  disabled={loading}
+                >
+                  ค้นหาพิกัดจากชื่อ/ที่อยู่
+                </button>
+              </div>
 
               {(geocodeSuggestions[candidate.id]?.length ?? 0) > 0 && (
                 <div className="geocode-suggestions">
@@ -1113,18 +1171,30 @@ export default function AdminApp() {
                         : "ยังไม่ได้ยืนยันพิกัดนี้"}
                     </small>
                   </div>
-                  <button
-                    type="button"
-                    className="secondary"
-                    onClick={() =>
-                      updateDraft(candidate.id, {
-                        coordinateCheckedAt: new Date().toISOString(),
-                      })
-                    }
-                    disabled={loading}
-                  >
-                    ยืนยันพิกัดนี้แล้ว
-                  </button>
+                  <div className="candidate-actions">
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() =>
+                        updateDraft(candidate.id, {
+                          coordinateCheckedAt: new Date().toISOString(),
+                        })
+                      }
+                      disabled={loading}
+                    >
+                      ยืนยันพิกัดนี้แล้ว
+                    </button>
+                    {candidate.review_state === "DISCOVERED" && (
+                      <button
+                        type="button"
+                        onClick={() => void confirmCoordinateAndSave(candidate)}
+                        disabled={loading}
+                        title="ใช้หลังเปิดพิกัดบนแผนที่และตรวจว่าเป็นสถานที่ถูกต้องแล้ว"
+                      >
+                        ยืนยันพิกัด + บันทึก GEOCODED
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
 
