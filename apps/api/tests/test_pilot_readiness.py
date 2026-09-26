@@ -1,19 +1,28 @@
 from app.tools.pilot_readiness import ProvinceReadiness, readiness_passes
 
 
-def test_readiness_requires_every_target_province_to_have_a_place() -> None:
+def test_readiness_requires_restaurant_and_mosque_in_every_target_province() -> None:
     items = [
-        ProvinceReadiness("A", 1, 0, 0),
-        ProvinceReadiness("B", 0, 1, 0),
-        ProvinceReadiness("C", 0, 0, 1),
+        ProvinceReadiness("A", 1, 1, 1),
+        ProvinceReadiness("B", 1, 1, 1),
+        ProvinceReadiness("C", 1, 1, 0),
     ]
     assert readiness_passes(items)
 
 
-def test_readiness_fails_when_a_province_is_empty() -> None:
+def test_readiness_fails_when_a_province_lacks_restaurant_or_mosque() -> None:
     items = [
-        ProvinceReadiness("A", 1, 0, 0),
-        ProvinceReadiness("B", 0, 0, 0),
+        ProvinceReadiness("A", 1, 1, 1),
+        ProvinceReadiness("B", 1, 0, 1),
+    ]
+    assert not readiness_passes(items)
+
+
+def test_readiness_requires_accommodation_in_two_provinces() -> None:
+    items = [
+        ProvinceReadiness("A", 1, 1, 1),
+        ProvinceReadiness("B", 1, 1, 0),
+        ProvinceReadiness("C", 1, 1, 0),
     ]
     assert not readiness_passes(items)
 
