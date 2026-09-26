@@ -890,6 +890,10 @@ export default function AdminApp() {
                   ? "ทุกจังหวัดมีร้านอาหารและมัสยิด และมีที่พักอย่างน้อย 2 จังหวัด"
                   : "Production coverage ยังไม่ครบ: ต้องมีร้านอาหารและมัสยิดทุกจังหวัด และที่พักอย่างน้อย 2 จังหวัด"}
               </p>
+              <small>
+                ที่พักครอบคลุม {pilotReadiness.accommodation_provinces}/
+                {pilotReadiness.required_accommodation_provinces} จังหวัดขั้นต่ำ
+              </small>
             </div>
             <strong className={pilotReadiness.ready ? "ready" : "not-ready"}>
               {pilotReadiness.ready ? "READY" : "NOT READY"}
@@ -904,8 +908,13 @@ export default function AdminApp() {
                   ร้าน {item.restaurants} · มัสยิด {item.mosques} · ที่พัก{" "}
                   {item.accommodation}
                 </small>
-                {item.missing_types.length > 0 && (
-                  <small>ขาด: {item.missing_types.join(", ")}</small>
+                {item.missing_types.filter((type) => type !== "ACCOMMODATION").length > 0 && (
+                  <small>
+                    ขาดขั้นต่ำรายจังหวัด:{" "}
+                    {item.missing_types
+                      .filter((type) => type !== "ACCOMMODATION")
+                      .join(", ")}
+                  </small>
                 )}
               </div>
             ))}
