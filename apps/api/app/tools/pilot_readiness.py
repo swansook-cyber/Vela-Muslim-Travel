@@ -6,16 +6,7 @@ from dataclasses import dataclass
 from sqlalchemy import text
 
 from app.db import SessionLocal
-
-PILOT_PROVINCES = (
-    "นครศรีธรรมราช",
-    "สุราษฎร์ธานี",
-    "ชุมพร",
-    "ประจวบคีรีขันธ์",
-    "เพชรบุรี",
-    "สระบุรี",
-    "นครราชสีมา",
-)
+from app.pilot import PILOT_PROVINCES
 
 CORE_PLACE_TYPES = (
     "RESTAURANT",
