@@ -451,3 +451,15 @@ forced into this batch without sufficiently strong current halal-service
 evidence. Coordinates remain blank until controlled map review.
 
 See `docs/PATHUM_THANI_EXPANSION.md`.
+
+### Nakhon Nayok Batch 1
+
+Nakhon Nayok expansion is available at
+`database/seeds/nakhon_nayok_expansion_review_queue.csv`.
+
+Batch 1 contains 8 conservative candidates: 5 current CICOT mosque records and
+3 active Muslim-friendly restaurant candidates. No accommodation candidate is
+forced into this batch without sufficiently strong current halal-service
+evidence. Coordinates remain blank until controlled map review.
+
+See `docs/NAKHON_NAYOK_EXPANSION.md`.
