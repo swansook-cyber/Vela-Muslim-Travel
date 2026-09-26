@@ -74,7 +74,9 @@ async def test_review_queue_supports_manual_review_states(monkeypatch, state) ->
 
     assert seen["review_state"] == state
     assert tasks[0].review_state == state
-    assert tasks[0].ready_to_approve is True
+    assert tasks[0].ready_to_approve is (
+        state == CandidateReviewState.GEOCODED
+    )
     assert tasks[0].approval_blockers == []
     assert tasks[0].maps_search_url.startswith(
         "https://www.google.com/maps/search/?api=1&query="
