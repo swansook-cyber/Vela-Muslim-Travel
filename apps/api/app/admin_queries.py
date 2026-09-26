@@ -150,12 +150,11 @@ async def update_candidate_review(
     return dict(row)
 
 
-async def promote_candidate(
+async def check_candidate_promotion(
     session: AsyncSession,
     candidate: dict,
     slug: str,
-    name_th: str,
-) -> str:
+) -> dict:
     duplicate = (
         await session.execute(
             text(
@@ -194,11 +193,35 @@ async def promote_candidate(
         )
     ).mappings().first()
 
+    slug_exists = (
+        await session.execute(
+            text("SELECT EXISTS (SELECT 1 FROM places WHERE slug = :slug)"),
+            {"slug": slug},
+        )
+    ).scalar_one()
+
+    return {
+        "can_promote": duplicate is None and not slug_exists,
+        "duplicate": dict(duplicate) if duplicate is not None else None,
+        "slug_exists": bool(slug_exists),
+    }
+
+
+async def promote_candidate(
+    session: AsyncSession,
+    candidate: dict,
+    slug: str,
+    name_th: str,
+) -> str:
+    preflight = await check_candidate_promotion(session, candidate, slug)
+    duplicate = preflight["duplicate"]
     if duplicate is not None:
         raise ValueError(
             "Potential duplicate place within 150 m: "
             f"{duplicate['name_th']} ({duplicate['slug']})"
         )
+    if preflight["slug_exists"]:
+        raise ValueError(f"Production slug already exists: {slug}")
 
     place_sql = text(
         """
