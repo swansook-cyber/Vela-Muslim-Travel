@@ -257,3 +257,15 @@ Muslim-friendly accommodations. All remain review candidates with blank
 coordinates until map verification is completed.
 
 See `docs/SURAT_THANI_KOH_SAMUI_EXPANSION.md`.
+
+
+### Chiang Rai Batch 1
+
+Chiang Rai expansion is available at
+`database/seeds/chiang_rai_expansion_review_queue.csv`.
+
+Batch 1 contains 10 candidates: 5 mosques, 3 Muslim-owned restaurants and
+2 Muslim-friendly accommodations. All remain review candidates with blank
+coordinates until map verification is completed.
+
+See `docs/CHIANG_RAI_EXPANSION.md`.
