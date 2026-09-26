@@ -55,3 +55,22 @@ corridors and confirm that:
 4. expired certification evidence is visible,
 5. restaurant, mosque/prayer and accommodation coverage is useful enough for a
    real drive before expanding nationwide.
+
+
+## Pilot matrix shortcut
+
+For the fixed southern-Thailand → Khao Yai pilot route, run:
+
+```bash
+cd apps/api
+python -m app.tools.pilot_route_smoke
+```
+
+This resolves the route once and compares **2 km, 5 km and 10 km** corridors.
+Each row reports total places, category coverage, represented provinces,
+expired evidence, and the mechanical core gate.
+
+The command exits non-zero when the **5 km** corridor is missing restaurant,
+prayer (mosque or prayer room), or accommodation coverage. The 2 km and 10 km
+rows are comparison bands for route usefulness; they are not separate pass/fail
+gates.
