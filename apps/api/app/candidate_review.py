@@ -63,6 +63,24 @@ def candidate_review_warnings(candidate: dict) -> list[str]:
 
     return warnings
 
+
+def candidate_promotion_blockers(candidate: dict) -> list[str]:
+    blockers: list[str] = []
+
+    if candidate.get("review_state") != "APPROVED":
+        blockers.append("candidate must be APPROVED before promotion")
+
+    if candidate.get("latitude") is None or candidate.get("longitude") is None:
+        blockers.append("reviewed coordinates are required before promotion")
+
+    if not certification_is_current(
+        str(candidate.get("proposed_trust_status") or ""),
+        candidate.get("certification_expires_at"),
+    ):
+        blockers.append("certified candidate requires current non-expired certificate")
+
+    return blockers
+
 def candidate_approval_blockers(
     candidate: dict,
     *,
