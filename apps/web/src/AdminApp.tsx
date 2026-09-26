@@ -833,6 +833,54 @@ export default function AdminApp() {
       {message && <p className="admin-message">{message}</p>}
       {error && <p className="error">{error}</p>}
 
+      {phase0Completion && (
+        <section className="pilot-readiness">
+          <div className="pilot-readiness-head">
+            <div>
+              <h2>Phase 0 Completion</h2>
+              <p>
+                {phase0Completion.mechanical_ready
+                  ? "Mechanical Ready — เหลือ Final Manual Acceptance"
+                  : "ยังไม่สมบูรณ์ — ทำ blocker ด้านล่างให้หมดก่อน"}
+              </p>
+              <small>
+                Review ค้าง {phase0Completion.active_review_pending} · รอ Promote{" "}
+                {phase0Completion.approved_waiting_promotion} · Promoted{" "}
+                {phase0Completion.promoted_candidates} · Rejected{" "}
+                {phase0Completion.rejected_candidates}
+              </small>
+            </div>
+            <strong>
+              {phase0Completion.mechanical_ready ? "MECHANICAL READY" : "IN PROGRESS"}
+            </strong>
+          </div>
+
+          {!phase0Completion.mechanical_ready &&
+            phase0Completion.blockers.length > 0 && (
+              <div className="approval-blockers">
+                <strong>สิ่งที่ต้องทำก่อนปิด Phase 0</strong>
+                <ul>
+                  {phase0Completion.blockers.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+          {phase0Completion.mechanical_ready &&
+            phase0Completion.manual_acceptance_required && (
+              <div className="approval-blockers">
+                <strong>Final Manual Acceptance</strong>
+                <ul>
+                  {phase0Completion.manual_acceptance_steps.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+        </section>
+      )}
+
       {dashboard && (
         <section className="admin-dashboard">
           <div><strong>{dashboard.candidates_total}</strong><span>Candidate ทั้งหมด</span></div>
