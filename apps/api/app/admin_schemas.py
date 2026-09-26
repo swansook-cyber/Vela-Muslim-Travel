@@ -230,6 +230,7 @@ class CandidateReviewProgressResponse(BaseModel):
     ready_to_approve: int
     blocked: int
     coordinate_pending: int
+    google_resolvable: int
     manual_hold: int
     evidence_blocked: int
     provinces: list[CandidateReviewProvinceProgress]
