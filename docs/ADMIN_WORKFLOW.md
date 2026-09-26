@@ -248,6 +248,21 @@ a potential duplicate and resolved deliberately.
 
 
 
+
+### Pilot queue scope
+
+Manual Review Progress is calculated from the seven pilot-corridor provinces.
+Shortcuts opened from that progress summary therefore use **Pilot queue** scope
+and reset the place-type filter to **ทุกประเภท** so the displayed count matches
+the summary count.
+
+The APPROVED / promotion queue is not pilot-scoped; it remains a global Admin
+queue and explicitly clears Pilot queue scope when opened.
+
+Reloading through the normal filter controls exits Pilot queue scope and uses
+the selected filters directly.
+
+
 ### Non-blocking review warnings
 
 The review queue can surface warnings that do not automatically block approval.
