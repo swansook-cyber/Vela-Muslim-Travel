@@ -330,3 +330,15 @@ explicit halal dining/breakfast evidence. Coordinates remain blank until
 controlled map review.
 
 See `docs/KHON_KAEN_EXPANSION.md`.
+
+### Nakhon Ratchasima / Khao Yai Batch 1
+
+Nakhon Ratchasima / Khao Yai expansion is available at
+`database/seeds/nakhon_ratchasima_khao_yai_expansion_review_queue.csv`.
+
+Batch 1 contains 9 conservative candidates: 2 current CICOT mosque records, 4
+active Muslim-friendly restaurant candidates and 3 Muslim-friendly
+accommodations with halal breakfast/meal evidence. Coordinates remain blank
+until controlled map review.
+
+See `docs/NAKHON_RATCHASIMA_KHAO_YAI_EXPANSION.md`.
