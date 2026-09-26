@@ -636,7 +636,8 @@ export default function AdminApp() {
                 ก่อนอนุมัติ
               </p>
               <small>
-                พิกัดค้าง {reviewProgress.coordinate_pending} · Manual hold{" "}
+                พิกัดค้าง {reviewProgress.coordinate_pending} · Google ดึงได้{" "}
+                {reviewProgress.google_resolvable} · Manual hold{" "}
                 {reviewProgress.manual_hold} · หลักฐาน{" "}
                 {reviewProgress.evidence_blocked}
               </small>
@@ -665,8 +666,8 @@ export default function AdminApp() {
                   {item.blocked}
                 </small>
                 <small>
-                  พิกัด {item.coordinate_pending} · Hold {item.manual_hold} ·
-                  หลักฐาน {item.evidence_blocked}
+                  พิกัด {item.coordinate_pending} · Google {item.google_resolvable} ·
+                  Hold {item.manual_hold} · หลักฐาน {item.evidence_blocked}
                 </small>
               </button>
             ))}
