@@ -9,8 +9,8 @@ from .admin_candidate_readiness import (
     candidate_readiness_passes,
     load_candidate_readiness,
 )
-from .admin_places import get_admin_place, list_admin_places, update_admin_place
 from .admin_phase0_completion import load_phase0_completion
+from .admin_places import get_admin_place, list_admin_places, update_admin_place
 from .admin_queries import (
     check_candidate_promotion,
     get_admin_dashboard,
@@ -43,9 +43,9 @@ from .admin_schemas import (
     CandidateReviewState,
     CandidateReviewTask,
     CandidateReviewUpdate,
+    Phase0CompletionResponse,
     PilotProvinceReadiness,
     PilotReadinessResponse,
-    Phase0CompletionResponse,
 )
 from .admin_verifications import (
     add_place_verification,
