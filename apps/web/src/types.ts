@@ -111,6 +111,7 @@ export interface CandidateCoordinateSuggestion {
   external_id: string;
   latitude: number;
   longitude: number;
+  formatted_address?: string | null;
 }
 
 export interface CandidateCoordinateBatchItem {
