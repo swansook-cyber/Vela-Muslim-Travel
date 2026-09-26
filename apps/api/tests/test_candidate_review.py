@@ -4,6 +4,7 @@ from app.candidate_review import (
     candidate_approval_blockers,
     candidate_maps_search_url,
     candidate_review_transition_allowed,
+    candidate_review_warnings,
 )
 
 
@@ -143,3 +144,34 @@ def test_candidate_review_transition_allows_remediation_and_reopen() -> None:
     assert candidate_review_transition_allowed("APPROVED", "REJECTED") is True
     assert candidate_review_transition_allowed("REJECTED", "DISCOVERED") is True
     assert candidate_review_transition_allowed("PROMOTED", "GEOCODED") is False
+
+
+def test_candidate_review_warns_when_certification_expires_within_30_days() -> None:
+    candidate = base_candidate()
+    candidate.update(
+        {
+            "proposed_trust_status": "HALAL_CERTIFIED",
+            "source_type": "OFFICIAL_CERTIFICATION",
+            "certification_number": "TEST-SOON",
+            "certification_expires_at": datetime.now(UTC) + timedelta(days=10),
+        }
+    )
+
+    warnings = candidate_review_warnings(candidate)
+
+    assert len(warnings) == 1
+    assert "expires within 30 days" in warnings[0]
+
+
+def test_candidate_review_does_not_warn_for_distant_certification_expiry() -> None:
+    candidate = base_candidate()
+    candidate.update(
+        {
+            "proposed_trust_status": "HALAL_CERTIFIED",
+            "source_type": "OFFICIAL_CERTIFICATION",
+            "certification_number": "TEST-LATER",
+            "certification_expires_at": datetime.now(UTC) + timedelta(days=60),
+        }
+    )
+
+    assert candidate_review_warnings(candidate) == []
