@@ -678,3 +678,48 @@ def test_phang_nga_excludes_disputed_flavours_of_india() -> None:
         "Flavours Of India" not in candidate.name
         for candidate in candidates
     )
+
+
+def test_trang_expansion_prefers_reviewable_quality() -> None:
+    path = Path("../../database/seeds/trang_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 11
+    assert {candidate.province for candidate in candidates} == {"ตรัง"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 4
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 2
+
+
+def test_trang_restaurants_do_not_infer_muslim_ownership() -> None:
+    path = Path("../../database/seeds/trang_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate for candidate in candidates if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert restaurants
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in restaurants
+    )
+    assert all(not candidate.certification_number for candidate in restaurants)
+
+
+def test_trang_oasis_requires_exact_address_review() -> None:
+    path = Path("../../database/seeds/trang_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    hotel = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "Trang Oasis Waterpark Hotel"
+    )
+
+    assert hotel.proposed_trust_status == "MUSLIM_FRIENDLY"
+    assert hotel.review_hold_reason is not None
+    assert "street address" in hotel.review_hold_reason
