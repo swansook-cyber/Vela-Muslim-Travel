@@ -108,6 +108,22 @@ is **2 Moo 9, Phong Prasat, Bang Saphan**. The reviewed coordinate is unchanged.
 - Twin Lotus Hotel — halal certification is service/kitchen scope only and
   expires 2026-10-22; re-check before promotion.
 
+
+### Review readiness checkpoint
+
+With all public-evidence/manual holds resolved:
+
+- **15 GEOCODED candidates are mechanically ready for reviewer approval**,
+- **8 DISCOVERED candidates are blocked only by coordinate verification**,
+- **all 8 DISCOVERED candidates are Google Place-ID resolver-ready**,
+- manual hold count = **0**,
+- evidence blocker count = **0**.
+
+Do not bulk/auto-approve the 15 ready candidates. Approval remains a deliberate
+Admin review action. After each of the remaining 8 coordinates is visually
+confirmed and saved as GEOCODED, the same blocker logic should make that
+candidate approval-ready as well.
+
 ## 3. Approval and promotion
 
 For each candidate after review blockers are clear:
