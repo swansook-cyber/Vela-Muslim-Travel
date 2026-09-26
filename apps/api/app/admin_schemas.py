@@ -238,6 +238,7 @@ class CandidateReviewProvinceProgress(BaseModel):
     blocked: int
     coordinate_pending: int
     google_resolvable: int
+    google_fast_lane: int
     manual_hold: int
     evidence_blocked: int
 
@@ -248,6 +249,7 @@ class CandidateReviewProgressResponse(BaseModel):
     blocked: int
     coordinate_pending: int
     google_resolvable: int
+    google_fast_lane: int
     manual_hold: int
     evidence_blocked: int
     provinces: list[CandidateReviewProvinceProgress]
