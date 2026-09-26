@@ -18,6 +18,8 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
             "review_hold_reason": "Confirm phone",
             "source_checked_at": "2026-09-25T11:23:00+07:00",
             "coordinate_checked_at": None,
+            "external_provider": "google_business",
+            "external_id": "ChIJreview",
         },
         {
             "province": "นครศรีธรรมราช",
@@ -61,6 +63,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
     assert result["ready_to_approve"] == 1
     assert result["blocked"] == 1
     assert result["coordinate_pending"] == 1
+    assert result["google_resolvable"] == 1
     assert result["manual_hold"] == 1
     assert result["evidence_blocked"] == 0
 
@@ -75,6 +78,7 @@ async def test_review_progress_counts_ready_and_blocked(monkeypatch) -> None:
         "ready_to_approve": 1,
         "blocked": 1,
         "coordinate_pending": 1,
+        "google_resolvable": 1,
         "manual_hold": 1,
         "evidence_blocked": 0,
     }
@@ -90,6 +94,7 @@ async def test_review_progress_endpoint_returns_typed_summary(monkeypatch) -> No
             "ready_to_approve": 1,
             "blocked": 2,
             "coordinate_pending": 2,
+            "google_resolvable": 1,
             "manual_hold": 1,
             "evidence_blocked": 0,
             "provinces": [
@@ -99,6 +104,7 @@ async def test_review_progress_endpoint_returns_typed_summary(monkeypatch) -> No
                     "ready_to_approve": 1,
                     "blocked": 2,
                     "coordinate_pending": 2,
+                    "google_resolvable": 1,
                     "manual_hold": 1,
                     "evidence_blocked": 0,
                 }
@@ -120,6 +126,7 @@ async def test_review_progress_endpoint_returns_typed_summary(monkeypatch) -> No
     assert result.ready_to_approve == 1
     assert result.blocked == 2
     assert result.coordinate_pending == 2
+    assert result.google_resolvable == 1
     assert result.manual_hold == 1
     assert result.evidence_blocked == 0
     assert result.provinces[0].province == "นครศรีธรรมราช"
