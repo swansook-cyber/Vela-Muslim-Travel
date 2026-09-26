@@ -147,8 +147,7 @@ def test_pilot_queue_contains_explicit_review_holds() -> None:
 
     held = [candidate for candidate in candidates if candidate.review_hold_reason]
 
-    assert len(held) == 1
-    assert held[0].name == "คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort"
+    assert held == []
 
 
 def test_candidate_parses_source_checked_at() -> None:
@@ -213,7 +212,7 @@ def test_pak_chong_mosque_address_convention_is_resolved() -> None:
     assert mosque.coordinate_checked_at is None
 
 
-def test_khunyaa_phone_conflict_is_held_for_manual_review() -> None:
+def test_khunyaa_phone_conflict_is_resolved_without_changing_trust() -> None:
     path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
     candidates = load_candidates(path)
 
@@ -224,10 +223,9 @@ def test_khunyaa_phone_conflict_is_held_for_manual_review() -> None:
     )
 
     assert khunyaa.review_state == "DISCOVERED"
-    assert khunyaa.phone == "+66 84 673 1717"
-    assert khunyaa.review_hold_reason is not None
-    assert "084-673-1717" in khunyaa.review_hold_reason
-    assert "089-791-3785" in khunyaa.review_hold_reason
+    assert khunyaa.phone == "+66 89 791 3785"
+    assert khunyaa.review_hold_reason is None
+    assert khunyaa.proposed_trust_status == "UNVERIFIED"
 
 
 def test_pilot_seed_checkpoint_counts_match_release_readiness() -> None:
