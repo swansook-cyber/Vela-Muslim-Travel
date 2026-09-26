@@ -378,3 +378,15 @@ Phueng accommodations with explicit halal-breakfast evidence. Coordinates remain
 blank until controlled map review.
 
 See `docs/RATCHABURI_EXPANSION.md`.
+
+### Nakhon Pathom Batch 1
+
+Nakhon Pathom expansion is available at
+`database/seeds/nakhon_pathom_expansion_review_queue.csv`.
+
+Batch 1 contains 7 conservative candidates: the 1 Nakhon Pathom mosque currently
+surfaced by CICOT, 5 active Muslim-friendly restaurant candidates and 1
+Muslim-friendly accommodation with explicit halal-breakfast evidence.
+Coordinates remain blank until controlled map review.
+
+See `docs/NAKHON_PATHOM_EXPANSION.md`.
