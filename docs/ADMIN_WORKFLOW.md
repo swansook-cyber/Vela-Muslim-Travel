@@ -249,6 +249,28 @@ a potential duplicate and resolved deliberately.
 
 
 
+### Google Fast Lane
+
+Manual Review Progress exposes a **Google Fast Lane** count for pilot candidates
+that are all of the following:
+
+- still `DISCOVERED`,
+- missing a confirmed coordinate,
+- backed by a Google business/place ID,
+- not currently under a manual review hold.
+
+The Admin shortcut opens this queue in single-review mode with Pilot queue scope
+and all place types. This is the preferred queue for rapidly clearing coordinate
+work because these candidates can proceed through:
+
+`resolve draft → open Google Maps → visual confirmation → GEOCODED`
+
+without first resolving an unrelated manual hold.
+
+The normal **Google** queue remains available and includes Google-resolvable
+candidates that still have holds. Fast Lane must never clear or bypass a hold;
+it only separates the straightforward coordinate-review work.
+
 ### Pilot queue scope
 
 Manual Review Progress is calculated from the seven pilot-corridor provinces.
