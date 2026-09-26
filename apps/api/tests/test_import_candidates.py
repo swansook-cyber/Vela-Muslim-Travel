@@ -522,3 +522,65 @@ def test_chiang_mai_uncertain_hotel_operation_is_held() -> None:
     assert hotel.proposed_trust_status == "MUSLIM_OWNED"
     assert hotel.review_hold_reason is not None
     assert "current hotel operation" in hotel.review_hold_reason
+
+
+def test_chonburi_pattaya_expansion_seed_has_balanced_tourism_coverage() -> None:
+    path = Path("../../database/seeds/chonburi_pattaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 13
+    assert {candidate.province for candidate in candidates} == {"ชลบุรี"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_chonburi_pattaya_restaurants_preserve_muslim_owned_label() -> None:
+    path = Path("../../database/seeds/chonburi_pattaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert len(restaurants) == 5
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_OWNED"
+        for candidate in restaurants
+    )
+    assert all(not candidate.certification_number for candidate in restaurants)
+
+
+def test_hard_rock_pattaya_certification_is_service_scope_only() -> None:
+    path = Path("../../database/seeds/chonburi_pattaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    hotel = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "Hard Rock Hotel Pattaya"
+    )
+
+    assert hotel.proposed_trust_status == "HALAL_CERTIFIED_SERVICE"
+    assert hotel.source_type == "OFFICIAL_CERTIFICATION"
+    assert hotel.certification_number == "100J5760010662"
+    assert hotel.certification_expires_at is not None
+
+
+def test_muslim_seafood_address_requires_reconciliation() -> None:
+    path = Path("../../database/seeds/chonburi_pattaya_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurant = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "Muslim Seafood Restaurant"
+    )
+
+    assert restaurant.review_hold_reason is not None
+    assert "locality" in restaurant.review_hold_reason
