@@ -113,6 +113,16 @@ export interface CandidateCoordinateSuggestion {
   longitude: number;
 }
 
+export interface CandidateCoordinateBatchItem {
+  candidate_id: string;
+  suggestion?: CandidateCoordinateSuggestion | null;
+  error?: string | null;
+}
+
+export interface CandidateCoordinateBatchResponse {
+  results: CandidateCoordinateBatchItem[];
+}
+
 export interface CandidateReviewTask extends CandidateResult {
   maps_search_url: string;
   approval_blockers: string[];
