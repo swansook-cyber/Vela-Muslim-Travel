@@ -1562,3 +1562,17 @@ def test_lopburi_commercial_candidates_do_not_overclaim_trust() -> None:
         for candidate in restaurants
     )
     assert all(not candidate.certification_number for candidate in restaurants)
+
+
+def test_sing_buri_expansion_uses_conservative_batch_size() -> None:
+    path = Path("../../database/seeds/sing_buri_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 2
+    assert {candidate.province for candidate in candidates} == {"สิงห์บุรี"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 2
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 0
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 0
