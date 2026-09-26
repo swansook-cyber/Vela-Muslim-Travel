@@ -255,8 +255,17 @@ class CandidateReviewProgressResponse(BaseModel):
     provinces: list[CandidateReviewProvinceProgress]
 
 
+class Phase0AcceptanceRequest(BaseModel):
+    route_smoke_2km_checked: bool
+    route_smoke_5km_core_pass: bool
+    route_smoke_10km_checked: bool
+    detours_and_evidence_checked: bool
+    note: str | None = Field(default=None, max_length=1000)
+
+
 class Phase0CompletionResponse(BaseModel):
     mechanical_ready: bool
+    final_complete: bool
     candidate_review_complete: bool
     promotion_queue_complete: bool
     production_coverage_ready: bool
@@ -268,4 +277,5 @@ class Phase0CompletionResponse(BaseModel):
     google_fast_lane: int
     blockers: list[str]
     manual_acceptance_required: bool
+    accepted_at: datetime | None = None
     manual_acceptance_steps: list[str]
