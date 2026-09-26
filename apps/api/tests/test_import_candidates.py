@@ -901,3 +901,45 @@ def test_surat_thani_koh_samui_commercial_candidates_do_not_overstate_certificat
         for candidate in commercial
     )
     assert all(not candidate.certification_number for candidate in commercial)
+
+
+def test_surat_thani_koh_samui_expansion_prefers_current_active_places() -> None:
+    path = Path("../../database/seeds/surat_thani_koh_samui_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 10
+    assert {candidate.province for candidate in candidates} == {"สุราษฎร์ธานี"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 2
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
+
+
+def test_surat_thani_koh_samui_commercial_places_are_muslim_friendly() -> None:
+    path = Path("../../database/seeds/surat_thani_koh_samui_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    commercial = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type in {"RESTAURANT", "ACCOMMODATION"}
+    ]
+
+    assert len(commercial) == 5
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in commercial
+    )
+    assert all(not candidate.certification_number for candidate in commercial)
+
+
+def test_surat_thani_koh_samui_excludes_closed_ihsan_restaurant() -> None:
+    path = Path("../../database/seeds/surat_thani_koh_samui_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert all(
+        candidate.name != "Ihsan Muslim Restaurant"
+        for candidate in candidates
+    )
