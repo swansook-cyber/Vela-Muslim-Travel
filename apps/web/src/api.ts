@@ -140,6 +140,11 @@ export async function fetchCandidates(
 }
 
 export interface CandidateReviewInput {
+  name?: string;
+  address?: string;
+  district?: string;
+  province?: string;
+  phone?: string;
   latitude?: number;
   longitude?: number;
   review_state?: CandidateReviewState;
