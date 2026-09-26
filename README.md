@@ -499,3 +499,15 @@ sufficiently strong current place-specific evidence. Coordinates remain blank
 until controlled map review.
 
 See `docs/SING_BURI_EXPANSION.md`.
+
+### Ang Thong Batch 1
+
+Ang Thong expansion is available at
+`database/seeds/ang_thong_expansion_review_queue.csv`.
+
+Batch 1 contains 6 conservative candidates: 3 current CICOT mosque records and
+3 active Muslim-friendly restaurant candidates. No accommodation candidate is
+forced into this batch without sufficiently strong current halal-service
+evidence. Coordinates remain blank until controlled map review.
+
+See `docs/ANG_THONG_EXPANSION.md`.
