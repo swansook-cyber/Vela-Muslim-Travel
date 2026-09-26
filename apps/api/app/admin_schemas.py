@@ -226,6 +226,7 @@ class CandidateReadinessResponse(BaseModel):
 class CandidateReviewTask(CandidateResult):
     maps_search_url: str
     approval_blockers: list[str]
+    review_warnings: list[str]
     ready_to_approve: bool
 
 
