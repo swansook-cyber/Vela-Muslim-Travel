@@ -53,6 +53,7 @@ from .admin_verifications import (
 from .candidate_review import (
     candidate_approval_blockers,
     candidate_maps_search_url,
+    candidate_promotion_blockers,
     candidate_review_transition_allowed,
     candidate_review_warnings,
 )
@@ -740,6 +741,9 @@ async def admin_candidate_promotion_check(
         )
 
     result = await check_candidate_promotion(session, candidate, request.slug)
+    promotion_blockers = candidate_promotion_blockers(candidate)
+    result["promotion_blockers"] = promotion_blockers
+    result["can_promote"] = result["can_promote"] and not promotion_blockers
     return CandidatePromotionCheckResponse(**result)
 
 
@@ -769,13 +773,11 @@ async def admin_promote_candidate(
             detail="Candidate requires reviewed coordinates before promotion",
         )
 
-    if not certification_is_current(
-        candidate["proposed_trust_status"],
-        candidate["certification_expires_at"],
-    ):
+    promotion_blockers = candidate_promotion_blockers(candidate)
+    if promotion_blockers:
         raise HTTPException(
             status_code=409,
-            detail="Certified candidate requires a current, non-expired certificate",
+            detail=promotion_blockers[0],
         )
 
     try:
