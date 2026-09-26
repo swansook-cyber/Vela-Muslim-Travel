@@ -511,3 +511,16 @@ forced into this batch without sufficiently strong current halal-service
 evidence. Coordinates remain blank until controlled map review.
 
 See `docs/ANG_THONG_EXPANSION.md`.
+
+### Chai Nat Batch 1
+
+Chai Nat expansion is available at
+`database/seeds/chai_nat_expansion_review_queue.csv`.
+
+Batch 1 contains 4 conservative candidates: the 1 Chai Nat mosque currently
+surfaced by CICOT and 3 active Muslim-friendly restaurant candidates. No
+accommodation candidate is forced into this batch without sufficiently strong
+current halal-service evidence. Coordinates remain blank until controlled map
+review.
+
+See `docs/CHAI_NAT_EXPANSION.md`.
