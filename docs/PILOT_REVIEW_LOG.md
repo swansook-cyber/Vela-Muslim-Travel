@@ -52,8 +52,9 @@ Primary discovery reference:
   phone discrepancy during manual review or leave the phone unverified.
 - Coordinate verification completed from MasjidThai's embedded Google Map:
   **8.2407216433, 99.4464044519**.
-- Staging state is now `GEOCODED`, but the phone discrepancy remains an
-  explicit manual hold and still blocks approval.
+- Historical 2026-09-25 status: the phone discrepancy was an explicit hold.
+  **Superseded 2026-09-26** by the structured Nakhon Si Thammarat provincial
+  Islamic council registry; the hold is now cleared.
 
 Primary evidence:
 - https://www.cicot.or.th/th/mosque/lists/178/6
@@ -395,8 +396,9 @@ Primary discovery evidence:
 
 - **มัสยิดมูฮัมมาดียะห์ บ้านดอนมะม่วง** — GEOCODED at
   `9.5154625, 99.164546875` from the current same-name Google business Plus Code
-  `G587+5RM`. The CICOT-vs-Google locality discrepancy remains an explicit
-  manual hold, so this candidate is not approval-ready.
+  `G587+5RM`. Historical 2026-09-25 status recorded a CICOT-vs-Google hold.
+  **Superseded 2026-09-26** by Surat Thani provincial Islamic committee
+  registry 014 at 20 Moo 6, Prasong; the hold is cleared.
 - **มัสยิดอิกอมุสซอลาฮ์ บ้านหนองจอก** — GEOCODED at
   `9.035931, 99.235434` from Tha Sathon Subdistrict Administrative
   Organization UTM coordinates `X 525875 / Y 998833`, converted from
@@ -410,13 +412,15 @@ Primary discovery evidence:
 ### Coordinate verification update — 2026-09-25 (ชุมพร)
 
 - **มัสยิดนูรุ้ลเอี๊ยะซาน** — GEOCODED at `10.8061625, 99.353109375`
-  from the current Google business Plus Code `R943+F69`. CICOT confirms the
-  Moo 7, Chum Kho, Pathio identity, but the Google and CICOT phone numbers still
-  conflict, so the existing manual hold remains.
-- **มัสยิดมูฮาญิรีน** — GEOCODED at `10.7377875, 99.161328125` from the
-  current Google business / Trip.com Plus Code `P5Q6+4G8`. MasjidThai
-  registers the mosque at 1 Moo 1, Hong Charoen, Tha Sae; the address-identity
-  discrepancy remains an explicit manual hold.
+  from the current Google business Plus Code `R943+F69`. Historical
+  2026-09-25 phone conflict is **superseded 2026-09-26** by the Chumphon
+  provincial Islamic committee registry 005 canonical contact; the hold is
+  cleared.
+- **มัสยิดมูฮาญิรีน** — the earlier Plus-Code-derived coordinate
+  `10.7377875, 99.161328125` is **superseded 2026-09-26**. The registered
+  MasjidThai page embeds a direct Google Map at
+  `10.7377810894, 99.1587437750`, which is now canonical together with
+  1 Moo 1, Hong Charoen. The hold is cleared.
 - **กะมา ครัวมุสลิม ฮาลาล** remains `DISCOVERED`. The current Google
   business listing still matches the staging name, 48 Moo 2 Phet Kasem Road,
   Sap Anan, Tha Sae and phone 096-698-7642, but no exact public coordinate or
@@ -436,8 +440,9 @@ Primary discovery evidence:
 - **มัสยิดนุรุ้ลอีมาน** — GEOCODED at
   `11.1484625, 99.488484375` from the current Google business / Trip.com
   Plus Code `4FXQ+99Q`, recovered and decoded with Google's official Open
-  Location Code algorithm. The Moo 2 versus Moo 9 administrative-address
-  discrepancy remains an explicit manual hold.
+  Location Code algorithm. Historical Moo 2 versus Moo 9 discrepancy is
+  **superseded 2026-09-26** by the Prachuap provincial Islamic committee /
+  MasjidThai 2 Moo 9 record; the hold is cleared.
 - **มัสยิดดารุ้ลอิบาดะห์** — GEOCODED at
   `12.2399125, 99.833515625` from the current Google business / Trip.com
   Plus Code `6RQM+XC6`, recovered and decoded with the same official
@@ -513,10 +518,10 @@ Primary discovery evidence:
 - Google/staging evidence still uses phone **084-673-1717**.
 - Current Makan Halal Guide, TripNiceDay and Cybo independently publish
   **089-791-3785** for the same KhunYaa identity/location.
-- The conflict is now stronger, not weaker. Do not select either phone
-  automatically; keep the manual hold until a direct/authoritative confirmation
-  resolves it.
-- Coordinate review may continue while this hold remains.
+- Historical review initially kept the phone conflict on hold.
+- **Resolved later on 2026-09-26:** current Makan, TripNiceDay and Cybo
+  consistently support **089-791-3785**, now used as canonical staging phone.
+  The older 084-673-1717 remains stale Google contact evidence.
 
 ### เน้นเนื้อ@ประจวบฮาลาล
 
