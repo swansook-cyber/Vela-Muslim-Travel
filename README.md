@@ -198,3 +198,15 @@ Batch 1 contains 13 candidates: 5 mosques, 5 Muslim-owned restaurants and 3
 Muslim-friendly accommodations.
 
 See `docs/SONGKHLA_HAT_YAI_EXPANSION.md`.
+
+
+### Phang Nga Batch 1
+
+Phang Nga expansion is available at
+`database/seeds/phang_nga_expansion_review_queue.csv`.
+
+Batch 1 deliberately contains 10 higher-confidence candidates rather than
+forcing a fixed batch size. A disputed “halal” restaurant listing was excluded
+because current evidence does not support the claim safely.
+
+See `docs/PHANG_NGA_EXPANSION.md`.
