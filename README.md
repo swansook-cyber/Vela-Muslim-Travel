@@ -222,3 +222,15 @@ Muslim-friendly accommodations. Muslim ownership is not inferred where the
 current source does not explicitly establish it.
 
 See `docs/TRANG_EXPANSION.md`.
+
+
+### Ayutthaya Batch 1
+
+Ayutthaya expansion is available at
+`database/seeds/ayutthaya_expansion_review_queue.csv`.
+
+Batch 1 contains 13 candidates: 5 mosques, 5 restaurants and 3
+Muslim-friendly accommodations. Muslim-owned status is used only for two
+restaurants with explicit ownership evidence.
+
+See `docs/AYUTTHAYA_EXPANSION.md`.
