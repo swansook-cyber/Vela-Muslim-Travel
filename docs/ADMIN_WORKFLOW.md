@@ -182,9 +182,11 @@ This is a convenience action only:
 5. each coordinate must still be opened on the map and explicitly confirmed
    before saving as `GEOCODED`.
 
-The batch runs candidates sequentially rather than flooding the provider, and
-the server-side Place resolver cache is reused. Failed candidates are reported
-without discarding successful draft suggestions.
+The browser sends one batch request. The API resolves candidates sequentially
+rather than flooding the provider, and the server-side Place resolver cache is
+reused. The batch is capped at 25 candidate IDs. Per-candidate failures are
+returned alongside successes, so one bad or missing candidate does not discard
+successful draft suggestions.
 
 ### Single-candidate review mode
 
