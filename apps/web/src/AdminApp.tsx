@@ -1193,12 +1193,15 @@ export default function AdminApp() {
                   onClick={() => saveState(candidate, "APPROVED")}
                   disabled={
                     loading ||
+                    candidate.review_state !== "GEOCODED" ||
                     (reviewTask !== null && !reviewTask.ready_to_approve)
                   }
                   title={
-                    reviewTask !== null && !reviewTask.ready_to_approve
-                      ? "ต้องแก้ approval blockers ก่อนอนุมัติ"
-                      : undefined
+                    candidate.review_state !== "GEOCODED"
+                      ? "ต้องบันทึกเป็น GEOCODED ก่อนอนุมัติ"
+                      : reviewTask !== null && !reviewTask.ready_to_approve
+                        ? "ต้องแก้ approval blockers ก่อนอนุมัติ"
+                        : undefined
                   }
                 >
                   อนุมัติ
