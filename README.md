@@ -403,3 +403,15 @@ current halal-service evidence. Coordinates remain blank until controlled map
 review.
 
 See `docs/SAMUT_SAKHON_MAHACHAI_EXPANSION.md`.
+
+### Samut Songkhram / Amphawa Batch 1
+
+Samut Songkhram / Amphawa expansion is available at
+`database/seeds/samut_songkhram_amphawa_expansion_review_queue.csv`.
+
+Batch 1 contains 8 conservative candidates: the 1 Samut Songkhram mosque
+currently surfaced by CICOT, 5 active Muslim-friendly restaurant candidates
+and 2 Amphawa accommodations with explicit halal-service evidence. Coordinates
+remain blank until controlled map review.
+
+See `docs/SAMUT_SONGKHRAM_AMPHAWA_EXPANSION.md`.
