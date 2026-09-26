@@ -10,6 +10,19 @@
 - optional Google Places API key if Admin should resolve stored Google Place IDs
   into coordinate suggestions
 
+## Preflight
+
+Before starting production, validate the private environment file:
+
+```bash
+python3 deploy/preflight.py deploy/.env
+```
+
+The preflight fails on default/short database credentials, missing Admin key,
+non-HTTPS production CORS origins, or `ALLOW_TEST_FIXTURES=true`. It warns
+when Google Places is disabled and when the pilot still depends on public
+OSRM/Nominatim services.
+
 ## Start
 
 ```bash
@@ -50,6 +63,16 @@ target database, and downtime window.
 
 1. create a database backup,
 2. pull the new Git commit,
+3. run `python3 deploy/preflight.py deploy/.env`,
+4. inspect pending migration files,
+5. rebuild and restart Compose,
+6. verify `/api/health`,
+7. verify the web UI, Admin dashboard, and Phase 0 Completion panel.
+
+The API container applies ordered SQL migrations before serving traffic.
+
+<!-- legacy ordered list retained below for compatibility -->
+<!--
 3. inspect pending migration files,
 4. rebuild and restart Compose,
 5. verify `/api/health`,
