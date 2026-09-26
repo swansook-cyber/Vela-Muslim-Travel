@@ -234,3 +234,14 @@ Muslim-friendly accommodations. Muslim-owned status is used only for two
 restaurants with explicit ownership evidence.
 
 See `docs/AYUTTHAYA_EXPANSION.md`.
+
+
+### Kanchanaburi Batch 1
+
+Kanchanaburi expansion is available at
+`database/seeds/kanchanaburi_expansion_review_queue.csv`.
+
+Batch 1 contains 10 higher-confidence candidates: 5 mosques, 4
+Muslim-friendly restaurants and 1 Muslim-friendly accommodation.
+
+See `docs/KANCHANABURI_EXPANSION.md`.
