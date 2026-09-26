@@ -81,7 +81,6 @@ from .schemas import (
 )
 from .security import require_admin
 from .tools.pilot_readiness import load_readiness, readiness_passes
-from .verification import certification_is_current
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
 AdminGuard = Annotated[None, Depends(require_admin)]
