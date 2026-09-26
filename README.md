@@ -210,3 +210,15 @@ forcing a fixed batch size. A disputed “halal” restaurant listing was exclud
 because current evidence does not support the claim safely.
 
 See `docs/PHANG_NGA_EXPANSION.md`.
+
+
+### Trang Batch 1
+
+Trang expansion is available at
+`database/seeds/trang_expansion_review_queue.csv`.
+
+Batch 1 contains 11 candidates: 5 mosques, 4 Muslim-friendly restaurants and 2
+Muslim-friendly accommodations. Muslim ownership is not inferred where the
+current source does not explicitly establish it.
+
+See `docs/TRANG_EXPANSION.md`.
