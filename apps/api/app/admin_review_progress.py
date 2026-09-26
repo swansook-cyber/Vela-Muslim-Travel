@@ -21,6 +21,7 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
             "ready_to_approve": 0,
             "blocked": 0,
             "coordinate_pending": 0,
+            "google_resolvable": 0,
             "manual_hold": 0,
             "evidence_blocked": 0,
         }
@@ -30,6 +31,7 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
     ready_to_approve = 0
     blocked = 0
     coordinate_pending = 0
+    google_resolvable = 0
     manual_hold = 0
     evidence_blocked = 0
 
@@ -47,6 +49,12 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
             or row.get("coordinate_checked_at") is None
         )
         has_manual_hold = bool(row.get("review_hold_reason"))
+        is_google_resolvable = (
+            has_coordinate_gap
+            and row.get("review_state") == CandidateReviewState.DISCOVERED.value
+            and row.get("external_provider") in {"google_business", "google_places"}
+            and bool(row.get("external_id"))
+        )
         non_coordinate_or_hold_blockers = [
             blocker
             for blocker in blockers
@@ -63,6 +71,9 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
         if has_coordinate_gap:
             coordinate_pending += 1
             per_province[province]["coordinate_pending"] += 1
+        if is_google_resolvable:
+            google_resolvable += 1
+            per_province[province]["google_resolvable"] += 1
         if has_manual_hold:
             manual_hold += 1
             per_province[province]["manual_hold"] += 1
@@ -82,6 +93,7 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
         "ready_to_approve": ready_to_approve,
         "blocked": blocked,
         "coordinate_pending": coordinate_pending,
+        "google_resolvable": google_resolvable,
         "manual_hold": manual_hold,
         "evidence_blocked": evidence_blocked,
         "provinces": [
