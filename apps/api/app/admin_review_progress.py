@@ -22,6 +22,7 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
             "blocked": 0,
             "coordinate_pending": 0,
             "google_resolvable": 0,
+            "google_fast_lane": 0,
             "manual_hold": 0,
             "evidence_blocked": 0,
         }
@@ -32,6 +33,7 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
     blocked = 0
     coordinate_pending = 0
     google_resolvable = 0
+    google_fast_lane = 0
     manual_hold = 0
     evidence_blocked = 0
 
@@ -74,6 +76,9 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
         if is_google_resolvable:
             google_resolvable += 1
             per_province[province]["google_resolvable"] += 1
+            if not has_manual_hold:
+                google_fast_lane += 1
+                per_province[province]["google_fast_lane"] += 1
         if has_manual_hold:
             manual_hold += 1
             per_province[province]["manual_hold"] += 1
@@ -98,6 +103,7 @@ async def load_candidate_review_progress(session: AsyncSession) -> dict:
         "blocked": blocked,
         "coordinate_pending": coordinate_pending,
         "google_resolvable": google_resolvable,
+        "google_fast_lane": google_fast_lane,
         "manual_hold": manual_hold,
         "evidence_blocked": evidence_blocked,
         "provinces": [
