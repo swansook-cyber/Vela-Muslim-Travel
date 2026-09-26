@@ -118,3 +118,11 @@ A first public-source cross-check pass has now been recorded for all **23 corrid
 The public pilot is still **not** production-ready: the remaining coordinate review, resolution of flagged evidence/address/phone/closure discrepancies, duplicate checks, approval, and promotion are required before listings can appear in route results.
 
 Admin now exposes a **Google Fast Lane** for Google-resolvable pilot candidates without manual holds, a **Phase 0 Completion** summary, and a guarded **Accept Phase 0** action. Final acceptance cannot be recorded until the mechanical gate is clear and the manual route-smoke checklist is confirmed.
+
+
+## Closing Phase 0
+
+Use `docs/RELEASE_READINESS.md` as the single execution checklist from the
+current pilot checkpoint to `PHASE 0 COMPLETE`. It intentionally freezes
+unrelated feature expansion until data review, promotion, route QA and deploy
+verification are finished.
