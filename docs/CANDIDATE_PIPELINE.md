@@ -60,3 +60,23 @@ They are supporting identifiers, not halal evidence.
 ## Current pilot queue
 
 `database/seeds/pilot_candidates_review_queue.csv` intentionally contains candidates that are not yet production records. It includes official evidence where available but leaves coordinate promotion to a controlled review step.
+
+
+## Review-state transition rules
+
+Forward review progression is intentionally stepwise:
+
+`DISCOVERED → GEOCODED → APPROVED → PROMOTED`
+
+The Admin API rejects a direct `DISCOVERED → APPROVED` jump. Promotion remains a
+separate endpoint and is the only normal `APPROVED → PROMOTED` path.
+
+Backward transitions are allowed only for deliberate remediation:
+
+- `GEOCODED → DISCOVERED`
+- `APPROVED → GEOCODED`
+- `APPROVED → REJECTED`
+- `REJECTED → DISCOVERED`
+
+Once a candidate is `PROMOTED`, candidate-review updates must not be used to
+change it. Production-place maintenance uses the production Admin workflow.
