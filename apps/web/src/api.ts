@@ -125,6 +125,9 @@ export async function fetchCandidates(
   if (placeType) {
     url.searchParams.set("place_type", placeType);
   }
+  if (pilotOnly) {
+    url.searchParams.set("pilot_only", "true");
+  }
 
   const response = await fetch(url, {
     headers: adminHeaders(adminKey),
@@ -463,6 +466,7 @@ export async function fetchCandidateReviewQueue(
   reviewState: CandidateReviewState = "DISCOVERED",
   province?: string,
   placeType?: PlaceType,
+  pilotOnly = false,
 ): Promise<CandidateReviewTask[]> {
   const url = new URL(`${API_BASE_URL}/admin/candidates/review-queue`);
   url.searchParams.set("review_state", reviewState);
