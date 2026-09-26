@@ -168,6 +168,15 @@ export default function AdminApp() {
   }, [candidates, filter, readinessFilter]);
 
   const filteredCount = displayedCandidates.length;
+  const batchGoogleCandidates = displayedCandidates.filter(
+    (candidate) =>
+      candidate.review_state === "DISCOVERED" &&
+      candidate.external_id &&
+      ["google_business", "google_places"].includes(
+        candidate.external_provider || "",
+      ) &&
+      !candidate.coordinate_checked_at,
+  );
   const safeReviewIndex = Math.min(
     reviewIndex,
     Math.max(displayedCandidates.length - 1, 0),
@@ -348,6 +357,75 @@ export default function AdminApp() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function resolveVisibleGooglePlaces() {
+    if (!dashboard?.google_places_resolver_enabled) {
+      setError("Google Places resolver ยังไม่ได้ตั้งค่าบน server");
+      return;
+    }
+    if (batchGoogleCandidates.length === 0) {
+      setMessage("ไม่มี candidate Google ที่รอดึงพิกัดในรายการปัจจุบัน");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setMessage(
+      `กำลังดึงพิกัด Google Place ID 0/${batchGoogleCandidates.length} รายการ…`,
+    );
+
+    const patches: Record<string, Partial<Draft>> = {};
+    const failures: string[] = [];
+
+    for (let index = 0; index < batchGoogleCandidates.length; index += 1) {
+      const candidate = batchGoogleCandidates[index];
+      try {
+        const result = await resolveCandidateGooglePlace(adminKey, candidate.id);
+        const currentNote = drafts[candidate.id]?.note || candidate.review_note || "";
+        const resolverNote =
+          `Google Place ID coordinate suggestion: ${result.external_id}`;
+        const note = currentNote.includes(resolverNote)
+          ? currentNote
+          : [currentNote, resolverNote].filter(Boolean).join("\n");
+
+        patches[candidate.id] = {
+          latitude: result.latitude.toFixed(7),
+          longitude: result.longitude.toFixed(7),
+          note,
+          coordinateCheckedAt: "",
+        };
+      } catch {
+        failures.push(candidate.name);
+      }
+
+      setMessage(
+        `กำลังดึงพิกัด Google Place ID ${index + 1}/${batchGoogleCandidates.length} รายการ…`,
+      );
+    }
+
+    if (Object.keys(patches).length > 0) {
+      setDrafts((current) => {
+        const next = { ...current };
+        for (const [candidateId, patch] of Object.entries(patches)) {
+          next[candidateId] = {
+            ...next[candidateId],
+            ...patch,
+          };
+        }
+        return next;
+      });
+    }
+
+    if (failures.length > 0) {
+      setError(
+        `ดึงพิกัดไม่สำเร็จ ${failures.length} รายการ: ${failures.join(", ")}`,
+      );
+    }
+    setMessage(
+      `ดึงพิกัดเข้า draft แล้ว ${Object.keys(patches).length}/${batchGoogleCandidates.length} รายการ กรุณาเปิดแผนที่และยืนยันแต่ละจุดก่อนบันทึก`,
+    );
+    setLoading(false);
   }
 
   function chooseCoordinate(candidate: CandidateResult, item: GeocodeResult) {
@@ -656,6 +734,17 @@ export default function AdminApp() {
           )}
         </div>
         <div className="review-queue-actions">
+          {dashboard?.google_places_resolver_enabled && (
+            <button
+              type="button"
+              className="secondary"
+              disabled={loading || batchGoogleCandidates.length === 0}
+              onClick={() => void resolveVisibleGooglePlaces()}
+              title="เติมพิกัดลง draft เท่านั้น ยังไม่ยืนยันหรือบันทึก state"
+            >
+              ดึง Google พิกัด {batchGoogleCandidates.length} รายการ
+            </button>
+          )}
           <button
             type="button"
             className="secondary"
