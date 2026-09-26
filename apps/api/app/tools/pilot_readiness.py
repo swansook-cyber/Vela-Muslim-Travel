@@ -108,8 +108,16 @@ async def async_main() -> int:
         print(
             f"{item.province}: total={item.total} "
             f"restaurant={item.restaurants} mosque={item.mosques} "
-            f"accommodation={item.accommodation} missing={missing}"
+            f"accommodation={item.accommodation} category_gaps={missing}"
         )
+
+    accommodation_provinces = sum(
+        1 for item in items if item.accommodation > 0
+    )
+    print(
+        f"Accommodation coverage: {accommodation_provinces}/2 "
+        "target provinces minimum"
+    )
 
     if not readiness_passes(items):
         print()
