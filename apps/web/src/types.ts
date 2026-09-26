@@ -281,8 +281,17 @@ export interface CandidateReadinessResponse {
 }
 
 
+export interface Phase0AcceptanceInput {
+  route_smoke_2km_checked: boolean;
+  route_smoke_5km_core_pass: boolean;
+  route_smoke_10km_checked: boolean;
+  detours_and_evidence_checked: boolean;
+  note?: string;
+}
+
 export interface Phase0CompletionResponse {
   mechanical_ready: boolean;
+  final_complete: boolean;
   candidate_review_complete: boolean;
   promotion_queue_complete: boolean;
   production_coverage_ready: boolean;
@@ -294,5 +303,6 @@ export interface Phase0CompletionResponse {
   google_fast_lane: number;
   blockers: string[];
   manual_acceptance_required: boolean;
+  accepted_at?: string | null;
   manual_acceptance_steps: string[];
 }
