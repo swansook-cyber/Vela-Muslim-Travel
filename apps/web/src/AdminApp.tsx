@@ -141,7 +141,9 @@ function candidateNextAction(
   }
 
   if (reviewTask?.ready_to_approve) {
-    return "พร้อมอนุมัติ";
+    return reviewTask.review_warnings.length > 0
+      ? "ทบทวนคำเตือนก่อนอนุมัติ"
+      : "พร้อมอนุมัติ";
   }
 
   if (!draft.sourceCheckedAt) {
