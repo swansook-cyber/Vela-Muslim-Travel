@@ -54,6 +54,7 @@ from .candidate_review import (
     candidate_approval_blockers,
     candidate_maps_search_url,
     candidate_review_transition_allowed,
+    candidate_review_warnings,
 )
 from .config import get_settings
 from .db import get_db
@@ -439,11 +440,13 @@ async def admin_candidate_review_queue(
     tasks: list[CandidateReviewTask] = []
     for row in rows:
         blockers = candidate_approval_blockers(row)
+        warnings = candidate_review_warnings(row)
         tasks.append(
             CandidateReviewTask(
                 **row,
                 maps_search_url=candidate_maps_search_url(row),
                 approval_blockers=blockers,
+                review_warnings=warnings,
                 ready_to_approve=(
                     row["review_state"] == CandidateReviewState.GEOCODED.value
                     and not blockers
