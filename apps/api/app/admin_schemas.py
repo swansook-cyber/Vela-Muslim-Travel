@@ -73,6 +73,19 @@ class CandidateCoordinateBatchResponse(BaseModel):
     results: list[CandidateCoordinateBatchItem]
 
 
+class CandidatePromotionDuplicate(BaseModel):
+    id: str
+    slug: str
+    name_th: str
+    distance_m: float
+
+
+class CandidatePromotionCheckResponse(BaseModel):
+    can_promote: bool
+    slug_exists: bool
+    duplicate: CandidatePromotionDuplicate | None = None
+
+
 class CandidatePromoteRequest(BaseModel):
     slug: str = Field(min_length=2, max_length=160, pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     name_th: str | None = Field(default=None, min_length=1, max_length=250)
