@@ -6,6 +6,26 @@ This file is the short operational checklist for moving Vela Muslim Travel from
 the current reviewed pilot into a usable release. It does not replace
 `docs/PHASE0_ACCEPTANCE.md`; it turns those rules into execution order.
 
+## Code-complete checkpoint
+
+**Status: CODE COMPLETE for the Phase 0 / first-usable pilot workflow.**
+
+Verified on GitHub Actions:
+
+- API unit tests: PASS
+- PostGIS spatial integration tests: PASS
+- Web CI: PASS
+- production Container CI: PASS
+
+The tested workflow now covers candidate discovery/review, audited candidate
+metadata correction, coordinate verification, approval guards, promotion
+preflight, promotion into production data, traveler search, Phase 0 completion,
+and guarded final acceptance.
+
+Do not add unrelated product features before data completion. A green code
+checkpoint is **not** the same as `PHASE 0 COMPLETE`; the latter still
+requires the reviewed real-world pilot data and route acceptance below.
+
 ## 1. Code readiness
 
 Current implementation includes:
