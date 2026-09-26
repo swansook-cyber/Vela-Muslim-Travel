@@ -147,7 +147,7 @@ def test_pilot_queue_contains_explicit_review_holds() -> None:
 
     held = [candidate for candidate in candidates if candidate.review_hold_reason]
 
-    assert len(held) >= 7
+    assert len(held) == 6
     assert any("Temporarily Closed" in candidate.review_hold_reason for candidate in held)
 
 
@@ -275,3 +275,21 @@ def test_ayah_address_identity_is_resolved_without_changing_trust() -> None:
     assert ayah.review_state == "GEOCODED"
     assert ayah.review_hold_reason is None
     assert ayah.proposed_trust_status == "UNVERIFIED"
+
+
+def test_nurul_iman_uses_provincial_committee_address() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    mosque = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "มัสยิดนุรุ้ลอีมาน"
+    )
+
+    assert mosque.review_state == "GEOCODED"
+    assert mosque.review_hold_reason is None
+    assert mosque.address is not None
+    assert "หมู่ 9" in mosque.address
+    assert mosque.external_provider == "google_business"
+    assert mosque.external_id == "ChIJuRf2yOIg_zARYoz1y1-VwV8"
