@@ -32,7 +32,7 @@ const typeLabels: Record<PlaceType, string> = {
 const trustLabels: Record<string, string> = {
   HALAL_CERTIFIED: "ฮาลาลรับรอง",
   HALAL_CERTIFIED_SERVICE: "มีบริการที่ได้รับรองฮาลาล",
-  MUSLIM_OWNED: "ร้าน/กิจการมุสลิม",
+  MUSLIM_OWNED: "กิจการมุสลิม (เจ้าของมุสลิม)",
   MUSLIM_FRIENDLY: "รองรับนักเดินทางมุสลิม",
   UNVERIFIED: "ยังไม่ได้ยืนยัน",
 };
