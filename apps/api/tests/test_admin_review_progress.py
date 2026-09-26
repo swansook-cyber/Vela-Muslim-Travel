@@ -130,3 +130,39 @@ async def test_review_progress_endpoint_returns_typed_summary(monkeypatch) -> No
     assert result.manual_hold == 1
     assert result.evidence_blocked == 0
     assert result.provinces[0].province == "นครศรีธรรมราช"
+
+
+@pytest.mark.asyncio
+async def test_review_progress_does_not_mark_discovered_as_ready(monkeypatch) -> None:
+    rows = [
+        {
+            "province": "นครราชสีมา",
+            "review_state": "DISCOVERED",
+            "latitude": 14.6,
+            "longitude": 101.4,
+            "source_type": "PUBLIC_WEB_SOURCE",
+            "source_reference": "https://example.com/ready-but-discovered",
+            "proposed_trust_status": "UNVERIFIED",
+            "certification_expires_at": None,
+            "review_hold_reason": None,
+            "source_checked_at": "2026-09-25T11:23:00+07:00",
+            "coordinate_checked_at": "2026-09-25T11:30:00+07:00",
+            "external_provider": "google_business",
+            "external_id": "ChIJstate",
+        }
+    ]
+
+    async def fake_list_candidates(session, review_state, limit):
+        return rows
+
+    monkeypatch.setattr(
+        admin_review_progress,
+        "list_candidates",
+        fake_list_candidates,
+    )
+
+    result = await admin_review_progress.load_candidate_review_progress(None)
+
+    assert result["pending"] == 1
+    assert result["ready_to_approve"] == 0
+    assert result["blocked"] == 1
