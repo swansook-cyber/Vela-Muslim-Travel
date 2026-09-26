@@ -1606,3 +1606,33 @@ def test_ang_thong_commercial_candidates_do_not_overclaim_trust() -> None:
         for candidate in restaurants
     )
     assert all(not candidate.certification_number for candidate in restaurants)
+
+
+def test_chai_nat_expansion_uses_conservative_batch_size() -> None:
+    path = Path("../../database/seeds/chai_nat_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 4
+    assert {candidate.province for candidate in candidates} == {"ชัยนาท"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 1
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 3
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 0
+
+
+def test_chai_nat_commercial_candidates_do_not_overclaim_trust() -> None:
+    path = Path("../../database/seeds/chai_nat_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate for candidate in candidates if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert len(restaurants) == 3
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in restaurants
+    )
+    assert all(not candidate.certification_number for candidate in restaurants)
