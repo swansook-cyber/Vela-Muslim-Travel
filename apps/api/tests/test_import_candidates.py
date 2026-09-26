@@ -422,9 +422,9 @@ def test_phuket_hotels_remain_muslim_friendly_without_certificate_number() -> No
     )
     assert all(not candidate.certification_number for candidate in hotels)
     assert {candidate.name for candidate in hotels} == {
-        "NAI YA Hotel Chiang Rai",
-        "Maryo Resort Chiangrai",
-        "101 Tea Green View Resort",
+        "Andaman Beach Hotel Phuket - Handwritten Collection",
+        "Bangtao Beach Chalet",
+        "Harmony Patong Hotel",
     }
 
 
