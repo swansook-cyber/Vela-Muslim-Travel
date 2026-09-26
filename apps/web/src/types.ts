@@ -162,6 +162,7 @@ export interface CandidatePromotionCheckResponse {
     name_th: string;
     distance_m: number;
   } | null;
+  promotion_blockers: string[];
 }
 
 
