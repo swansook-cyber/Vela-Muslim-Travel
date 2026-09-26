@@ -151,3 +151,15 @@ restaurants, and 3 Muslim-friendly accommodations. All remain review candidates
 with blank coordinates until map verification is completed.
 
 See `docs/PHUKET_EXPANSION.md`.
+
+
+### Krabi Batch 1
+
+Krabi expansion is available at
+`database/seeds/krabi_expansion_review_queue.csv`.
+
+Batch 1 contains 13 candidates: 5 mosques, 5 Muslim-owned restaurants, and 3
+accommodations. Aonang Silver Orchid Resort is explicitly Muslim-owned from its
+official website; the other accommodation trust labels remain conservative.
+
+See `docs/KRABI_EXPANSION.md`.
