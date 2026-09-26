@@ -12,7 +12,8 @@ python -m app.tools.route_smoke \
   --origin-lng 99.68 \
   --destination-lat 14.53 \
   --destination-lng 101.37 \
-  --corridor-km 5
+  --corridor-km 5 \
+  --require-core-types
 ```
 
 The command prints:
@@ -27,6 +28,21 @@ The command prints:
 
 This command intentionally reads only promoted production places. Discovery
 candidates are excluded until their coordinates and evidence are reviewed.
+
+
+The summary also reports:
+
+- counts by restaurant / mosque / prayer room / accommodation,
+- number of represented provinces,
+- expired verification evidence count,
+- a **mechanical core coverage** check for food + prayer + accommodation.
+
+`--require-core-types` exits non-zero if any of those three core needs is
+missing. This is only a structural minimum; it does **not** mean the route is
+useful enough for travelers. Manual acceptance must still inspect encounter
+order, detour relevance, evidence quality, province gaps, and whether the
+available stops are practical for a real drive.
+
 
 ## Pilot acceptance
 
