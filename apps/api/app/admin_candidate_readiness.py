@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .tools.candidate_queue_readiness import PILOT_PROVINCES
+from .pilot import PILOT_PROVINCES
 
 
 async def load_candidate_readiness(session: AsyncSession) -> list[dict]:
