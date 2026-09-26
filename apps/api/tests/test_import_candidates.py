@@ -421,6 +421,11 @@ def test_phuket_hotels_remain_muslim_friendly_without_certificate_number() -> No
         for candidate in hotels
     )
     assert all(not candidate.certification_number for candidate in hotels)
+    assert {candidate.name for candidate in hotels} == {
+        "NAI YA Hotel Chiang Rai",
+        "Maryo Resort Chiangrai",
+        "101 Tea Green View Resort",
+    }
 
 
 def test_krabi_expansion_seed_has_balanced_tourism_coverage() -> None:
@@ -644,14 +649,14 @@ def test_phang_nga_expansion_prefers_quality_over_fixed_batch_size() -> None:
     path = Path("../../database/seeds/phang_nga_expansion_review_queue.csv")
     candidates = load_candidates(path)
 
-    assert len(candidates) == 10
+    assert len(candidates) == 11
     assert {candidate.province for candidate in candidates} == {"พังงา"}
     assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
     assert all(candidate.latitude is None for candidate in candidates)
     assert all(candidate.longitude is None for candidate in candidates)
     assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
     assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 3
-    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 2
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 3
 
 
 def test_phang_nga_uncertain_restaurants_do_not_claim_muslim_ownership() -> None:
@@ -985,7 +990,7 @@ def test_chiang_rai_hotels_remain_muslim_friendly_without_certificate_number() -
         if candidate.place_type == "ACCOMMODATION"
     ]
 
-    assert len(hotels) == 2
+    assert len(hotels) == 3
     assert all(
         candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
         for candidate in hotels
