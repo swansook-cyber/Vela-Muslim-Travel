@@ -9,6 +9,7 @@ import type {
   CandidateCoordinateSuggestion,
   CandidateReadinessResponse,
   CandidateResult,
+  CandidatePromotionCheckResponse,
   CandidateReviewProgressResponse,
   CandidateReviewState,
   CandidateReviewTask,
@@ -205,6 +206,28 @@ export async function resolveCandidateGooglePlaces(
   }
 
   return response.json() as Promise<CandidateCoordinateBatchResponse>;
+}
+
+
+export async function checkCandidatePromotion(
+  adminKey: string,
+  candidateId: string,
+  slug: string,
+): Promise<CandidatePromotionCheckResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/candidates/${encodeURIComponent(candidateId)}/promotion-check`,
+    {
+      method: "POST",
+      headers: adminHeaders(adminKey),
+      body: JSON.stringify({ slug }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json() as Promise<CandidatePromotionCheckResponse>;
 }
 
 
