@@ -94,9 +94,13 @@ Phase 0 now includes:
 - browser security headers and edge rate limits,
 - web and API CI pipelines,
 - production Docker Compose full-stack smoke tests,
-- real-route coverage summaries plus a 2/5/10 km pilot smoke matrix.
+- real-route coverage summaries plus a 2/5/10 km pilot smoke matrix,
+- canonical Phase 0 completion dashboard with blocker-driven quick actions,
+- guarded final Phase 0 acceptance recorded in the Admin audit log,
+- first-usable PWA result cards with full address, trust provenance, evidence
+  freshness, external navigation, website/social links, and empty-result guidance.
 
-The next major gate is completing manual coordinate review for the curated pilot candidates, promoting only approved records, and running an end-to-end route test from southern Thailand toward Khao Yai using production data.
+The code path for closing Phase 0 is now in place. The remaining gate is real data work: complete manual coordinate review for the curated pilot candidates, resolve recorded holds, promote only approved records, then run the 2/5/10 km end-to-end route smoke from southern Thailand toward Khao Yai. When those checks pass, Admin can record Final Phase 0 Acceptance and the Completion panel changes to **PHASE 0 COMPLETE**.
 
 
 ## Pilot review status
@@ -112,3 +116,5 @@ A first public-source cross-check pass has now been recorded for all **23 corrid
 **Coordinate-review checkpoint (2026-09-26): 15/23 corridor candidates are GEOCODED and 8 remain DISCOVERED.** The Admin workflow can now resolve Google-backed candidates directly from their stored Place IDs, singly or as a capped read-only batch. Returned coordinates remain draft suggestions until a reviewer opens the map and explicitly records `coordinate_checked_at`.
 
 The public pilot is still **not** production-ready: the remaining coordinate review, resolution of flagged evidence/address/phone/closure discrepancies, duplicate checks, approval, and promotion are required before listings can appear in route results.
+
+Admin now exposes a **Google Fast Lane** for Google-resolvable pilot candidates without manual holds, a **Phase 0 Completion** summary, and a guarded **Accept Phase 0** action. Final acceptance cannot be recorded until the mechanical gate is clear and the manual route-smoke checklist is confirmed.
