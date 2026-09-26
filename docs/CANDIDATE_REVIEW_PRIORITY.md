@@ -53,8 +53,9 @@ Of those 8 coordinate-pending candidates:
 
 - **7** already carry a Google business/place ID and can use the Admin
   server-side Google batch resolver to obtain draft coordinate suggestions.
-- **1** (`เน้นเนื้อ@ประจวบฮาลาล`) does not use a Google provider in staging and
-  is also under an explicit temporary-closure hold.
+- **1** (`เน้นเนื้อ@ประจวบฮาลาล`) does not use a Google provider in staging.
+  Its operating-status hold was resolved on 2026-09-26, but exact coordinates
+  still require manual review.
 
 Google resolver output is still a suggestion only. A reviewer must open the
 suggested point on the map, confirm the exact venue, record
@@ -103,8 +104,10 @@ approve the candidate.
    - Resolve the phone conflict before approval. Coordinate review may continue,
      but the hold must remain after GEOCODED.
 
-### Non-Google coordinate hold
+### Non-Google coordinate review
 
-**เน้นเนื้อ@ประจวบฮาลาล** stays outside the Google queue. Its current Google
-business status was recorded as temporarily closed, so reopening must be
-confirmed before approval even after coordinates are established.
+**เน้นเนื้อ@ประจวบฮาลาล** stays outside the Google queue because staging does
+not carry a Google provider ID. The prior temporary-closure hold was cleared on
+2026-09-26 after current Makan, Wongnai/LINE MAN and Restaurant Guru activity
+confirmed ongoing operation. It remains `DISCOVERED` until an exact coordinate
+is manually reviewed.
