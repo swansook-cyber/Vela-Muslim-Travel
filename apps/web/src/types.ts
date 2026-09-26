@@ -126,6 +126,7 @@ export interface CandidateCoordinateBatchResponse {
 export interface CandidateReviewTask extends CandidateResult {
   maps_search_url: string;
   approval_blockers: string[];
+  review_warnings: string[];
   ready_to_approve: boolean;
 }
 
