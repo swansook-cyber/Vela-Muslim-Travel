@@ -72,6 +72,42 @@ A property must not be labeled "halal certified" unless that claim has a verifia
 
 The UI should explain what each label means.
 
+
+### Muslim-owned businesses
+
+A restaurant or accommodation **does not need official halal certification to
+be useful to Muslim travelers**.
+
+Use `MUSLIM_OWNED` when there is credible evidence that the business is owned
+or operated by Muslims, even when no current halal certificate exists.
+
+This label means only:
+
+- the business is Muslim-owned / Muslim-operated based on reviewed evidence,
+- it is **not** the same as `HALAL_CERTIFIED`,
+- no certification claim should be shown unless an official certificate is
+  separately verified.
+
+Acceptable evidence may include:
+
+- an explicit statement from the business owner or official business page,
+- a provincial Islamic committee / Muslim business directory that identifies
+  Muslim ownership,
+- a reliable interview/news/profile naming the owner and Muslim ownership,
+- field verification recorded by an Admin reviewer.
+
+Do **not** infer Muslim ownership from:
+
+- a Muslim-sounding personal or business name,
+- Arabic/Islamic branding alone,
+- menu appearance,
+- customer reviews alone,
+- location near a mosque.
+
+When ownership evidence is credible but food/certification evidence is absent,
+prefer `MUSLIM_OWNED` over `UNVERIFIED`; keep the UI wording explicit so the
+traveler can decide.
+
 ## Verification
 
 Every trust-sensitive claim should have:
