@@ -2,18 +2,22 @@
 
 React + Vite + MapLibre client for Vela Muslim Travel.
 
-## Current Phase 0 capabilities
+## Current capabilities
 
-- route-first search form,
+- Near Me and Along My Route workflows,
 - browser geolocation for origin,
+- searchable origin and destination,
 - configurable route corridor,
 - filters for restaurant / accommodation / mosque / prayer room,
-- MapLibre route rendering,
-- result markers,
+- MapLibre route rendering and result markers,
 - route distance and duration summary,
-- trust-status display,
+- on-demand road detour calculation,
+- trust status, verification source/date/expiry, and evidence links,
+- full result address plus external Google Maps / Apple Maps navigation,
+- website/social/phone actions when available,
 - responsive layout,
-- installable web manifest baseline.
+- installable web manifest,
+- service-worker shell caching with API/Admin data excluded from offline caching.
 
 ## Local development
 
@@ -47,8 +51,16 @@ Override it with `VITE_API_BASE_URL`.
 
 The Phase 0 map uses OpenStreetMap raster tiles with attribution. This is suitable for development and low-volume validation only. A production deployment must follow the OpenStreetMap tile usage policy or use an appropriate tile provider / self-hosted tile service.
 
-## Not production-ready yet
+## Remaining production caveats
 
-The current UI accepts destination coordinates. The product UX should later replace this with location search/autocomplete and saved/recent destinations.
+The traveler workflow is usable for the pilot, but production readiness still
+depends on reviewed/promoted real-world data and final route acceptance.
 
-Offline support is not complete yet. The manifest is only the installation baseline; service-worker and offline data behavior will be added after the core route workflow is validated.
+Restaurant `opening_hours` is currently stored as JSONB without a normalized
+V1 schedule contract. The UI therefore does **not** infer a live open/closed
+state yet; doing so before the hours format and timezone semantics are defined
+would risk showing incorrect information.
+
+The service worker intentionally caches only the application shell/static
+assets. Route, place, verification and Admin data remain network-backed so
+trust-sensitive information is not served stale from an offline cache.
