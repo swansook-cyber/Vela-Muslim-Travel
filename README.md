@@ -79,6 +79,8 @@ Phase 0 now includes:
 - controlled geocode candidate review with explicit coordinate selection,
 - exact Google Place-ID coordinate suggestions with server-side caching,
 - one-request batch coordinate suggestions for the filtered Admin queue,
+- Google-resolvable review filtering and queue shortcut,
+- promotion preflight for duplicate proximity and production slug conflicts,
 - candidate readiness dashboard,
 - reviewed-coordinate preservation across candidate re-imports,
 - verification-evidence guardrails and certificate-expiry handling,
@@ -91,7 +93,8 @@ Phase 0 now includes:
 - PWA shell caching that excludes all API/admin responses,
 - browser security headers and edge rate limits,
 - web and API CI pipelines,
-- production Docker Compose full-stack smoke tests.
+- production Docker Compose full-stack smoke tests,
+- real-route coverage summaries plus a 2/5/10 km pilot smoke matrix.
 
 The next major gate is completing manual coordinate review for the curated pilot candidates, promoting only approved records, and running an end-to-end route test from southern Thailand toward Khao Yai using production data.
 
