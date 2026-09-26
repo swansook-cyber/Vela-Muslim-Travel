@@ -62,7 +62,7 @@ Seed checkpoint:
 - 7 DISCOVERED candidates are Google-resolvable,
 - 6 of those are Google Fast Lane candidates without manual holds,
 - 1 Google-resolvable candidate has an explicit hold,
-- 1 non-Google candidate has a temporary-closure hold.
+- 1 non-Google candidate still needs coordinate review but has no manual hold.
 
 ### Execute first — Google Fast Lane
 
@@ -91,8 +91,9 @@ still requires visual coordinate confirmation before GEOCODED.
   and TripNiceDay publish 089-791-3785. Resolve the phone conflict before
   approval; coordinate review can proceed while the hold remains.
 - เน้นเนื้อ@ประจวบฮาลาล:
-  confirm reopening before approval; current checkpoint records a temporarily
-  closed Google business status.
+  operating-status hold was resolved on 2026-09-26 using current Makan,
+  Wongnai/LINE MAN and Restaurant Guru activity. It remains DISCOVERED because
+  exact coordinates still need manual review; trust remains UNVERIFIED.
 
 ### Resolve existing GEOCODED holds before approval
 
