@@ -778,3 +778,47 @@ def test_ayutthaya_incomplete_addresses_are_held() -> None:
         "Krua Muslim Krung Kao Ayutthaya",
         "RUS Hotel & Convention Ayutthaya",
     }
+
+
+def test_kanchanaburi_expansion_prefers_quality_over_fixed_size() -> None:
+    path = Path("../../database/seeds/kanchanaburi_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 10
+    assert {candidate.province for candidate in candidates} == {"กาญจนบุรี"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 4
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 1
+
+
+def test_kanchanaburi_restaurants_do_not_infer_muslim_ownership() -> None:
+    path = Path("../../database/seeds/kanchanaburi_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate for candidate in candidates if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert restaurants
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in restaurants
+    )
+
+
+def test_sanctuary_kanchanaburi_has_address_hold_not_certification_claim() -> None:
+    path = Path("../../database/seeds/kanchanaburi_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    hotel = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "Sanctuary Kanchanaburi"
+    )
+
+    assert hotel.proposed_trust_status == "MUSLIM_FRIENDLY"
+    assert hotel.review_hold_reason is not None
+    assert hotel.certification_number is None
