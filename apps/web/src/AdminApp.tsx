@@ -962,7 +962,8 @@ export default function AdminApp() {
                 </small>
                 <small>
                   พิกัด {item.coordinate_pending} · Google {item.google_resolvable} ·
-                  Hold {item.manual_hold} · หลักฐาน {item.evidence_blocked}
+                  Fast {item.google_fast_lane} · Hold {item.manual_hold} · หลักฐาน{" "}
+                  {item.evidence_blocked}
                 </small>
               </button>
             ))}
