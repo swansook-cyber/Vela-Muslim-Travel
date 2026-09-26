@@ -152,6 +152,18 @@ export interface CandidateReviewProgressResponse {
 }
 
 
+export interface CandidatePromotionCheckResponse {
+  can_promote: boolean;
+  slug_exists: boolean;
+  duplicate?: {
+    id: string;
+    slug: string;
+    name_th: string;
+    distance_m: number;
+  } | null;
+}
+
+
 export interface AdminDashboard {
   candidates_total: number;
   discovered: number;
