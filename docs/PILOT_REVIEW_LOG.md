@@ -320,14 +320,14 @@ Primary discovery evidence:
 Primary evidence:
 - https://cicot.or.th/th/mosque/lists/2/3
 
-- **Address reconciliation update (2026-09-25):** current CICOT lists
-  `ม.2 ต.ปากช่อง`, while older Thailand halal travel guides identify
-  Pakistan Yannatul Firdaus Mosque at Kaek Market / Trok Chumchon Surao near
-  Pak Chong Bus Station, `Mu 11`. Current local mosque directories also use
-  Tessaban 22 Road / Trok Chumchon Surao. These may be different address
-  conventions for the same mosque, but the discrepancy must be resolved before
-  approval. A manual hold is now explicit; no coordinate is inferred from the
-  historical guide.
+- **Address reconciliation update (2026-09-26):** current Google business and
+  Cybo use the current street representation around Tessaban 22, while CICOT
+  uses Moo 2 and older local/halal-travel sources use Mu 11 / Kaek Market /
+  Trok Chumchon Surao. The unique mosque identity is consistent across these
+  sources, so the address-only manual hold is cleared and the current street
+  address is used as canonical staging data. No coordinate is inferred from
+  the historical address; visual map confirmation is still required before
+  GEOCODED.
 
 ### ร้านอาหารอิสลามตลาดแขก อ.ปากช่อง
 
@@ -364,8 +364,9 @@ Primary discovery evidence:
 - Current restaurant/travel sources show the same phone and active restaurant.
 - Tripadvisor uses the more conventional address **16/6 หมู่ 5 ถนนมิตรภาพ
   ปากช่อง 30320** while other sources use the plus-code / Sap Wai wording.
-- Do not normalize the address automatically. Confirm exact location and
-  administrative address during coordinate review.
+- The alternate 16/6 Moo 5 / Plus Code representations were reconciled on
+  2026-09-26 as the same venue identity using matching current business ID,
+  phone and location evidence. The address-only hold is cleared.
 - No official certification evidence was established in this review; keep
   `UNVERIFIED`.
 
@@ -484,9 +485,8 @@ Primary discovery evidence:
 - **Ayah Restaurant Halal** — GEOCODED at
   `14.6574375, 101.345671875` from the current Google business Plus Code
   `M84W+X7F`, recovered and decoded with Google's official Open Location Code
-  algorithm. The current Google business identity remains consistent, but
-  external sources also use `16/6 Moo 5 Mittraphap Road`; the address-identity
-  discrepancy therefore remains an explicit manual hold.
+  algorithm. The 16/6 Moo 5 Mittraphap representation was reconciled on
+  2026-09-26 as the same venue identity; the address-only hold is cleared.
 - Other Khao Yai candidates remain unchanged in this pass because no direct
   coordinate, embedded-map coordinate or Plus Code with sufficient provenance
   was obtained. Their current business/source identities remain available for
