@@ -93,6 +93,17 @@ function isCandidateReviewTask(
   );
 }
 
+function isGoogleResolvableCandidate(candidate: CandidateResult): boolean {
+  return (
+    candidate.review_state === "DISCOVERED" &&
+    Boolean(candidate.external_id) &&
+    ["google_business", "google_places"].includes(
+      candidate.external_provider || "",
+    ) &&
+    !candidate.coordinate_checked_at
+  );
+}
+
 export default function AdminApp() {
   const [adminKey, setAdminKey] = useState(
     () => sessionStorage.getItem("vela-admin-key") || "",
@@ -103,7 +114,13 @@ export default function AdminApp() {
     useState<"" | CandidateResult["place_type"]>("");
   const [readinessFilter, setReadinessFilter] =
     useState<
-      "ALL" | "READY" | "BLOCKED" | "COORDINATE_PENDING" | "MANUAL_HOLD" | "EVIDENCE"
+      | "ALL"
+      | "READY"
+      | "BLOCKED"
+      | "COORDINATE_PENDING"
+      | "GOOGLE_RESOLVABLE"
+      | "MANUAL_HOLD"
+      | "EVIDENCE"
     >("ALL");
   const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [singleReviewMode, setSingleReviewMode] = useState(false);
@@ -149,6 +166,9 @@ export default function AdminApp() {
           ].includes(blocker),
         );
       }
+      if (readinessFilter === "GOOGLE_RESOLVABLE") {
+        return isGoogleResolvableCandidate(candidate);
+      }
       if (readinessFilter === "MANUAL_HOLD") {
         return candidate.approval_blockers.some((blocker) =>
           blocker.startsWith("manual review hold:"),
@@ -170,13 +190,7 @@ export default function AdminApp() {
 
   const filteredCount = displayedCandidates.length;
   const batchGoogleCandidates = displayedCandidates.filter(
-    (candidate) =>
-      candidate.review_state === "DISCOVERED" &&
-      candidate.external_id &&
-      ["google_business", "google_places"].includes(
-        candidate.external_provider || "",
-      ) &&
-      !candidate.coordinate_checked_at,
+    isGoogleResolvableCandidate,
   );
   const safeReviewIndex = Math.min(
     reviewIndex,
@@ -593,6 +607,7 @@ export default function AdminApp() {
                   | "READY"
                   | "BLOCKED"
                   | "COORDINATE_PENDING"
+                  | "GOOGLE_RESOLVABLE"
                   | "MANUAL_HOLD"
                   | "EVIDENCE",
               )
@@ -602,6 +617,7 @@ export default function AdminApp() {
             <option value="READY">พร้อมอนุมัติ</option>
             <option value="BLOCKED">ยังติด blocker</option>
             <option value="COORDINATE_PENDING">พิกัดยังไม่ครบ</option>
+            <option value="GOOGLE_RESOLVABLE">Google ดึงพิกัดได้</option>
             <option value="MANUAL_HOLD">มี Manual hold</option>
             <option value="EVIDENCE">หลักฐานยังไม่ผ่าน</option>
           </select>
