@@ -552,6 +552,7 @@ async def admin_resolve_candidate_google_place(
         external_id=result.place_id,
         latitude=result.latitude,
         longitude=result.longitude,
+        formatted_address=getattr(result, "formatted_address", None),
     )
 
 
@@ -626,6 +627,7 @@ async def admin_resolve_candidate_google_places(
                     external_id=result.place_id,
                     latitude=result.latitude,
                     longitude=result.longitude,
+                    formatted_address=getattr(result, "formatted_address", None),
                 ),
             )
         )
