@@ -258,8 +258,8 @@ def test_pilot_seed_checkpoint_counts_match_release_readiness() -> None:
     assert len(pilot) == 23
     assert len(geocoded) == 15
     assert len(discovered) == 8
-    assert len(google_resolvable) == 7
-    assert len(google_fast_lane) == 7
+    assert len(google_resolvable) == 8
+    assert len(google_fast_lane) == 8
 
 
 def test_ayah_address_identity_is_resolved_without_changing_trust() -> None:
@@ -306,5 +306,23 @@ def test_nen_nuea_operating_hold_is_resolved_without_claiming_certification() ->
     assert restaurant.review_state == "DISCOVERED"
     assert restaurant.review_hold_reason is None
     assert restaurant.proposed_trust_status == "UNVERIFIED"
+    assert restaurant.latitude is None
+    assert restaurant.longitude is None
+
+
+def test_nen_nuea_is_now_google_resolvable_without_manual_hold() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurant = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "เน้นเนื้อ@ประจวบฮาลาล"
+    )
+
+    assert restaurant.review_state == "DISCOVERED"
+    assert restaurant.review_hold_reason is None
+    assert restaurant.external_provider == "google_business"
+    assert restaurant.external_id == "ChIJP1rc7lSF_jAREG6AfeqnSho"
     assert restaurant.latitude is None
     assert restaurant.longitude is None
