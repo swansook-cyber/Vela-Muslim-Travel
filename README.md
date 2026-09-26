@@ -487,3 +487,15 @@ accommodation candidate is forced into this batch without sufficiently strong
 halal-service evidence. Coordinates remain blank until controlled map review.
 
 See `docs/LOPBURI_EXPANSION.md`.
+
+### Sing Buri Batch 1
+
+Sing Buri expansion is available at
+`database/seeds/sing_buri_expansion_review_queue.csv`.
+
+Batch 1 contains 2 conservative mosque candidates currently surfaced by CICOT.
+No restaurant or accommodation candidate is forced into this batch without
+sufficiently strong current place-specific evidence. Coordinates remain blank
+until controlled map review.
+
+See `docs/SING_BURI_EXPANSION.md`.
