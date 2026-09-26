@@ -203,6 +203,8 @@ class PilotProvinceReadiness(BaseModel):
 
 class PilotReadinessResponse(BaseModel):
     ready: bool
+    accommodation_provinces: int
+    required_accommodation_provinces: int = 2
     provinces: list[PilotProvinceReadiness]
 
 
