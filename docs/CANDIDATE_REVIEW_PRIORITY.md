@@ -63,9 +63,9 @@ suggested point on the map, confirm the exact venue, record
 
 ## Google coordinate execution queue
 
-For the current 7 Google-resolvable pilot candidates, review the straightforward
-items first so the queue shrinks quickly, then handle the address-discrepancy
-case separately.
+For the current 7 Google-resolvable pilot candidates, review the **5**
+no-hold items first so the queue shrinks quickly, then handle the two
+Google-resolvable candidates with explicit holds separately.
 
 ### Straightforward coordinate review
 
@@ -84,16 +84,19 @@ case separately.
 5. **กะมา ครัวมุสลิม ฮาลาล**
    - Google Place ID: `ChIJBzAp2VpN_zARrGXZ_BL7X98`
    - No manual hold recorded.
-6. **คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort**
-   - Google Place ID: `ChIJVy7c7Bg7HDERjTbk8mJLjSI`
-   - No manual hold recorded.
-
 For each item: resolve the Google coordinate into draft, open the exact point on
 Google Maps, visually confirm the venue identity, then use
 **ยืนยันพิกัด + บันทึก GEOCODED**. This step must not infer certification or
 approve the candidate.
 
 ### Coordinate review with an existing hold
+
+6. **คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort**
+   - Google Place ID: `ChIJVy7c7Bg7HDERjTbk8mJLjSI`
+   - Google still matches the staging address and phone 084-673-1717.
+   - Current Makan Halal Guide and TripNiceDay publish phone 089-791-3785.
+   - Resolve the phone conflict before approval. Coordinate review may continue,
+     but the hold must remain after GEOCODED.
 
 7. **มัสยิดยันน่าตุ้ลฟิรเดาซ์**
    - Google Place ID: `ChIJg8AZfzEqHDERIEmyXoK-g_0`
