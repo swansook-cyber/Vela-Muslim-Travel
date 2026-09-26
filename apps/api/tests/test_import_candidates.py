@@ -638,3 +638,43 @@ def test_songkhla_hat_yai_hotels_do_not_overstate_certification() -> None:
         for candidate in hotels
     )
     assert all(not candidate.certification_number for candidate in hotels)
+
+
+def test_phang_nga_expansion_prefers_quality_over_fixed_batch_size() -> None:
+    path = Path("../../database/seeds/phang_nga_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 10
+    assert {candidate.province for candidate in candidates} == {"พังงา"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 5
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 3
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 2
+
+
+def test_phang_nga_uncertain_restaurants_do_not_claim_muslim_ownership() -> None:
+    path = Path("../../database/seeds/phang_nga_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurants = [
+        candidate for candidate in candidates if candidate.place_type == "RESTAURANT"
+    ]
+
+    assert restaurants
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in restaurants
+    )
+    assert all(not candidate.certification_number for candidate in restaurants)
+
+
+def test_phang_nga_excludes_disputed_flavours_of_india() -> None:
+    path = Path("../../database/seeds/phang_nga_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert all(
+        "Flavours Of India" not in candidate.name
+        for candidate in candidates
+    )
