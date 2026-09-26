@@ -281,3 +281,15 @@ Muslim-friendly accommodations. Coordinates remain blank until controlled map
 review.
 
 See `docs/RAYONG_KOH_SAMET_EXPANSION.md`.
+
+
+### Trat / Koh Chang Batch 1
+
+Trat / Koh Chang expansion is available at
+`database/seeds/trat_koh_chang_expansion_review_queue.csv`.
+
+Batch 1 contains 11 candidates: 5 mosques, 3 restaurants and 3
+Muslim-friendly accommodations. Coordinates remain blank until controlled map
+review.
+
+See `docs/TRAT_KOH_CHANG_EXPANSION.md`.
