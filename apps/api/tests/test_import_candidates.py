@@ -147,8 +147,8 @@ def test_pilot_queue_contains_explicit_review_holds() -> None:
 
     held = [candidate for candidate in candidates if candidate.review_hold_reason]
 
-    assert len(held) == 6
-    assert any("Temporarily Closed" in candidate.review_hold_reason for candidate in held)
+    assert len(held) == 1
+    assert held[0].name == "คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort"
 
 
 def test_candidate_parses_source_checked_at() -> None:
@@ -293,3 +293,20 @@ def test_nurul_iman_uses_provincial_committee_address() -> None:
     assert "หมู่ 9" in mosque.address
     assert mosque.external_provider == "google_business"
     assert mosque.external_id == "ChIJuRf2yOIg_zARYoz1y1-VwV8"
+
+
+def test_nen_nuea_operating_hold_is_resolved_without_claiming_certification() -> None:
+    path = Path("../../database/seeds/pilot_candidates_review_queue.csv")
+    candidates = load_candidates(path)
+
+    restaurant = next(
+        candidate
+        for candidate in candidates
+        if candidate.name == "เน้นเนื้อ@ประจวบฮาลาล"
+    )
+
+    assert restaurant.review_state == "DISCOVERED"
+    assert restaurant.review_hold_reason is None
+    assert restaurant.proposed_trust_status == "UNVERIFIED"
+    assert restaurant.latitude is None
+    assert restaurant.longitude is None
