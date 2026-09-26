@@ -2,7 +2,11 @@ import pytest
 from fastapi import HTTPException
 
 from app import main
-from app.admin_schemas import CandidateCoordinateBatchRequest, CandidateReviewState
+from app.admin_schemas import (
+    CandidateCoordinateBatchRequest,
+    CandidateReviewState,
+    CandidateReviewUpdate,
+)
 
 
 def candidate_row(state: str) -> dict:
@@ -190,3 +194,27 @@ async def test_batch_google_resolver_requires_configuration(monkeypatch) -> None
         )
 
     assert exc_info.value.status_code == 503
+
+
+@pytest.mark.asyncio
+async def test_candidate_update_rejects_discovered_to_approved_jump(monkeypatch) -> None:
+    row = candidate_row(CandidateReviewState.DISCOVERED.value)
+
+    async def fake_get_candidate(session, candidate_id):
+        assert candidate_id == row["id"]
+        return row
+
+    monkeypatch.setattr(main, "get_candidate", fake_get_candidate)
+
+    with pytest.raises(HTTPException) as exc_info:
+        await main.admin_update_candidate(
+            candidate_id=row["id"],
+            update=CandidateReviewUpdate(
+                review_state=CandidateReviewState.APPROVED,
+            ),
+            session=None,
+            _admin=None,
+        )
+
+    assert exc_info.value.status_code == 409
+    assert "DISCOVERED -> APPROVED" in str(exc_info.value.detail)
