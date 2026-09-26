@@ -245,3 +245,15 @@ Batch 1 contains 10 higher-confidence candidates: 5 mosques, 4
 Muslim-friendly restaurants and 1 Muslim-friendly accommodation.
 
 See `docs/KANCHANABURI_EXPANSION.md`.
+
+
+### Surat Thani / Koh Samui Batch 1
+
+Surat Thani / Koh Samui expansion is available at
+`database/seeds/surat_thani_koh_samui_expansion_review_queue.csv`.
+
+Batch 1 contains 10 candidates: 5 mosques, 2 restaurants and 3
+Muslim-friendly accommodations. All remain review candidates with blank
+coordinates until map verification is completed.
+
+See `docs/SURAT_THANI_KOH_SAMUI_EXPANSION.md`.
