@@ -415,3 +415,15 @@ and 2 Amphawa accommodations with explicit halal-service evidence. Coordinates
 remain blank until controlled map review.
 
 See `docs/SAMUT_SONGKHRAM_AMPHAWA_EXPANSION.md`.
+
+### Samut Prakan Batch 1
+
+Samut Prakan expansion is available at
+`database/seeds/samut_prakan_expansion_review_queue.csv`.
+
+Batch 1 contains 11 conservative candidates: 5 current CICOT mosque records, 3
+active Muslim-friendly restaurant candidates and 3 Muslim-friendly
+accommodations with explicit halal dining/breakfast evidence. Coordinates remain
+blank until controlled map review.
+
+See `docs/SAMUT_PRAKAN_EXPANSION.md`.
