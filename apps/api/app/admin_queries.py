@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .admin_schemas import CandidateReviewState
+from .tools.candidate_queue_readiness import PILOT_PROVINCES
 
 CANDIDATE_COLUMNS = """
     id::text,
@@ -38,6 +39,7 @@ async def list_candidates(
     review_state: CandidateReviewState | None,
     province: str | None = None,
     place_type: str | None = None,
+    pilot_only: bool = False,
     limit: int = 100,
 ) -> list[dict]:
     sql = text(
@@ -55,6 +57,10 @@ async def list_candidates(
           AND (
             CAST(:place_type AS text) IS NULL
             OR place_type::text = CAST(:place_type AS text)
+          )
+          AND (
+            :pilot_only = false
+            OR province = ANY(:pilot_provinces)
           )
         ORDER BY
             CASE province
@@ -78,6 +84,8 @@ async def list_candidates(
                 "review_state": review_state.value if review_state else None,
                 "province": province,
                 "place_type": place_type,
+                "pilot_only": pilot_only,
+                "pilot_provinces": list(PILOT_PROVINCES),
                 "limit": limit,
             },
         )
