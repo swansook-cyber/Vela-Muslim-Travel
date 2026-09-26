@@ -1057,6 +1057,12 @@ export default function AdminApp() {
             ? candidate
             : null;
           const nextAction = candidateNextAction(candidate, reviewTask, draft);
+          const hasUnsavedCoordinateDraft =
+            Boolean(draft.latitude && draft.longitude) &&
+            (
+              Number(draft.latitude) !== candidate.latitude ||
+              Number(draft.longitude) !== candidate.longitude
+            );
 
           return (
             <article className="candidate-card" key={candidate.id}>
@@ -1138,6 +1144,12 @@ export default function AdminApp() {
                     </ul>
                   </div>
                 )}
+
+              {hasUnsavedCoordinateDraft && (
+                <p className="admin-message">
+                  มีพิกัดใหม่ใน draft — ยังไม่ได้บันทึกหรือยืนยัน
+                </p>
+              )}
 
               <div className="coordinate-grid">
                 <label>
