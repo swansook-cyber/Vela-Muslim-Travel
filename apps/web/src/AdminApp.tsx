@@ -313,6 +313,7 @@ export default function AdminApp() {
       const activeProvince = overrides?.province ?? provinceFilter;
       const activeFilter = overrides?.reviewState ?? filter;
       const activeType = overrides?.placeType ?? typeFilter;
+      const activePilotOnly = overrides?.pilotOnly ?? pilotQueueOnly;
       const candidateRequest =
         activeFilter === "DISCOVERED" || activeFilter === "GEOCODED"
           ? fetchCandidateReviewQueue(
@@ -320,6 +321,7 @@ export default function AdminApp() {
               activeFilter,
               activeProvince || undefined,
               activeType || undefined,
+              activePilotOnly,
             )
           : fetchCandidates(
               adminKey,
