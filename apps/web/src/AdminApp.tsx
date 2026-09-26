@@ -200,6 +200,9 @@ export default function AdminApp() {
   const [geocodeSuggestions, setGeocodeSuggestions] = useState<
     Record<string, GeocodeResult[]>
   >({});
+  const [googleFormattedAddresses, setGoogleFormattedAddresses] = useState<
+    Record<string, string>
+  >({});
   const [promotionChecks, setPromotionChecks] = useState<
     Record<string, CandidatePromotionCheckResponse>
   >({});
@@ -501,6 +504,15 @@ export default function AdminApp() {
         note: [currentNote, resolverNote].filter(Boolean).join("\n"),
         coordinateCheckedAt: "",
       });
+      setGoogleFormattedAddresses((current) => {
+        const next = { ...current };
+        if (result.formatted_address) {
+          next[candidate.id] = result.formatted_address;
+        } else {
+          delete next[candidate.id];
+        }
+        return next;
+      });
       setMessage(
         `ดึงพิกัดจาก Google Place ID ของ ${candidate.name} แล้ว กรุณาเปิดพิกัดบนแผนที่และยืนยันก่อนบันทึก`,
       );
@@ -537,6 +549,7 @@ export default function AdminApp() {
         batchGoogleCandidates.map((candidate) => candidate.id),
       );
       const patches: Record<string, Partial<Draft>> = {};
+      const googleAddresses: Record<string, string> = {};
       const failures: string[] = [];
       const byId = new Map(
         batchGoogleCandidates.map((candidate) => [candidate.id, candidate]),
@@ -565,9 +578,16 @@ export default function AdminApp() {
           note,
           coordinateCheckedAt: "",
         };
+        if (item.suggestion.formatted_address) {
+          googleAddresses[candidate.id] = item.suggestion.formatted_address;
+        }
       }
 
       if (Object.keys(patches).length > 0) {
+        setGoogleFormattedAddresses((current) => ({
+          ...current,
+          ...googleAddresses,
+        }));
         setDrafts((current) => {
           const next = { ...current };
           for (const [candidateId, patch] of Object.entries(patches)) {
@@ -1528,6 +1548,12 @@ export default function AdminApp() {
                     </button>
                   ))}
                 </div>
+              )}
+
+              {googleFormattedAddresses[candidate.id] && (
+                <p className="admin-message">
+                  Google address: {googleFormattedAddresses[candidate.id]}
+                </p>
               )}
 
               {draft.latitude && draft.longitude && (
