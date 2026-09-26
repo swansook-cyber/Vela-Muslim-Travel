@@ -50,7 +50,11 @@ from .admin_verifications import (
     list_place_verifications,
     validate_verification_claim,
 )
-from .candidate_review import candidate_approval_blockers, candidate_maps_search_url
+from .candidate_review import (
+    candidate_approval_blockers,
+    candidate_maps_search_url,
+    candidate_review_transition_allowed,
+)
 from .config import get_settings
 from .db import get_db
 from .geocoding import GeocodingError, search_places
@@ -593,6 +597,17 @@ async def admin_update_candidate(
     latitude = update.latitude if update.latitude is not None else existing["latitude"]
     longitude = update.longitude if update.longitude is not None else existing["longitude"]
     review_state = update.review_state or CandidateReviewState(existing["review_state"])
+    if not candidate_review_transition_allowed(
+        existing["review_state"],
+        review_state.value,
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"Invalid candidate review transition: "
+                f"{existing['review_state']} -> {review_state.value}"
+            ),
+        )
     review_note = (
         update.review_note
         if update.review_note is not None
