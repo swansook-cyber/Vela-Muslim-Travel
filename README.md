@@ -163,3 +163,15 @@ accommodations. Aonang Silver Orchid Resort is explicitly Muslim-owned from its
 official website; the other accommodation trust labels remain conservative.
 
 See `docs/KRABI_EXPANSION.md`.
+
+
+### Chiang Mai Batch 1
+
+Chiang Mai expansion is available at
+`database/seeds/chiang_mai_expansion_review_queue.csv`.
+
+Batch 1 contains 13 candidates: 5 mosques, 5 Muslim-owned restaurants, and 3
+accommodations. Al-Farooq Hotel is held for current-operation confirmation
+rather than being treated as active automatically.
+
+See `docs/CHIANG_MAI_EXPANSION.md`.
