@@ -81,3 +81,25 @@ Phase 0 is only considered fully accepted after both:
    inspected for sensible detours and fresh evidence.
 
 Do not mark Phase 0 complete from candidate counts alone.
+
+## Final acceptance record
+
+After the Completion panel reaches `MECHANICAL READY`, an Admin may record the
+final acceptance through `POST /admin/phase0-acceptance` or the Admin UI
+**Accept Phase 0** action.
+
+The action is guarded server-side and is rejected unless:
+
+- mechanical readiness is currently true,
+- the 2 km route smoke was checked,
+- the 5 km core-category gate passed,
+- the 10 km route smoke was checked,
+- detour quality and evidence freshness were manually inspected.
+
+A successful acceptance is stored in `admin_audit_log` as
+`PHASE0_ACCEPTANCE`. The Completion panel then reports `PHASE 0 COMPLETE`.
+
+The acceptance is invalidated automatically if any pilot candidate has an
+`updated_at` timestamp newer than the latest acceptance record. This prevents a
+stale acceptance badge from surviving later candidate changes; the manual
+route acceptance must then be repeated.
