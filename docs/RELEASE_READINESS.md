@@ -60,7 +60,7 @@ Seed checkpoint:
 - 15 GEOCODED,
 - 8 DISCOVERED,
 - 7 DISCOVERED candidates are Google-resolvable,
-- 6 of those are Google Fast Lane candidates without manual holds,
+- all 7 are Google Fast Lane candidates without manual holds,
 - 7 Google-resolvable candidates have no manual holds,
 - 1 non-Google candidate still needs coordinate review but has no manual hold.
 
