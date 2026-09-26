@@ -206,9 +206,12 @@ Primary evidence:
   ตำบลคลองวาฬ อำเภอเมืองประจวบคีรีขันธ์ 77000**, phone **084-455-6783**.
 - Wongnai describes it as a halal restaurant, and Makan Halal Guide lists
   Muslim-travel amenities including a prayer room.
-- The current Google business listing is marked **Temporarily Closed**.
-- Do not approve or promote this candidate while closure status is unresolved.
-  Recheck that the restaurant is operating before any state advancement.
+- **Operating-status resolution 2026-09-26:** current Makan Halal Guide,
+  Wongnai/LINE MAN and Restaurant Guru all show ongoing business activity,
+  current schedules/order state, and recent reviews. These newer independent
+  signals supersede the earlier Google **Temporarily Closed** status.
+- The operating-status hold is cleared. Exact coordinates still require manual
+  review before GEOCODED.
 - These public listings still do not establish official halal certification;
   retain `UNVERIFIED`.
 
@@ -441,11 +444,10 @@ Primary discovery evidence:
   Plus Code `6RQM+XC6`, recovered and decoded with the same official
   algorithm. CICOT and MasjidThai independently support the Moo 4, Rai Kao,
   Sam Roi Yot identity.
-- **เน้นเนื้อ@ประจวบฮาลาล** remains `DISCOVERED`. Google currently marks the
-  business **Temporarily Closed**, while Wongnai and Makan Halal Guide still
-  publish opening schedules. The closure hold remains until operation is
-  confirmed directly; no coordinate promotion is performed while this status
-  conflict is unresolved.
+- **เน้นเนื้อ@ประจวบฮาลาล** remains `DISCOVERED` because no reviewed exact
+  coordinate is stored yet. Its prior temporary-closure hold was cleared on
+  2026-09-26 using current Makan, Wongnai/LINE MAN and Restaurant Guru activity.
+  Trust remains `UNVERIFIED`.
 
 
 
@@ -521,14 +523,14 @@ Primary discovery evidence:
 
 - Current Makan Halal Guide and Wongnai still publish the same **143/2
   Khlong Wan** address and phone **084-455-6783**.
-- Both sources continue to publish operating schedules; Wongnai currently
-  renders the venue with a next-opening-time state rather than as a permanently
-  closed listing.
-- This remains inconsistent with the Google business **Temporarily Closed**
-  status recorded in the previous review.
-- Keep the operating-status hold until direct confirmation establishes whether
-  the business is currently operating. Do not promote on schedule metadata
-  alone.
+- Wongnai/LINE MAN exposes current order/opening state, while Restaurant Guru
+  was updated in July 2026 and includes recent Google reviews plus active hours.
+- These newer independent signals support ongoing operation and supersede the
+  older Google **Temporarily Closed** checkpoint.
+- **Operating-status hold cleared 2026-09-26.** The candidate remains
+  `DISCOVERED` only because exact coordinates still need manual review.
+  Public listings do not establish official halal certification; keep
+  `UNVERIFIED`.
 
 
 ### Ayah Restaurant Halal — address hold resolved
