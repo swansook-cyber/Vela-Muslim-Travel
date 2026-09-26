@@ -42,6 +42,25 @@ Mosques are sourced from the CICOT mosque directory but stay `UNVERIFIED` in
 the generic trust field because that field is primarily used for commercial
 halal/travel claims.
 
+
+## Muslim-owned discovery rule
+
+For restaurants and accommodations, actively include businesses that can be
+credibly verified as **Muslim-owned**, even if they have never applied for a
+halal certificate.
+
+Use:
+
+- `MUSLIM_OWNED` when ownership is verified,
+- `MUSLIM_FRIENDLY` when the venue explicitly supports Muslim travelers but
+  Muslim ownership is not established,
+- `HALAL_CERTIFIED` / `HALAL_CERTIFIED_SERVICE` only with current official
+  certification evidence.
+
+A Muslim-owned business should not be excluded merely because it lacks an
+official certificate. At the same time, Muslim ownership must not be inferred
+from a name, logo, neighborhood or menu alone.
+
 ## Coordinate policy
 
 Coordinates remain blank until one of these is available:
