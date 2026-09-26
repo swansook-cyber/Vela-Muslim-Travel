@@ -887,8 +887,8 @@ export default function AdminApp() {
               <h2>Pilot Readiness</h2>
               <p>
                 {pilotReadiness.ready
-                  ? "ทุกจังหวัดเป้าหมายมี production place อย่างน้อย 1 จุด"
-                  : "ยังมีจังหวัดเป้าหมายที่ไม่มี production place"}
+                  ? "ทุกจังหวัดมีร้านอาหารและมัสยิด และมีที่พักอย่างน้อย 2 จังหวัด"
+                  : "Production coverage ยังไม่ครบ: ต้องมีร้านอาหารและมัสยิดทุกจังหวัด และที่พักอย่างน้อย 2 จังหวัด"}
               </p>
             </div>
             <strong className={pilotReadiness.ready ? "ready" : "not-ready"}>
