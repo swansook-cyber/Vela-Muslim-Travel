@@ -536,3 +536,16 @@ accommodations with explicit halal-service evidence. Coordinates remain blank
 until controlled map review.
 
 See `docs/UTHAI_THANI_EXPANSION.md`.
+
+### Suphan Buri Batch 1
+
+Suphan Buri expansion is available at
+`database/seeds/suphan_buri_expansion_review_queue.csv`.
+
+Batch 1 contains 6 conservative candidates: the 1 Suphan Buri mosque currently
+surfaced by CICOT and 5 current Muslim-friendly restaurant candidates. No
+accommodation candidate is forced into this batch without sufficiently strong
+current halal-service evidence. Coordinates remain blank until controlled map
+review.
+
+See `docs/SUPHAN_BURI_EXPANSION.md`.
