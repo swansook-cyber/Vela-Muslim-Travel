@@ -93,10 +93,13 @@ Do not infer certification or approve automatically.
 
 ### Resolve existing GEOCODED holds before approval
 
+Ayah Restaurant Halal address mapping was resolved on 2026-09-26: the current
+Google Plus Code address and the 16/6 Moo 5 Mittraphap representation refer to
+the same business identity. It remains UNVERIFIED for trust/certification.
+
 - มัสยิดอันซอรุสซุนนะฮฺ — conflicting phone sources.
 - มัสยิดนูรุ้ลเอี๊ยะซาน — conflicting CICOT/Google phone.
 - มัสยิดมูฮาญิรีน — registered address versus map address.
-- Ayah Restaurant Halal — plus-code/Sap Wai versus 16/6 Moo 5 address.
 - มัสยิดมูฮัมมาดียะห์ บ้านดอนมะม่วง — Tha Chana versus same-name map result.
 - มัสยิดนุรุ้ลอีมาน — Moo 2 versus Moo 9.
 - Twin Lotus Hotel — halal certification is service/kitchen scope only and
