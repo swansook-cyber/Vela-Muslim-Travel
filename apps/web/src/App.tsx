@@ -37,6 +37,15 @@ const trustLabels: Record<string, string> = {
   UNVERIFIED: "ยังไม่ได้ยืนยัน",
 };
 
+const verificationSourceLabels: Record<string, string> = {
+  OFFICIAL_CERTIFICATION: "แหล่งรับรองทางการ",
+  BUSINESS_OWNER: "เจ้าของกิจการ",
+  FIELD_CHECK: "ตรวจสถานที่",
+  COMMUNITY_REPORT: "รายงานชุมชน",
+  PUBLIC_WEB_SOURCE: "แหล่งข้อมูลสาธารณะ",
+  UNKNOWN: "ไม่ระบุแหล่งยืนยัน",
+};
+
 function safeHttpUrl(value: string | null | undefined): string | null {
   if (!value) {
     return null;
@@ -67,6 +76,27 @@ function verificationLabel(value: string | null | undefined): string | null {
     month: "short",
     year: "numeric",
   })}`;
+}
+
+function verificationExpiryLabel(
+  value: string | null | undefined,
+  expired: boolean | undefined,
+): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  const formatted = date.toLocaleDateString("th-TH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+  return expired ? `หลักฐานหมดอายุ ${formatted}` : `หลักฐานถึง ${formatted}`;
 }
 
 function placeFeatures(place: PlaceResult): string[] {
@@ -566,6 +596,10 @@ export default function App() {
 
       {(routeResult || nearbyPlaces) && (
         <section className="results">
+          <p className="hint">
+            ป้ายสถานะบอกระดับความน่าเชื่อถือของข้อมูล ไม่ควรตีความว่า
+            “ฮาลาลรับรอง” เว้นแต่แสดงสถานะรับรองอย่างชัดเจน
+          </p>
           <div className="summary">
             {routeResult ? (
               <>
@@ -581,6 +615,13 @@ export default function App() {
             )}
           </div>
 
+          {visiblePlaces.length === 0 && (
+            <p className="admin-message">
+              ยังไม่พบสถานที่ที่ตรงกับตัวกรองและระยะที่เลือก ลองเพิ่มรัศมีหรือ
+              เลือกประเภทสถานที่เพิ่ม
+            </p>
+          )}
+
           <div className="place-list">
             {visiblePlaces.map((place) => (
               <article key={place.id} className="place-card">
@@ -588,6 +629,7 @@ export default function App() {
                   <span className="type">{typeLabels[place.place_type]}</span>
                   <h3>{place.name_th}</h3>
                   <p>{[place.district, place.province].filter(Boolean).join(" · ")}</p>
+                  {place.address && <p className="hint">{place.address}</p>}
                   {placeFeatures(place).length > 0 && (
                     <div className="feature-chips">
                       {placeFeatures(place).map((feature) => (
@@ -611,6 +653,24 @@ export default function App() {
                       Apple Maps
                     </a>
                     {place.phone && <a href={`tel:${place.phone}`}>โทร</a>}
+                    {safeHttpUrl(place.website_url) && (
+                      <a
+                        href={safeHttpUrl(place.website_url) ?? undefined}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        เว็บไซต์
+                      </a>
+                    )}
+                    {safeHttpUrl(place.social_url) && (
+                      <a
+                        href={safeHttpUrl(place.social_url) ?? undefined}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        โซเชียล
+                      </a>
+                    )}
                     {safeHttpUrl(place.source_reference) && (
                       <a
                         href={safeHttpUrl(place.source_reference) ?? undefined}
@@ -668,6 +728,23 @@ export default function App() {
                   </strong>
                   {verificationLabel(place.verified_at) && (
                     <span>{verificationLabel(place.verified_at)}</span>
+                  )}
+                  {place.verification_source_type && (
+                    <span>
+                      {verificationSourceLabels[place.verification_source_type] ||
+                        place.verification_source_type}
+                    </span>
+                  )}
+                  {verificationExpiryLabel(
+                    place.expires_at,
+                    place.verification_expired,
+                  ) && (
+                    <span>
+                      {verificationExpiryLabel(
+                        place.expires_at,
+                        place.verification_expired,
+                      )}
+                    </span>
                   )}
                 </div>
               </article>
