@@ -42,3 +42,20 @@ coordinate verification in Admin:
 Known review flags from the first pass are recorded in
 `docs/PILOT_REVIEW_LOG.md`. In particular, temporary-closure or conflicting
 address/phone evidence must be resolved rather than normalized automatically.
+
+
+## Coordinate queue checkpoint — 2026-09-26
+
+The pilot corridor currently has **15 GEOCODED** candidates and **8 DISCOVERED**
+candidates remaining.
+
+Of those 8 coordinate-pending candidates:
+
+- **7** already carry a Google business/place ID and can use the Admin
+  server-side Google batch resolver to obtain draft coordinate suggestions.
+- **1** (`เน้นเนื้อ@ประจวบฮาลาล`) does not use a Google provider in staging and
+  is also under an explicit temporary-closure hold.
+
+Google resolver output is still a suggestion only. A reviewer must open the
+suggested point on the map, confirm the exact venue, record
+`coordinate_checked_at`, and resolve any manual hold before approval.
