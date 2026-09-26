@@ -81,6 +81,11 @@ function suggestedSlug(candidate: CandidateResult): string {
 }
 
 interface Draft {
+  name: string;
+  address: string;
+  district: string;
+  province: string;
+  phone: string;
   latitude: string;
   longitude: string;
   note: string;
@@ -303,6 +308,11 @@ export default function AdminApp() {
       const next = { ...current };
       for (const item of items) {
         next[item.id] ??= {
+          name: item.name,
+          address: item.address || "",
+          district: item.district || "",
+          province: item.province || "",
+          phone: item.phone || "",
           latitude: item.latitude?.toString() || "",
           longitude: item.longitude?.toString() || "",
           note: item.review_note || "",
@@ -659,6 +669,11 @@ export default function AdminApp() {
 
     try {
       await updateCandidate(adminKey, candidate.id, {
+        name: draft.name.trim(),
+        address: draft.address,
+        district: draft.district,
+        province: draft.province,
+        phone: draft.phone,
         latitude,
         longitude,
         review_state: "GEOCODED",
@@ -694,6 +709,11 @@ export default function AdminApp() {
 
     try {
       await updateCandidate(adminKey, candidate.id, {
+        name: draft?.name.trim(),
+        address: draft?.address,
+        district: draft?.district,
+        province: draft?.province,
+        phone: draft?.phone,
         latitude,
         longitude,
         review_state: state,
@@ -1362,6 +1382,11 @@ export default function AdminApp() {
       <section className="candidate-list">
         {visibleCandidates.map((candidate) => {
           const draft = drafts[candidate.id] || {
+            name: candidate.name,
+            address: candidate.address || "",
+            district: candidate.district || "",
+            province: candidate.province || "",
+            phone: candidate.phone || "",
             latitude: "",
             longitude: "",
             note: "",
@@ -1398,6 +1423,75 @@ export default function AdminApp() {
                   </small>
                 </div>
                 <strong>{candidate.review_state}</strong>
+              </div>
+
+              <div className="candidate-metadata-editor">
+                <strong>Candidate data correction</strong>
+                <small>
+                  แก้เฉพาะข้อมูลที่ตรวจหลักฐานแล้ว การแก้ชื่อ/ที่อยู่/อำเภอ/จังหวัด
+                  จะต้องยืนยันพิกัดใหม่ก่อน GEOCODED/APPROVED
+                </small>
+                <label>
+                  ชื่อ
+                  <input
+                    value={draft.name}
+                    onChange={(event) =>
+                      updateDraft(candidate.id, {
+                        name: event.target.value,
+                        coordinateCheckedAt: "",
+                      })
+                    }
+                  />
+                </label>
+                <label>
+                  ที่อยู่
+                  <textarea
+                    value={draft.address}
+                    onChange={(event) =>
+                      updateDraft(candidate.id, {
+                        address: event.target.value,
+                        coordinateCheckedAt: "",
+                      })
+                    }
+                    rows={2}
+                  />
+                </label>
+                <div className="coordinate-grid">
+                  <label>
+                    อำเภอ/เขต
+                    <input
+                      value={draft.district}
+                      onChange={(event) =>
+                        updateDraft(candidate.id, {
+                          district: event.target.value,
+                          coordinateCheckedAt: "",
+                        })
+                      }
+                    />
+                  </label>
+                  <label>
+                    จังหวัด
+                    <input
+                      value={draft.province}
+                      onChange={(event) =>
+                        updateDraft(candidate.id, {
+                          province: event.target.value,
+                          coordinateCheckedAt: "",
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+                <label>
+                  โทรศัพท์
+                  <input
+                    value={draft.phone}
+                    onChange={(event) =>
+                      updateDraft(candidate.id, { phone: event.target.value })
+                    }
+                    placeholder="เว้นว่างได้หากแหล่งข้อมูลขัดกัน"
+                  />
+                </label>
               </div>
 
               <dl className="candidate-facts">
