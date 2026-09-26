@@ -3,6 +3,7 @@ from datetime import UTC, datetime, timedelta
 from app.candidate_review import (
     candidate_approval_blockers,
     candidate_maps_search_url,
+    candidate_promotion_blockers,
     candidate_review_transition_allowed,
     candidate_review_warnings,
 )
@@ -175,3 +176,31 @@ def test_candidate_review_does_not_warn_for_distant_certification_expiry() -> No
     )
 
     assert candidate_review_warnings(candidate) == []
+
+
+def test_candidate_promotion_blockers_reject_expired_certificate() -> None:
+    candidate = base_candidate()
+    candidate.update(
+        {
+            "review_state": "APPROVED",
+            "proposed_trust_status": "HALAL_CERTIFIED",
+            "certification_expires_at": datetime.now(UTC) - timedelta(days=1),
+        }
+    )
+
+    assert candidate_promotion_blockers(candidate) == [
+        "certified candidate requires current non-expired certificate"
+    ]
+
+
+def test_candidate_promotion_blockers_accept_current_approved_candidate() -> None:
+    candidate = base_candidate()
+    candidate.update(
+        {
+            "review_state": "APPROVED",
+            "proposed_trust_status": "HALAL_CERTIFIED",
+            "certification_expires_at": datetime.now(UTC) + timedelta(days=30),
+        }
+    )
+
+    assert candidate_promotion_blockers(candidate) == []
