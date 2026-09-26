@@ -56,3 +56,28 @@ and practical for a real drive.
 
 Once CI is green and this manually reviewed real-world pilot returns sensible route results,
 development can move to the first usable PWA.
+
+## Completion dashboard
+
+The Admin endpoint `GET /admin/phase0-completion` is the canonical mechanical
+completion summary for Phase 0. The Admin UI renders the same result in the
+**Phase 0 Completion** panel.
+
+`mechanical_ready=true` means all of the following are true:
+
+- no pilot candidates remain in DISCOVERED or GEOCODED review work,
+- no APPROVED pilot candidate is still waiting for promotion,
+- production coverage satisfies the structural pilot gate.
+
+This status is necessary but not sufficient for final Phase 0 acceptance.
+After mechanical readiness, the panel switches to **Final Manual Acceptance**
+and requires the real-route checks below.
+
+Phase 0 is only considered fully accepted after both:
+
+1. the Completion panel reports `MECHANICAL READY`, and
+2. the real pilot route smoke matrix is run at 2/5/10 km, with the 5 km
+   corridor meeting core-category coverage and the returned stops manually
+   inspected for sensible detours and fresh evidence.
+
+Do not mark Phase 0 complete from candidate counts alone.
