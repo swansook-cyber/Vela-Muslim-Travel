@@ -640,7 +640,9 @@ export default function AdminApp() {
       }));
 
       if (result.can_promote) {
-        setMessage(`${candidate.name} ผ่าน duplicate/slug preflight`);
+        setMessage(`${candidate.name} ผ่าน promotion preflight`);
+      } else if (result.promotion_blockers.length > 0) {
+        setError(result.promotion_blockers.join(" · "));
       } else if (result.duplicate) {
         setError(
           `พบสถานที่ประเภทเดียวกันใกล้ ${result.duplicate.distance_m.toFixed(
@@ -1411,9 +1413,11 @@ export default function AdminApp() {
                     <small>
                       {promotionChecks[candidate.id].can_promote
                         ? "Preflight ผ่าน"
-                        : promotionChecks[candidate.id].duplicate
-                          ? `พบ ${promotionChecks[candidate.id].duplicate?.name_th} ใกล้ ${promotionChecks[candidate.id].duplicate?.distance_m.toFixed(0)} ม.`
-                          : "slug ซ้ำ"}
+                        : promotionChecks[candidate.id].promotion_blockers.length > 0
+                          ? promotionChecks[candidate.id].promotion_blockers.join(" · ")
+                          : promotionChecks[candidate.id].duplicate
+                            ? `พบ ${promotionChecks[candidate.id].duplicate?.name_th} ใกล้ ${promotionChecks[candidate.id].duplicate?.distance_m.toFixed(0)} ม.`
+                            : "slug ซ้ำ"}
                     </small>
                   )}
                   <button
