@@ -125,9 +125,6 @@ export async function fetchCandidates(
   if (placeType) {
     url.searchParams.set("place_type", placeType);
   }
-  if (pilotOnly) {
-    url.searchParams.set("pilot_only", "true");
-  }
 
   const response = await fetch(url, {
     headers: adminHeaders(adminKey),
@@ -475,6 +472,9 @@ export async function fetchCandidateReviewQueue(
   }
   if (placeType) {
     url.searchParams.set("place_type", placeType);
+  }
+  if (pilotOnly) {
+    url.searchParams.set("pilot_only", "true");
   }
 
   const response = await fetch(url, {
