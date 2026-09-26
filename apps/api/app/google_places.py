@@ -16,6 +16,7 @@ class GooglePlaceLocation:
     place_id: str
     latitude: float
     longitude: float
+    formatted_address: str | None = None
 
 
 class GooglePlacesError(RuntimeError):
@@ -72,7 +73,7 @@ async def resolve_google_place_location(place_id: str) -> GooglePlaceLocation:
     headers = {
         "Accept": "application/json",
         "X-Goog-Api-Key": settings.google_places_api_key,
-        "X-Goog-FieldMask": "id,location",
+        "X-Goog-FieldMask": "id,location,formattedAddress",
     }
 
     async with httpx.AsyncClient(
@@ -92,6 +93,9 @@ async def resolve_google_place_location(place_id: str) -> GooglePlaceLocation:
         location = payload["location"]
         latitude = float(location["latitude"])
         longitude = float(location["longitude"])
+        formatted_address = payload.get("formattedAddress")
+        if formatted_address is not None:
+            formatted_address = str(formatted_address).strip() or None
     except (KeyError, TypeError, ValueError) as exc:
         raise GooglePlacesError("Google Places provider returned invalid data") from exc
 
@@ -104,6 +108,7 @@ async def resolve_google_place_location(place_id: str) -> GooglePlaceLocation:
         place_id=returned_id,
         latitude=latitude,
         longitude=longitude,
+        formatted_address=formatted_address,
     )
     _set_cached(normalized, result)
     return result
