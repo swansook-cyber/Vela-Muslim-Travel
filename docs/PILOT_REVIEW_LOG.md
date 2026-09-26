@@ -504,6 +504,32 @@ Primary discovery evidence:
   not represented as whole-property halal certification.
 
 
+
+## 2026-09-26 — held-candidate evidence refresh
+
+### คุณย่าเขาใหญ่ KhunYaaKhaoyai HalalResort
+
+- Google/staging evidence still uses phone **084-673-1717**.
+- Current Makan Halal Guide, TripNiceDay and Cybo independently publish
+  **089-791-3785** for the same KhunYaa identity/location.
+- The conflict is now stronger, not weaker. Do not select either phone
+  automatically; keep the manual hold until a direct/authoritative confirmation
+  resolves it.
+- Coordinate review may continue while this hold remains.
+
+### เน้นเนื้อ@ประจวบฮาลาล
+
+- Current Makan Halal Guide and Wongnai still publish the same **143/2
+  Khlong Wan** address and phone **084-455-6783**.
+- Both sources continue to publish operating schedules; Wongnai currently
+  renders the venue with a next-opening-time state rather than as a permanently
+  closed listing.
+- This remains inconsistent with the Google business **Temporarily Closed**
+  status recorded in the previous review.
+- Keep the operating-status hold until direct confirmation establishes whether
+  the business is currently operating. Do not promote on schedule metadata
+  alone.
+
 ## Review rule
 
 A successful web/source cross-check does **not** change `review_state`.
