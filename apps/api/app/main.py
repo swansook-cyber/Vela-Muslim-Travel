@@ -27,6 +27,9 @@ from .admin_schemas import (
     AdminPlaceUpdate,
     AdminVerificationCreate,
     AdminVerificationResult,
+    CandidateCoordinateBatchItem,
+    CandidateCoordinateBatchRequest,
+    CandidateCoordinateBatchResponse,
     CandidateCoordinateSuggestion,
     CandidatePromoteRequest,
     CandidatePromoteResponse,
@@ -475,6 +478,84 @@ async def admin_resolve_candidate_google_place(
         latitude=result.latitude,
         longitude=result.longitude,
     )
+
+
+@app.post(
+    "/admin/candidates/resolve-google-places",
+    response_model=CandidateCoordinateBatchResponse,
+)
+async def admin_resolve_candidate_google_places(
+    request: CandidateCoordinateBatchRequest,
+    session: DbSession,
+    _admin: AdminGuard,
+) -> CandidateCoordinateBatchResponse:
+    if not settings.google_places_api_key:
+        raise HTTPException(
+            status_code=503,
+            detail="Google Places API is not configured",
+        )
+
+    results: list[CandidateCoordinateBatchItem] = []
+    for candidate_id in request.candidate_ids:
+        candidate = await get_candidate(session, candidate_id)
+        if candidate is None:
+            results.append(
+                CandidateCoordinateBatchItem(
+                    candidate_id=candidate_id,
+                    error="Candidate not found",
+                )
+            )
+            continue
+
+        if candidate.get("external_provider") not in {
+            "google_business",
+            "google_places",
+        }:
+            results.append(
+                CandidateCoordinateBatchItem(
+                    candidate_id=candidate_id,
+                    error="Candidate does not use a Google place provider",
+                )
+            )
+            continue
+
+        external_id = candidate.get("external_id")
+        if not external_id:
+            results.append(
+                CandidateCoordinateBatchItem(
+                    candidate_id=candidate_id,
+                    error="Candidate has no Google place ID",
+                )
+            )
+            continue
+
+        try:
+            result = await resolve_google_place_location(str(external_id))
+        except GooglePlacesNotConfigured as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        except GooglePlacesError as exc:
+            results.append(
+                CandidateCoordinateBatchItem(
+                    candidate_id=candidate_id,
+                    error=str(exc),
+                )
+            )
+            continue
+
+        results.append(
+            CandidateCoordinateBatchItem(
+                candidate_id=candidate_id,
+                suggestion=CandidateCoordinateSuggestion(
+                    candidate_id=candidate_id,
+                    provider="google_places",
+                    external_id=result.place_id,
+                    latitude=result.latitude,
+                    longitude=result.longitude,
+                ),
+            )
+        )
+
+    return CandidateCoordinateBatchResponse(results=results)
 
 
 @app.get("/admin/candidates", response_model=list[CandidateResult])
