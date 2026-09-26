@@ -34,6 +34,7 @@ async def test_google_places_resolves_id_and_location(monkeypatch) -> None:
                     "latitude": 14.1234567,
                     "longitude": 101.7654321,
                 },
+                "formattedAddress": "165 Moo 15 Thanarat Rd, Mu Si, Pak Chong",
             }
 
     class FakeClient:
@@ -63,11 +64,12 @@ async def test_google_places_resolves_id_and_location(monkeypatch) -> None:
     assert result.place_id == "ChIJtest"
     assert result.latitude == pytest.approx(14.1234567)
     assert result.longitude == pytest.approx(101.7654321)
+    assert result.formatted_address == "165 Moo 15 Thanarat Rd, Mu Si, Pak Chong"
     assert str(seen["url"]).endswith("/v1/places/ChIJtest")
     assert seen["headers"] == {
         "Accept": "application/json",
         "X-Goog-Api-Key": "test-key",
-        "X-Goog-FieldMask": "id,location",
+        "X-Goog-FieldMask": "id,location,formattedAddress",
     }
 
 
