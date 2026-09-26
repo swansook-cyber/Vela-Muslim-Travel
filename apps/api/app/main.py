@@ -12,6 +12,7 @@ from .admin_candidate_readiness import (
 from .admin_places import get_admin_place, list_admin_places, update_admin_place
 from .admin_queries import (
     get_admin_dashboard,
+    check_candidate_promotion,
     get_candidate,
     list_admin_audit,
     list_candidates,
@@ -33,6 +34,7 @@ from .admin_schemas import (
     CandidateCoordinateSuggestion,
     CandidatePromoteRequest,
     CandidatePromoteResponse,
+    CandidatePromotionCheckResponse,
     CandidateProvinceReadiness,
     CandidateReadinessResponse,
     CandidateResult,
@@ -687,6 +689,34 @@ async def admin_update_candidate(
     )
     await session.commit()
     return CandidateResult(**row)
+
+
+@app.post(
+    "/admin/candidates/{candidate_id}/promotion-check",
+    response_model=CandidatePromotionCheckResponse,
+)
+async def admin_candidate_promotion_check(
+    candidate_id: str,
+    request: CandidatePromoteRequest,
+    session: DbSession,
+    _admin: AdminGuard,
+) -> CandidatePromotionCheckResponse:
+    candidate = await get_candidate(session, candidate_id)
+    if candidate is None:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    if candidate["review_state"] != CandidateReviewState.APPROVED.value:
+        raise HTTPException(
+            status_code=409,
+            detail="Candidate must be APPROVED before promotion preflight",
+        )
+    if candidate["latitude"] is None or candidate["longitude"] is None:
+        raise HTTPException(
+            status_code=409,
+            detail="Candidate requires reviewed coordinates before promotion preflight",
+        )
+
+    result = await check_candidate_promotion(session, candidate, request.slug)
+    return CandidatePromotionCheckResponse(**result)
 
 
 @app.post(
