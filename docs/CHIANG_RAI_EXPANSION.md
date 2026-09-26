@@ -14,11 +14,11 @@ Prioritize:
 
 ## Batch 1
 
-`database/seeds/chiang_rai_expansion_review_queue.csv` contains **10 candidates**:
+`database/seeds/chiang_rai_expansion_review_queue.csv` contains **11 candidates**:
 
 - 5 mosques from CICOT,
 - 3 restaurants explicitly described as Muslim-owned,
-- 2 accommodations with current halal dining/breakfast support.
+- 3 accommodations with current halal dining/breakfast evidence.
 
 All begin as `DISCOVERED` with blank coordinates.
 
@@ -34,6 +34,10 @@ without a current official certificate number and scope.
 NAI YA Hotel and Maryo Resort are stored as `MUSLIM_FRIENDLY` because current
 property data show halal dietary/breakfast options. This is not a whole-property
 halal certification claim.
+
+The Riverie by Katathani carries a review hold because current sources conflict:
+Booking lists halal breakfast while Halalbooking says there is no halal food
+provision. Do not approve it until the property is checked directly.
 
 ## Coordinate policy
 
