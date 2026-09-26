@@ -59,6 +59,20 @@ class CandidateCoordinateSuggestion(BaseModel):
     longitude: float = Field(ge=-180, le=180)
 
 
+class CandidateCoordinateBatchRequest(BaseModel):
+    candidate_ids: list[str] = Field(min_length=1, max_length=25)
+
+
+class CandidateCoordinateBatchItem(BaseModel):
+    candidate_id: str
+    suggestion: CandidateCoordinateSuggestion | None = None
+    error: str | None = None
+
+
+class CandidateCoordinateBatchResponse(BaseModel):
+    results: list[CandidateCoordinateBatchItem]
+
+
 class CandidatePromoteRequest(BaseModel):
     slug: str = Field(min_length=2, max_length=160, pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     name_th: str | None = Field(default=None, min_length=1, max_length=250)
