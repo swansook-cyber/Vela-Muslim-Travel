@@ -313,13 +313,13 @@ export default function AdminApp() {
               adminKey,
               activeFilter,
               activeProvince || undefined,
-              typeFilter || undefined,
+              activeType || undefined,
             )
           : fetchCandidates(
               adminKey,
               activeFilter || undefined,
               activeProvince || undefined,
-              typeFilter || undefined,
+              activeType || undefined,
             );
 
       const [
