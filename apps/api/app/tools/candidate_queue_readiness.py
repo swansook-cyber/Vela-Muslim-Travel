@@ -5,15 +5,7 @@ import csv
 from collections import Counter, defaultdict
 from pathlib import Path
 
-PILOT_PROVINCES = (
-    "นครศรีธรรมราช",
-    "สุราษฎร์ธานี",
-    "ชุมพร",
-    "ประจวบคีรีขันธ์",
-    "เพชรบุรี",
-    "สระบุรี",
-    "นครราชสีมา",
-)
+from app.pilot import PILOT_PROVINCES
 
 REQUIRED_ROUTE_TYPES = ("RESTAURANT", "MOSQUE")
 
