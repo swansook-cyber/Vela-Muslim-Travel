@@ -247,6 +247,19 @@ A nearby match is not automatically deleted or merged. It must be reviewed as
 a potential duplicate and resolved deliberately.
 
 
+
+### Non-blocking review warnings
+
+The review queue can surface warnings that do not automatically block approval.
+For certified candidates, evidence expiring within 30 days is shown as a warning
+so the reviewer can re-check the certificate before promotion.
+
+Warnings are intentionally separate from approval blockers: a warning requires
+attention, while a blocker prevents APPROVED. Admin's **ขั้นตอนถัดไป** text
+prioritizes these warnings before approval so they are not hidden by a generic
+"ready" state.
+
+
 ## Certification freshness
 
 A certified label is current only while its evidence has a future expiry date.
