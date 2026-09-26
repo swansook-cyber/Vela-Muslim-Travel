@@ -374,6 +374,12 @@ Primary discovery evidence:
 - Existing Google business ID `ChIJVy7c7Bg7HDERjTbk8mJLjSI` still resolves to
   the hotel at **49/1 หมู่ 5 ตำบลวังกะทะ อำเภอปากช่อง จังหวัดนครราชสีมา
   30130**, phone **084-673-1717**, matching staging.
+- **Recheck 2026-09-26:** current Makan Halal Guide and TripNiceDay instead
+  publish phone **089-791-3785** for the same KhunYaa identity/location.
+- Do not choose or overwrite either phone automatically. The candidate now has
+  an explicit phone-conflict hold that must be resolved before approval.
+- Coordinate review may continue independently, but the hold must remain after
+  GEOCODED until the phone discrepancy is reconciled.
 - Current public sources continue to identify the property using the
   `HalalResort` name.
 - No evidence reviewed here establishes whole-property halal certification.
