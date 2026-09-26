@@ -279,3 +279,20 @@ export interface CandidateReadinessResponse {
   ready: boolean;
   provinces: CandidateProvinceReadiness[];
 }
+
+
+export interface Phase0CompletionResponse {
+  mechanical_ready: boolean;
+  candidate_review_complete: boolean;
+  promotion_queue_complete: boolean;
+  production_coverage_ready: boolean;
+  active_review_pending: number;
+  approved_waiting_promotion: number;
+  promoted_candidates: number;
+  rejected_candidates: number;
+  manual_hold: number;
+  google_fast_lane: number;
+  blockers: string[];
+  manual_acceptance_required: boolean;
+  manual_acceptance_steps: string[];
+}
