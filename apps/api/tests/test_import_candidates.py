@@ -1060,3 +1060,35 @@ def test_trat_commercial_candidates_do_not_claim_muslim_ownership_or_certificati
         for candidate in commercial
     )
     assert all(not candidate.certification_number for candidate in commercial)
+
+
+def test_mae_hong_son_pai_expansion_uses_conservative_batch_size() -> None:
+    path = Path("../../database/seeds/mae_hong_son_pai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    assert len(candidates) == 9
+    assert {candidate.province for candidate in candidates} == {"แม่ฮ่องสอน"}
+    assert all(candidate.review_state == "DISCOVERED" for candidate in candidates)
+    assert all(candidate.latitude is None for candidate in candidates)
+    assert all(candidate.longitude is None for candidate in candidates)
+    assert sum(candidate.place_type == "MOSQUE" for candidate in candidates) == 3
+    assert sum(candidate.place_type == "RESTAURANT" for candidate in candidates) == 4
+    assert sum(candidate.place_type == "ACCOMMODATION" for candidate in candidates) == 2
+
+
+def test_mae_hong_son_pai_commercial_candidates_do_not_overclaim_trust() -> None:
+    path = Path("../../database/seeds/mae_hong_son_pai_expansion_review_queue.csv")
+    candidates = load_candidates(path)
+
+    commercial = [
+        candidate
+        for candidate in candidates
+        if candidate.place_type in {"RESTAURANT", "ACCOMMODATION"}
+    ]
+
+    assert len(commercial) == 6
+    assert all(
+        candidate.proposed_trust_status == "MUSLIM_FRIENDLY"
+        for candidate in commercial
+    )
+    assert all(not candidate.certification_number for candidate in commercial)
