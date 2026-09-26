@@ -253,3 +253,19 @@ class CandidateReviewProgressResponse(BaseModel):
     manual_hold: int
     evidence_blocked: int
     provinces: list[CandidateReviewProvinceProgress]
+
+
+class Phase0CompletionResponse(BaseModel):
+    mechanical_ready: bool
+    candidate_review_complete: bool
+    promotion_queue_complete: bool
+    production_coverage_ready: bool
+    active_review_pending: int
+    approved_waiting_promotion: int
+    promoted_candidates: int
+    rejected_candidates: int
+    manual_hold: int
+    google_fast_lane: int
+    blockers: list[str]
+    manual_acceptance_required: bool
+    manual_acceptance_steps: list[str]
