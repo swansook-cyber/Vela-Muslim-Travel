@@ -524,3 +524,15 @@ current halal-service evidence. Coordinates remain blank until controlled map
 review.
 
 See `docs/CHAI_NAT_EXPANSION.md`.
+
+### Uthai Thani Batch 1
+
+Uthai Thani expansion is available at
+`database/seeds/uthai_thani_expansion_review_queue.csv`.
+
+Batch 1 contains 6 conservative candidates: 2 current CICOT mosque records, 2
+active Muslim-friendly restaurant candidates and 2 Muslim-friendly
+accommodations with explicit halal-service evidence. Coordinates remain blank
+until controlled map review.
+
+See `docs/UTHAI_THANI_EXPANSION.md`.
